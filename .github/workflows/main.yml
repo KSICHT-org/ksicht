@@ -45,7 +45,7 @@ jobs:
       # 5. build assets [TODO]
       - name: Build Assets
         run: |
-          .\node_modules\.bin\webpack --config webpack.config.js --mode production
+          node ./node_modules/webpack/bin/webpack.js --mode production --progress --config webpack.config.js
 
 
       # 6. login to docker hub
