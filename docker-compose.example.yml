@@ -1,6 +1,6 @@
 services:
     website:
-        image: xaralis/ksicht:latest
+        image: ksicht/web:latest
         volumes:
             - ./media:/media:Z
         ports:

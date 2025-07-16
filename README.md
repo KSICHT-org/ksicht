@@ -80,7 +80,7 @@ make test
 ### Building & deploying
 
 This app is distributed as a Docker container
-and [hosted on Docker Hub](https://hub.docker.com/r/xaralis/ksicht).
+and [hosted on Docker Hub](https://hub.docker.com/r/ksicht/web).
 Makefile provides all the necessary commands:
 
 ```bash
