@@ -1,8 +1,8 @@
 # Build image
-FROM python:3.12-slim-bookworm as build
+FROM python:3.12-slim-bookworm AS build
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /usr/src/app
 
@@ -24,11 +24,11 @@ RUN pip install --upgrade pip && \
 # Production image
 FROM python:3.12-slim-bookworm
 
-ENV PYTHONPATH /ksicht
-ENV DJANGO_SETTINGS_MODULE ksicht.settings
-ENV PATH "/ksicht/.local/bin:${PATH}"
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH=/ksicht
+ENV DJANGO_SETTINGS_MODULE=ksicht.settings
+ENV PATH="/ksicht/.local/bin:${PATH}"
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Create custom user to avoid running as a root
 RUN mkdir -p /ksicht && \
