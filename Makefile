@@ -1,9 +1,13 @@
 
 init-env:
 	python3 -m venv .env
+win-init-env:
+	python -m venv .env
 
 install:
 	pip install pip-tools && CFLAGS="-Wno-error=implicit-function-declaration" pip install -r requirements.txt && npm install
+win-install:
+	pip install pip-tools & set CFLAGS="-Wno-error=implicit-function-declaration" & pip install -r requirements.txt && npm install
 
 install-test:
 	pip install -r requirements-test.txt
@@ -13,6 +17,8 @@ install-dev:
 
 run:
 	DEBUG=1 DEBUG_TOOLBAR=1 ./node_modules/.bin/concurrently -r -k "python manage.py runserver 8080" "./node_modules/.bin/webpack --config webpack.config.js --mode development --watch"
+win-run:
+	set DEBUG="1" & set DEBUG_TOOLBAR="1" & set DATABASE_DSN="postgresql://postgres:postgres@localhost:5433/ksicht" & .\node_modules\.bin\concurrently -r -k "python manage.py runserver 8080" ".\node_modules\.bin\webpack --config webpack.config.js --mode development --watch"
 
 dep-freeze:
 	pip-compile requirements.in
@@ -22,22 +28,26 @@ test:
 
 migrate:
 	DEBUG=1 python manage.py migrate
+win-migrate:
+	set DEBUG="1" & set DATABASE_DSN='postgresql://postgres:postgres@localhost:5433/ksicht' & python manage.py migrate
 
 migrations:
 	DEBUG=1 python manage.py makemigrations
+win-migrations:
+	set DEBUG="1" & python manage.py makemigrations
 
 build-assets:
-	./node_modules/.bin/webpack --config webpack.config.js --mode production
+	.\node_modules\.bin\webpack --config webpack.config.js --mode production
 
 build-image:
-	docker buildx build --platform linux/amd64 -t xaralis/ksicht:latest .
+	docker buildx build --platform linux/amd64 -t ksicht/web:latest .
 
 build:
 	make build-assets
 	make build-image
 
 push:
-	docker push xaralis/ksicht:latest
+	docker push ksicht/web:latest
 
 release:
 	make build
