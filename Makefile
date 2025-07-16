@@ -7,7 +7,7 @@ win-init-env:
 install:
 	pip install pip-tools && CFLAGS="-Wno-error=implicit-function-declaration" pip install -r requirements.txt && npm install
 win-install:
-	pip install pip-tools & set CFLAGS="-Wno-error=implicit-function-declaration" & pip install -r requirements.txt && npm install
+	pip install pip-tools & $env:CFLAGS="-Wno-error=implicit-function-declaration" & pip install -r requirements.txt && npm install
 
 install-test:
 	pip install -r requirements-test.txt
@@ -18,7 +18,7 @@ install-dev:
 run:
 	DEBUG=1 DEBUG_TOOLBAR=1 ./node_modules/.bin/concurrently -r -k "python manage.py runserver 8080" "./node_modules/.bin/webpack --config webpack.config.js --mode development --watch"
 win-run:
-	set DEBUG="1" & set DEBUG_TOOLBAR="1" & set DATABASE_DSN="postgresql://postgres:postgres@localhost:5433/ksicht" & .\node_modules\.bin\concurrently -r -k "python manage.py runserver 8080" ".\node_modules\.bin\webpack --config webpack.config.js --mode development --watch"
+	$env:DEBUG="1" & $env:DEBUG_TOOLBAR="1" & $env:DATABASE_DSN="postgresql://postgres:postgres@localhost:5433/ksicht" & .\node_modules\.bin\concurrently -r -k "python manage.py runserver 8080" ".\node_modules\.bin\webpack --config webpack.config.js --mode development --watch"
 
 dep-freeze:
 	pip-compile requirements.in
@@ -29,12 +29,12 @@ test:
 migrate:
 	DEBUG=1 python manage.py migrate
 win-migrate:
-	set DEBUG="1" & set DATABASE_DSN='postgresql://postgres:postgres@localhost:5433/ksicht' & python manage.py migrate
+	$env:DEBUG="1" & $env:DATABASE_DSN='postgresql://postgres:postgres@localhost:5433/ksicht' & python manage.py migrate
 
 migrations:
 	DEBUG=1 python manage.py makemigrations
 win-migrations:
-	set DEBUG="1" & python manage.py makemigrations
+	$env:DEBUG="1" & python manage.py makemigrations
 
 build-assets:
 	.\node_modules\.bin\webpack --config webpack.config.js --mode production
