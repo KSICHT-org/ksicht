@@ -1,3 +1,9 @@
+#######################
+# commands are intended for use on UNIX (and UNIX-like) systems
+# some commands have their Windows variants, intended to be used inside PowerShell, starting with 'win-'
+# before invoking these commands, make sure to run debugEnv.ps1 script
+# Windows variants won't work properly in CMD!
+#######################
 
 init-env:
 	python3 -m venv .env
@@ -7,7 +13,7 @@ win-init-env:
 install:
 	pip install pip-tools && CFLAGS="-Wno-error=implicit-function-declaration" pip install -r requirements.txt && npm install
 win-install:
-	pip install pip-tools & $env:CFLAGS="-Wno-error=implicit-function-declaration" & pip install -r requirements.txt && npm install
+	pip install pip-tools & pip install -r requirements.txt && npm install
 
 install-test:
 	pip install -r requirements-test.txt
@@ -18,7 +24,7 @@ install-dev:
 run:
 	DEBUG=1 DEBUG_TOOLBAR=1 ./node_modules/.bin/concurrently -r -k "python manage.py runserver 8080" "./node_modules/.bin/webpack --config webpack.config.js --mode development --watch"
 win-run:
-	$env:DEBUG="1" & $env:DEBUG_TOOLBAR="1" & $env:DATABASE_DSN="postgresql://postgres:postgres@localhost:5433/ksicht" & .\node_modules\.bin\concurrently -r -k "python manage.py runserver 8080" ".\node_modules\.bin\webpack --config webpack.config.js --mode development --watch"
+	.\node_modules\.bin\concurrently -r -k "python manage.py runserver 8080" ".\node_modules\.bin\webpack --config webpack.config.js --mode development --watch"
 
 dep-freeze:
 	pip-compile requirements.in
@@ -29,12 +35,12 @@ test:
 migrate:
 	DEBUG=1 python manage.py migrate
 win-migrate:
-	$env:DEBUG="1" & $env:DATABASE_DSN='postgresql://postgres:postgres@localhost:5433/ksicht' & python manage.py migrate
+	python manage.py migrate
 
 migrations:
 	DEBUG=1 python manage.py makemigrations
 win-migrations:
-	$env:DEBUG="1" & python manage.py makemigrations
+	python manage.py makemigrations
 
 build-assets:
 	.\node_modules\.bin\webpack --config webpack.config.js --mode production
