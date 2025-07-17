@@ -266,7 +266,7 @@ class SubmissionOverview(FormView):
         # Map participant_id -> application_id
         application_map = {a.participant_id: str(a.id) for a in applications}
 
-        # Saved submssions come from DB, triplets (application_id, task_id, should_exist)
+        # Saved submissions come from DB, triplets (application_id, task_id, should_exist)
         saved_submissions = {
             (application_map[s.application.participant_id], str(s.task_id), True)
             for s in submissions
