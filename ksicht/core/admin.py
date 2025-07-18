@@ -1,4 +1,3 @@
-from sched import Event
 from cuser.admin import UserAdmin
 from django import forms
 from django.contrib import admin
