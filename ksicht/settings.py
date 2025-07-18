@@ -60,6 +60,8 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
+    "imagefield",
+    "cabinet",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -325,3 +327,8 @@ KSICHT_CONTACT_ADDRESS_LINES = [
 ]
 
 BLANK_PDF_FILEPATH = os.path.join(MEDIA_ROOT, "blank_page.pdf")
+
+# filebrowser
+# FILEBROWSER_DIRECTORY = ''
+# DIRECTORY = ''
+

@@ -19,6 +19,7 @@ django==5.2.4
     #   -r .\requirements.in
     #   crispy-bulma
     #   django-appconf
+    #   django-cabinet
     #   django-crispy-forms
     #   django-markdownx
     #   django-minify-html
@@ -29,12 +30,16 @@ django-appconf==1.0.4
     # via
     #   django-imagekit
     #   django-select2
+django-cabinet==0.17.0
+    # via -r .\requirements.in
 django-capture-tag==1.0
     # via -r .\requirements.in
 django-crispy-forms==2.4
     # via
     #   -r .\requirements.in
     #   crispy-bulma
+django-imagefield==0.22.0
+    # via django-cabinet
 django-imagekit==5.0.0
     # via -r .\requirements.in
 django-markdown-deux==1.0.6
@@ -47,6 +52,8 @@ django-registration==5.2.1
     # via -r .\requirements.in
 django-select2==8.4.1
     # via -r .\requirements.in
+django-tree-queries==0.20.0
+    # via django-cabinet
 django-username-email==2.5.7
     # via -r .\requirements.in
 django-webpack-loader==3.2.1
@@ -74,6 +81,7 @@ pilkit==3.0
 pillow==11.3.0
     # via
     #   -r .\requirements.in
+    #   django-imagefield
     #   django-markdownx
     #   pilkit
     #   reportlab

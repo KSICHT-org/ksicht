@@ -23,3 +23,4 @@ pilkit==3.0
 # Fix for https://stackoverflow.com/questions/73929564/entrypoints-object-has-no-attribute-get-digital-ocean
 # markdownx installs old version of markdown which breaks the app
 Markdown==3.8.2
+django-cabinet==0.17
