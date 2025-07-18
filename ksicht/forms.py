@@ -1,3 +1,5 @@
+import logging
+
 from cuser.forms import AuthenticationForm, UserChangeForm, UserCreationForm
 from django import forms
 from django.contrib.auth.forms import (
@@ -12,7 +14,7 @@ import pydash as py_
 from webpack_loader.templatetags.webpack_loader import webpack_static
 
 from .core import constants
-from .core.models import Grade, Participant, User
+from .core.models import Grade, Participant, User, GradeManager, GradeApplication
 from .core.form_utils import (
     FormHelper,
     Field,
@@ -243,6 +245,9 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
         super().__init__(*args, **kwargs)
 
         self.fields["email"].disabled = True
+        self.fields["school_year"].disabled = True
+        self.fields["school_year"].help_text = "Školní ročník je měněn automaticky před začátkem nového ročníku KSICHTu. Pokud jej přesto potřebuješ změnit, napiš nám email na ksicht@natur.cuni.cz."
+
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -278,6 +283,10 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
     def save(self, commit=True):
         user = super().save(commit)
         cd = self.cleaned_data
+
+
+        logger = logging.getLogger(__name__)
+        logger.error(user.is_applied_in_current_grade())
 
         user.save()
 
