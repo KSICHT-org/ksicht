@@ -16,7 +16,7 @@ from django.contrib.messages import constants as messages
 import dsnparse
 
 
-ADMINS = (("Filip Varecha", "filip@varecha.work"),)
+ADMINS = (("Filip Varecha", "filip@varecha.work"),("KSICHT org","ksicht.org@gmail.com"))
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -327,8 +327,3 @@ KSICHT_CONTACT_ADDRESS_LINES = [
 ]
 
 BLANK_PDF_FILEPATH = os.path.join(MEDIA_ROOT, "blank_page.pdf")
-
-# filebrowser
-# FILEBROWSER_DIRECTORY = ''
-# DIRECTORY = ''
-
