@@ -49,7 +49,7 @@ class KsichtProfileMixin(forms.ModelForm):
         )
         self.fields["birth_date"] = forms.DateField(
             label="Datum narození",
-            required=False,
+            required=True,
             help_text="Datum narození ve formátu 1. 1. 1980.",
             localize=True,
         )
