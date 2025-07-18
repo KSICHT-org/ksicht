@@ -28,13 +28,13 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ksicht/ksicht.git"
+        "url": "git+https://github.com/ksicht-org/ksicht.git"
     },
     "keywords": [],
     "author": "Filip Vařecha",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/ksicht/ksicht.cz/issues"
+        "url": "https://github.com/ksicht-org/ksicht/issues"
     },
-    "homepage": "https://github.com/ksicht/ksicht.cz/#readme"
+    "homepage": "https://github.com/ksicht-org/ksicht/#readme"
 }
