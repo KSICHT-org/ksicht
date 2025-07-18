@@ -64,8 +64,23 @@
                         <div class="card series-card {% if series == current_series and series.task_file %}is-current{% endif %}">
                             <div class="card-content">
                                 <h2 class="is-6 is-uppercase has-text-weight-bold">{{ series }}</h2>
-                                <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey">odevzdání do {{ series.submission_deadline | date:"d.m." }}</div>
+                                {% if series in future_series %}
+                                    <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey mb-4">
+                                        <p>
+                                            zveřejnění:
+                                            {% if series.expected_publish_date %}
+                                                {{ series.expected_publish_date | date:"d.m." }}
+                                            {% else %}
+                                                datum není známo
+                                            {% endif %}
+                                        </p>
+                                        <p class="subtitle is-7 has-text-grey">datum je pouze orientační</p>
+                                    </div>
+                                {% endif %}
 
+                                <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey">
+                                        odevzdání do {{ series.submission_deadline | date:"d.m." }}
+                                </div>
                                 {% if series in future_series %}
                                     <p class="subtitle is-7 has-text-grey">datum je pouze orientační</p>
                                 {% endif %}

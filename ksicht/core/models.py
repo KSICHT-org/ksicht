@@ -200,6 +200,9 @@ class GradeSeries(models.Model):
         null=False,
         db_index=True,
     )
+    expected_publish_date = models.DateField(
+        verbose_name="Předpokládané datum zvěřejnění zadání", null=True, blank=True
+    )
     submission_deadline = models.DateTimeField(
         verbose_name="Deadline pro odeslání řešení", null=False
     )
@@ -231,6 +234,9 @@ class GradeSeries(models.Model):
         return reverse(
             "core:series_detail", kwargs={"pk": self.pk, "grade_id": self.grade_id}
         )
+
+    def is_expected_publish_date_passed(self):
+        return self.expected_publish_date and self.expected_publish_date < datetime.now().date()
 
     @property
     def accepts_solution_submissions(self):
