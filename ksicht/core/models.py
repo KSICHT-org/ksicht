@@ -39,7 +39,6 @@ class User(AbstractCUser):
         current_grade = Grade.objects.filter(
             start_date__lte=current_date, end_date__gte=current_date
         ).first()
-        logger.error(current_grade)
 
         return GradeApplication.objects.filter(
              grade=current_grade, participant=self.participant_profile
