@@ -18,7 +18,18 @@
     {% if can_apply %}
         <div class="notification">
             <p class="title is-4">Do tohoto ročníku se ještě můžeš přihlásit!</p>
-            <p class="is-size-6 mb-4">Před přihlášením si prosím zkontrolujte správnost údajů na  <a href="{% url 'edit_profile' %}">svém profilu</a>.</p>
+            <article class="message is-info">
+                <div class="message-body">
+                    Před přihlášením si, prosím, zkontrolujte správnost údajů na <a href="{% url 'edit_profile' %}">svém profilu</a>.
+                </div>
+            </article>
+            {% if not has_birth_date %}
+                <article class="message is-danger">
+                    <div class="message-body">
+                        Pro účast je nově potřeba mít vyplněné datum narození!
+                    </div>
+                </article>
+            {% endif %}
             {% crispy application_form %}
         </div>
     {% endif %}

@@ -5,7 +5,27 @@
 {% block headline %}{% block page_title %}Můj profil{% endblock %}{% endblock %}
 
 {% block container %}
-{% crispy form %}
+    <article class="message is-info">
+        <div class="message-header">
+            <p>Upozornění</p>
+            <button class="delete" aria-label="delete"></button>
+        </div>
+        <div class="message-body">
+            Školní ročník se nově zvýší o jednu úroveň automaticky při zahájení dalšího ročníku KSICHTu.
+            Pokud dojde k situaci, kdy ročník zde v profilu neodpovídá realitě, pošli nám email na <a
+            href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
+        </div>
+    </article>
+
+    {% if no_birth_date %}
+        <article class="message is-warning">
+            <div class="message-body">
+                Pro účast v KSICHTu je nově potřeba mít vyplněné datum narození.
+            </div>
+        </article>
+    {% endif %}
+
+    {% crispy form %}
 {% endblock %}
 
 {% block after_body %}

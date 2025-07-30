@@ -47,12 +47,12 @@ class KsichtProfileMixin(forms.ModelForm):
             required=False,
             empty_value="+420",
             initial="+420",
-            help_text="Telefon ve formátu +420 777 123123.",
+            help_text="Telefon ve formátu +420 777 123 123.",
         )
         self.fields["birth_date"] = forms.DateField(
             label="Datum narození",
             required=True,
-            help_text="Datum narození ve formátu 1. 1. 1980.",
+            help_text="Datum narození ve formátu 31.12.2000.",
             localize=True,
         )
         self.fields["street"] = forms.CharField(
@@ -246,8 +246,6 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
 
         self.fields["email"].disabled = True
         self.fields["school_year"].disabled = True
-        self.fields["school_year"].help_text = "Školní ročník je měněn automaticky před začátkem nového ročníku KSICHTu. Pokud jej přesto potřebuješ změnit, napiš nám email na ksicht@natur.cuni.cz."
-
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
