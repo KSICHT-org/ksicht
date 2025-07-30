@@ -457,6 +457,7 @@ class Participant(models.Model):
         ("sk", "Slovensko"),
     )
     GRADE_CHOICES = (
+        ("5", "absolvent"),
         ("4", "SŠ, 4."),
         ("3", "SŠ, 3."),
         ("2", "SŠ, 2."),
@@ -553,6 +554,7 @@ class Participant(models.Model):
 
 class GradeApplication(models.Model):
     GRADE_CHOICES = (
+        ("5", "absolvent"),
         ("4", "SŠ, 4."),
         ("3", "SŠ, 3."),
         ("2", "SŠ, 2."),
