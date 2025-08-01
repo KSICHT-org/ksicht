@@ -21,6 +21,8 @@ __all__ = (
     "GradeResultsExportView",
 )
 
+from ..models import Participant
+
 
 @method_decorator(current_grade_exists, name="dispatch")
 class CurrentGradeView(DetailView):
@@ -43,8 +45,12 @@ class CurrentGradeView(DetailView):
             hasattr(self.request.user, "participant_profile")
             and self.request.user.participant_profile.birth_date is not None
         )
+        data["is_graduate"] = (
+            hasattr(self.request.user, "participant_profile")
+            and self.request.user.participant_profile.school_year is Participant.GRADE_CHOICES[0][0]
+        )
 
-        data["application_form"] = forms.CurrentGradeAppliationForm(has_birth_date=data["has_birth_date"])
+        data["application_form"] = forms.CurrentGradeAppliationForm(has_birth_date=data["has_birth_date"], is_graduate=data["is_graduate"])
         return data
 
 

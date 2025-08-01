@@ -20,13 +20,20 @@
             <p class="title is-4">Do tohoto ročníku se ještě můžeš přihlásit!</p>
             <article class="message is-info">
                 <div class="message-body">
-                    Před přihlášením si, prosím, zkontrolujte správnost údajů na <a href="{% url 'edit_profile' %}">svém profilu</a>.
+                    Před přihlášením si, prosím, zkontroluj správnost údajů na <a href="{% url 'edit_profile' %}">svém profilu</a>.
                 </div>
             </article>
             {% if not has_birth_date %}
                 <article class="message is-danger">
                     <div class="message-body">
                         Pro účast je nově potřeba mít vyplněné datum narození!
+                    </div>
+                </article>
+            {% endif %}
+            {% if is_graduate %}
+                <article class="message is-danger">
+                    <div class="message-body">
+                        Jako absolvent střední školy se již nemůžeš účastnit KSICHTu.
                     </div>
                 </article>
             {% endif %}

@@ -14,11 +14,14 @@ class CurrentGradeAppliationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         has_birth_date = kwargs.pop("has_birth_date", False)
+        is_graduate = kwargs.pop("is_graduate", False)
+        is_btn_disabled = (not has_birth_date) or is_graduate
+
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("applied"),
-            Submit("submit", "Přihlásit se do ročníku", css_class="is-medium", disabled=(not has_birth_date)),
+            Submit("submit", "Přihlásit se do ročníku", css_class="is-medium", disabled=is_btn_disabled),
         )
         self.helper.form_action = reverse("core:current_grade_application")
 
