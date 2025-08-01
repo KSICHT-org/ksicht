@@ -1,5 +1,5 @@
 psycopg2-binary==2.9.10
-Django==5.2.4
+Django==5.0.14
 dsnparse==0.2.1
 django-crispy-forms==2.4
 crispy-bulma==0.12.0
@@ -8,7 +8,7 @@ django-markdownx==4.0.9
 django-markdown-deux==1.0.6
 django-minify-html==1.12.0
 django-capture-tag
-django-registration==5.2.1
+django-registration==5.1.0
 django-username-email==2.5.7
 django-imagekit==5.0.0
 django_select2==8.4.1
