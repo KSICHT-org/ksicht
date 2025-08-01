@@ -14,6 +14,7 @@
 !.babelrc
 !webpack.config.js
 !webpack-stats.json
+!manage.py
 
 **/*~
 **/*.log

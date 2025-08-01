@@ -62,6 +62,7 @@ COPY --chown=ksicht ./assets /ksicht/assets
 COPY --chown=ksicht ./ksicht ./ksicht/
 COPY --chown=ksicht ./fonts ./fonts/
 COPY --chown=ksicht ./fixtures ./fixtures/
+COPY --chown=ksicht manage.py .
 
 # Collect static files
 RUN mkdir -p /ksicht/static && \
