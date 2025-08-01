@@ -18,7 +18,7 @@ urlpatterns = [
                 "series__attachments"
             ),
             template_name="core/grade_archive.html",
-            paginate_by=10,
+            paginate_by=6,
         ),
         name="grade_archive",
     ),

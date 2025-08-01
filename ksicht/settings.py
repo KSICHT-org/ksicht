@@ -16,7 +16,7 @@ from django.contrib.messages import constants as messages
 import dsnparse
 
 
-ADMINS = (("Filip Varecha", "filip@varecha.work"),)
+ADMINS = (("Filip Varecha", "filip@varecha.work"),("KSICHT org","ksicht.org@gmail.com"))
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -60,6 +60,8 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
+    "imagefield",
+    "cabinet",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

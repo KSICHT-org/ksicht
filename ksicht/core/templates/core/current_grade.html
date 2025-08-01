@@ -18,7 +18,18 @@
     {% if can_apply %}
         <div class="notification">
             <p class="title is-4">Do tohoto ročníku se ještě můžeš přihlásit!</p>
-            <p class="is-size-6 mb-4">Před přihlášením si prosím zkontrolujte správnost údajů na  <a href="{% url 'edit_profile' %}">svém profilu</a>.</p>
+            <article class="message is-info">
+                <div class="message-body">
+                    Před přihlášením si, prosím, zkontrolujte správnost údajů na <a href="{% url 'edit_profile' %}">svém profilu</a>.
+                </div>
+            </article>
+            {% if not has_birth_date %}
+                <article class="message is-danger">
+                    <div class="message-body">
+                        Pro účast je nově potřeba mít vyplněné datum narození!
+                    </div>
+                </article>
+            {% endif %}
             {% crispy application_form %}
         </div>
     {% endif %}
@@ -64,8 +75,23 @@
                         <div class="card series-card {% if series == current_series and series.task_file %}is-current{% endif %}">
                             <div class="card-content">
                                 <h2 class="is-6 is-uppercase has-text-weight-bold">{{ series }}</h2>
-                                <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey">odevzdání do {{ series.submission_deadline | date:"d.m." }}</div>
+                                {% if series in future_series %}
+                                    <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey mb-4">
+                                        <p>
+                                            zveřejnění:
+                                            {% if series.expected_publish_date %}
+                                                {{ series.expected_publish_date | date:"d.m." }}
+                                            {% else %}
+                                                datum není známo
+                                            {% endif %}
+                                        </p>
+                                        <p class="subtitle is-7 has-text-grey">datum je pouze orientační</p>
+                                    </div>
+                                {% endif %}
 
+                                <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey">
+                                        odevzdání do {{ series.submission_deadline | date:"d.m." }}
+                                </div>
                                 {% if series in future_series %}
                                     <p class="subtitle is-7 has-text-grey">datum je pouze orientační</p>
                                 {% endif %}

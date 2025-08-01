@@ -1,3 +1,5 @@
+import logging
+
 from cuser.forms import AuthenticationForm, UserChangeForm, UserCreationForm
 from django import forms
 from django.contrib.auth.forms import (
@@ -12,7 +14,7 @@ import pydash as py_
 from webpack_loader.templatetags.webpack_loader import webpack_static
 
 from .core import constants
-from .core.models import Grade, Participant, User
+from .core.models import Grade, Participant, User, GradeManager, GradeApplication
 from .core.form_utils import (
     FormHelper,
     Field,
@@ -45,12 +47,12 @@ class KsichtProfileMixin(forms.ModelForm):
             required=False,
             empty_value="+420",
             initial="+420",
-            help_text="Telefon ve formátu +420 777 123123.",
+            help_text="Telefon ve formátu +420 777 123 123.",
         )
         self.fields["birth_date"] = forms.DateField(
             label="Datum narození",
-            required=False,
-            help_text="Datum narození ve formátu 1. 1. 1980.",
+            required=True,
+            help_text="Datum narození ve formátu 31.12.2000.",
             localize=True,
         )
         self.fields["street"] = forms.CharField(
@@ -243,6 +245,7 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
         super().__init__(*args, **kwargs)
 
         self.fields["email"].disabled = True
+        self.fields["school_year"].disabled = True
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -278,6 +281,10 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
     def save(self, commit=True):
         user = super().save(commit)
         cd = self.cleaned_data
+
+
+        logger = logging.getLogger(__name__)
+        logger.error(user.is_applied_in_current_grade())
 
         user.save()
 

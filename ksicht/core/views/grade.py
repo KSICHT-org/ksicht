@@ -39,7 +39,12 @@ class CurrentGradeView(DetailView):
             and self.object.participants.filter(user=self.request.user).exists()
         )
         data["can_apply"] = data["is_participant"] and not data["is_grade_participant"]
-        data["application_form"] = forms.CurrentGradeAppliationForm()
+        data["has_birth_date"] = (
+            hasattr(self.request.user, "participant_profile")
+            and self.request.user.participant_profile.birth_date is not None
+        )
+
+        data["application_form"] = forms.CurrentGradeAppliationForm(has_birth_date=data["has_birth_date"])
         return data
 
 

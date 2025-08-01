@@ -13,11 +13,12 @@ class CurrentGradeAppliationForm(forms.Form):
     applied = forms.BooleanField(initial="y", required=True, widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
+        has_birth_date = kwargs.pop("has_birth_date", False)
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("applied"),
-            Submit("submit", "Přihlásit se do ročníku", css_class="is-medium"),
+            Submit("submit", "Přihlásit se do ročníku", css_class="is-medium", disabled=(not has_birth_date)),
         )
         self.helper.form_action = reverse("core:current_grade_application")
 

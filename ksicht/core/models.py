@@ -34,6 +34,16 @@ class User(AbstractCUser):
     def is_participant(self):
         return Participant.objects.filter(user=self).exists()
 
+    def is_applied_in_current_grade(self):
+        current_date = date.today()
+        current_grade = Grade.objects.filter(
+            start_date__lte=current_date, end_date__gte=current_date
+        ).first()
+
+        return GradeApplication.objects.filter(
+             grade=current_grade, participant=self.participant_profile
+        ).exists()
+
 
 @receiver(user_activated)
 def create_grade_application(sender, user: User, **kwargs):
@@ -200,6 +210,9 @@ class GradeSeries(models.Model):
         null=False,
         db_index=True,
     )
+    expected_publish_date = models.DateField(
+        verbose_name="Předpokládané datum zvěřejnění zadání", null=True, blank=True
+    )
     submission_deadline = models.DateTimeField(
         verbose_name="Deadline pro odeslání řešení", null=False
     )
@@ -231,6 +244,9 @@ class GradeSeries(models.Model):
         return reverse(
             "core:series_detail", kwargs={"pk": self.pk, "grade_id": self.grade_id}
         )
+
+    def is_expected_publish_date_passed(self):
+        return self.expected_publish_date and self.expected_publish_date < datetime.now().date()
 
     @property
     def accepts_solution_submissions(self):
@@ -441,11 +457,16 @@ class Participant(models.Model):
         ("sk", "Slovensko"),
     )
     GRADE_CHOICES = (
-        ("4", "4."),
-        ("3", "3."),
-        ("2", "2."),
-        ("1", "1."),
-        ("l", "nižší"),
+        ("5", "absolvent"),
+        ("4", "SŠ, 4."),
+        ("3", "SŠ, 3."),
+        ("2", "SŠ, 2."),
+        ("1", "SŠ, 1."),
+        ("0", "ZŠ, 9."),
+        ("-1", "ZŠ, 8."),
+        ("-2", "ZŠ, 7."),
+        ("-3", "ZŠ, 6."),
+        # ("l", "nižší"),
     )
 
     user = models.OneToOneField(
@@ -481,7 +502,7 @@ class Participant(models.Model):
     )
     school_year = models.CharField(
         verbose_name="Ročník",
-        max_length=1,
+        max_length=5,
         null=False,
         choices=GRADE_CHOICES,
     )
@@ -531,14 +552,18 @@ class Participant(models.Model):
     def get_full_name(self):
         return f"{self.user.get_full_name() or self.user.email}"
 
-
 class GradeApplication(models.Model):
     GRADE_CHOICES = (
-        ("4", "4."),
-        ("3", "3."),
-        ("2", "2."),
-        ("1", "1."),
-        ("l", "nižší"),
+        ("5", "absolvent"),
+        ("4", "SŠ, 4."),
+        ("3", "SŠ, 3."),
+        ("2", "SŠ, 2."),
+        ("1", "SŠ, 1."),
+        ("0", "ZŠ, 9."),
+        ("-1", "ZŠ, 8."),
+        ("-2", "ZŠ, 7."),
+        ("-3", "ZŠ, 6."),
+        #("l", "nižší"),
     )
 
     grade = models.ForeignKey(

@@ -21,7 +21,7 @@ __all__ = (
 class SeriesTaskEnvelopesPrintout(View):
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type="application/pdf")
-        filename = quote("Obálky pro školy")
+        filename = quote("obalky_pro_skoly")
         response["Content-Disposition"] = f"attachment; filename*=UTF-8''{filename}.pdf"
 
         def _build_lines(s):

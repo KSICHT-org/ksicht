@@ -50,6 +50,12 @@ class UserProfileEditView(UpdateView):
         )
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["no_birth_date"] = self.object.participant_profile.birth_date is None
+        return context
+
 
 def permission_protected_flatpage(request, url):
     """
