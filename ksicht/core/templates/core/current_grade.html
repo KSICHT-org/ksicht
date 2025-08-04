@@ -82,7 +82,7 @@
                         <div class="card series-card {% if series == current_series and series.task_file %}is-current{% endif %}">
                             <div class="card-content">
                                 <h2 class="is-6 is-uppercase has-text-weight-bold">{{ series }}</h2>
-                                {% if series in future_series %}
+                                {% if not series.is_expected_publish_date_passed %}
                                     <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey mb-4">
                                         <p>
                                             zveřejnění:
