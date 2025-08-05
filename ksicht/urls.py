@@ -24,7 +24,6 @@ from django_registration.backends.activation import views as reg_views
 
 from . import forms, views
 
-
 sitemaps = {}
 
 urlpatterns = (
@@ -89,8 +88,8 @@ urlpatterns = (
             auth_views.PasswordResetCompleteView.as_view(),
             name="password_reset_complete",
         ),
-        re_path(
-            r"^ucty/aktivace/dokonceno/$",
+        path(
+            "ucty/aktivace/dokonceno/",
             TemplateView.as_view(
                 template_name="django_registration/activation_complete.html"
             ),
@@ -99,24 +98,24 @@ urlpatterns = (
         # The activation key can make use of any character from the
         # URL-safe base64 alphabet, plus the colon as a separator.
         re_path(
-            r"^ucty/aktivace/(?P<activation_key>[-:\w]+)/$",
-            reg_views.ActivationView.as_view(),
+            r"^ucty/aktivace/",
+            views.KsichtActivationView.as_view(),
             name="django_registration_activate",
         ),
-        re_path(
-            r"^ucty/registrace/$",
+        path(
+            "ucty/registrace/",
             reg_views.RegistrationView.as_view(form_class=forms.KsichtRegistrationForm),
             name="django_registration_register",
         ),
-        re_path(
-            r"^ucty/registrace/dokonceno/$",
+        path(
+            "ucty/registrace/dokonceno/",
             TemplateView.as_view(
                 template_name="django_registration/registration_complete.html"
             ),
             name="django_registration_complete",
         ),
-        re_path(
-            r"^ucty/registrace-uzavrena/$",
+        path(
+            "ucty/registrace-uzavrena/",
             TemplateView.as_view(
                 template_name="django_registration/registration_closed.html"
             ),

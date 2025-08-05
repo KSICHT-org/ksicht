@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import UpdateView
 import pydash as py_
+from django_registration.backends.activation.views import ActivationView
 
 from . import forms
 
@@ -56,6 +57,16 @@ class UserProfileEditView(UpdateView):
         context["no_birth_date"] = self.object.participant_profile.birth_date is None
         return context
 
+
+class KsichtActivationView(ActivationView):
+    def form_invalid(self, form):
+        super().form_invalid(form)
+
+        extra_context = {"is_form_invalid": True, "form_error": form.errors.get("activation_key")}
+
+        context_data = self.get_context_data()
+        context_data.update(extra_context)
+        return self.render_to_response(context_data)
 
 def permission_protected_flatpage(request, url):
     """
