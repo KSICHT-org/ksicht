@@ -1,0 +1,39 @@
+{% extends "focused.html" %}
+{% load crispy_forms_tags %}
+{% load webpack_static from webpack_loader %}
+
+{% block headline %}{% block page_title %}Aktivace účtu{% endblock %}{% endblock %}
+
+{% block container %}
+    {% if activation_error %}
+        {% if activation_error.code == "already_activated" %}
+            <div class="notification is-info">
+                Uživatel je již aktivován. Můžete se <a href="{% url "login" %}">přihlásit</a>.
+            </div>
+        {% elif activation_error.code == "bad_username" %}
+            <div class="notification is-warning">
+                Uživatel nebyl nalezen. Pro více informací nás kontaktujte přes email na <a
+                href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
+            </div>
+        {% endif %}
+
+    {% endif %}
+
+    {% if is_form_invalid %}
+        <div class="notification is-danger">
+            Aktivační klíč je neplatný. Pro více informací nás kontaktujte přes email na <a
+            href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
+        </div>
+
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.activation_key.as_hidden }}
+        <button type="submit" class="button is-primary">Aktivovat</button>
+    </form>
+{% endblock %}
+
+{% block after_body %}
+    <script src="{% webpack_static "js/user-form.js" %}"></script>
+{% endblock %}
