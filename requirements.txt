@@ -8,13 +8,13 @@ asgiref==3.8.1
     # via
     #   django
     #   django-minify-html
-charset-normalizer==3.4.2
+charset-normalizer==3.4.4
     # via reportlab
-confusable-homoglyphs==3.2.0
+confusable-homoglyphs==3.3.1
     # via django-registration
 crispy-bulma==0.12.0
     # via -r .\requirements.in
-django==5.0.14
+django==5.2.11
     # via
     #   -r .\requirements.in
     #   crispy-bulma
@@ -26,51 +26,51 @@ django==5.0.14
     #   django-registration
     #   django-select2
     #   django-username-email
-django-appconf==1.0.4
+django-appconf==1.2.0
     # via
     #   django-imagekit
     #   django-select2
-django-cabinet==0.17.0
+django-cabinet==0.18.1
     # via -r .\requirements.in
 django-capture-tag==1.0
     # via -r .\requirements.in
-django-crispy-forms==2.4
+django-crispy-forms==2.5
     # via
     #   -r .\requirements.in
     #   crispy-bulma
 django-imagefield==0.22.0
     # via django-cabinet
-django-imagekit==5.0.0
+django-imagekit==6.1.0
     # via -r .\requirements.in
 django-markdown-deux==1.0.6
     # via -r .\requirements.in
 django-markdownx==4.0.9
     # via -r .\requirements.in
-django-minify-html==1.12.0
+django-minify-html==1.14.0
     # via -r .\requirements.in
-django-registration==5.1.0
+django-registration==5.2.1
     # via -r .\requirements.in
-django-select2==8.4.1
+django-select2==8.4.8
     # via -r .\requirements.in
-django-tree-queries==0.20.0
+django-tree-queries==0.23.1
     # via django-cabinet
 django-username-email==2.5.7
     # via -r .\requirements.in
-django-webpack-loader==3.2.1
+django-webpack-loader==3.2.3
     # via -r .\requirements.in
-dsnparse==0.2.1
+dsnparse==0.4.0
     # via -r .\requirements.in
-gunicorn==23.0.0
+gunicorn==25.1.0
     # via -r .\requirements.in
-markdown==3.8.2
+markdown==3.10.2
     # via
     #   -r .\requirements.in
     #   django-markdownx
-markdown2==2.3.9
+markdown2==2.5.4
     # via django-markdown-deux
-minify-html==0.15.0
+minify-html==0.18.1
     # via django-minify-html
-packaging==24.1
+packaging==26.0
     # via gunicorn
 pdfrw==0.4
     # via -r .\requirements.in
@@ -78,24 +78,24 @@ pilkit==3.0
     # via
     #   -r .\requirements.in
     #   django-imagekit
-pillow==11.3.0
+pillow==12.1.1
     # via
     #   -r .\requirements.in
     #   django-imagefield
     #   django-markdownx
     #   pilkit
     #   reportlab
-psycopg2-binary==2.9.10
+psycopg2-binary==2.9.11
     # via -r .\requirements.in
-pydash==8.0.5
+pydash==8.0.6
     # via -r .\requirements.in
-pypdf==5.8.0
+pypdf==6.7.4
     # via -r .\requirements.in
-reportlab==4.4.2
+reportlab==4.4.10
     # via -r .\requirements.in
-sqlparse==0.3.1
+sqlparse==0.5.5
     # via django
-typing-extensions==4.12.2
+typing-extensions==4.15.0
     # via pydash
-tzdata==2025.2
+tzdata==2025.3
     # via django

@@ -174,9 +174,11 @@ class EventAttendeesExportView(BaseDetailView):
                 attendee.user.last_name,
                 "Náhradník" if is_substitute else "Účastník",
                 (participant.phone if participant else None) or attendee.user_phone,
-                formats.date_format(birth_date, "SHORT_DATE_FORMAT")
-                if birth_date
-                else None,
+                (
+                    formats.date_format(birth_date, "SHORT_DATE_FORMAT")
+                    if birth_date
+                    else None
+                ),
             ]
 
             if participant:

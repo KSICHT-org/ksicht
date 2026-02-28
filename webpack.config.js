@@ -16,12 +16,21 @@ module.exports = (env, argv) => {
             filename: prodMode ? "[name]-[fullhash].js" : "[name].js",
         },
 
+        resolve: {
+            alias: {
+                // FA v7 uses @use internally with $font-path: '../webfonts'.
+                // css-loader can't resolve this relative to FA's SCSS source,
+                // so we alias it to the actual package webfonts directory.
+                '../webfonts': path.resolve(__dirname, 'node_modules/@fortawesome/fontawesome-free/webfonts'),
+            },
+        },
+
         optimization: {
             minimizer: prodMode
                 ? [
-                      new TerserPlugin({ parallel: true }),
-                      new CssMinimizerPlugin({}),
-                  ]
+                    new TerserPlugin({ parallel: true }),
+                    new CssMinimizerPlugin({}),
+                ]
                 : [],
         },
 
@@ -37,11 +46,12 @@ module.exports = (env, argv) => {
                     use: [
                         MiniCssExtractPlugin.loader,
                         "css-loader",
-                        "sass-loader",
                         {
                             loader: "sass-loader",
                             options: {
+                                api: "modern-compiler",
                                 sassOptions: {
+                                    silenceDeprecations: ["import"],
                                     // https://github.com/jgthms/bulma/issues/3856
                                     quietDeps: true,
                                 },

@@ -62,11 +62,15 @@ class KsichtActivationView(ActivationView):
     def form_invalid(self, form):
         super().form_invalid(form)
 
-        extra_context = {"is_form_invalid": True, "form_error": form.errors.get("activation_key")}
+        extra_context = {
+            "is_form_invalid": True,
+            "form_error": form.errors.get("activation_key"),
+        }
 
         context_data = self.get_context_data()
         context_data.update(extra_context)
         return self.render_to_response(context_data)
+
 
 def permission_protected_flatpage(request, url):
     """

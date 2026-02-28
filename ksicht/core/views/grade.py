@@ -47,10 +47,13 @@ class CurrentGradeView(DetailView):
         )
         data["is_graduate"] = (
             hasattr(self.request.user, "participant_profile")
-            and self.request.user.participant_profile.school_year is Participant.GRADE_CHOICES[0][0]
+            and self.request.user.participant_profile.school_year
+            is Participant.GRADE_CHOICES[0][0]
         )
 
-        data["application_form"] = forms.CurrentGradeAppliationForm(has_birth_date=data["has_birth_date"], is_graduate=data["is_graduate"])
+        data["application_form"] = forms.CurrentGradeAppliationForm(
+            has_birth_date=data["has_birth_date"], is_graduate=data["is_graduate"]
+        )
         return data
 
 

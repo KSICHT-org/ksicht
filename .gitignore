@@ -16,3 +16,4 @@ db.sqlite3
 webpack-stats.json
 static
 media/*
+.excluded
