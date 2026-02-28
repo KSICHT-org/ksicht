@@ -72,11 +72,15 @@ def envelopes(recipients: List[EnvelopeRecipientInfo], our_lines, out_file):
     can = canvas.Canvas(packet, pagesize=pagesize)
 
     for recipient in recipients:
-        paragraph = Paragraph("<br />".join(recipient["lines"]), style=page_paragraph_style)
+        paragraph = Paragraph(
+            "<br />".join(recipient["lines"]), style=page_paragraph_style
+        )
         paragraph_width = paragraph.wrap(700, 1000)[0]
         paragraph.drawOn(can, page_width - paragraph_width - 48, 270)
 
-        ksicht_contact_paragraph.drawOn(can, 24, page_height - 24 - ksicht_contact_height)
+        ksicht_contact_paragraph.drawOn(
+            can, 24, page_height - 24 - ksicht_contact_height
+        )
 
         if recipient["note"]:
             note_paragraph = Paragraph(
@@ -84,9 +88,11 @@ def envelopes(recipients: List[EnvelopeRecipientInfo], our_lines, out_file):
                 style=note_paragraph_style,
             )
             note_width, note_height = note_paragraph.wrap(300, 200)
-            note_paragraph.drawOn(can, page_width - 24 - note_width, page_height - 24 - note_height)
+            note_paragraph.drawOn(
+                can, page_width - 24 - note_width, page_height - 24 - note_height
+            )
 
-        can.showPage() # Close current page & start new one
+        can.showPage()  # Close current page & start new one
 
     can.save()
     packet.seek(0)

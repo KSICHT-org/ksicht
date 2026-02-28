@@ -150,9 +150,9 @@ class KsichtRegistrationForm(KsichtProfileMixin, UserCreationForm):
             )
         )
         self.fields[email_field].label = "Emailová adresa"
-        self.fields[
-            email_field
-        ].help_text = "Slouží jako uživatelské jméno pro přihlášení."
+        self.fields[email_field].help_text = (
+            "Slouží jako uživatelské jméno pro přihlášení."
+        )
 
         self.fields["tos"] = forms.BooleanField(
             widget=forms.CheckboxInput,
@@ -281,7 +281,6 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
     def save(self, commit=True):
         user = super().save(commit)
         cd = self.cleaned_data
-
 
         logger = logging.getLogger(__name__)
         logger.error(user.is_applied_in_current_grade())

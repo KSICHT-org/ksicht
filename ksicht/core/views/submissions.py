@@ -94,15 +94,19 @@ class SolutionSubmitView(TemplateView):
             formset.append(
                 (
                     task,
-                    forms.SolutionSubmitForm(
-                        files=self.request.FILES
-                        if self.request.method == "POST"
-                        and str(task.id) == form_task_id
-                        else None,
-                        task=task,
-                    )
-                    if task.id not in task_submissions
-                    else None,
+                    (
+                        forms.SolutionSubmitForm(
+                            files=(
+                                self.request.FILES
+                                if self.request.method == "POST"
+                                and str(task.id) == form_task_id
+                                else None
+                            ),
+                            task=task,
+                        )
+                        if task.id not in task_submissions
+                        else None
+                    ),
                     submission,
                     submission.can_delete(self.request.user) if submission else False,
                 )
@@ -409,9 +413,7 @@ class SolutionExportView(View):
         solution_files = []
 
         for s in submitted_solutions:
-            solution_files.append(
-                s.file_for_export_normal
-            )
+            solution_files.append(s.file_for_export_normal)
 
         # Join all files in one large batch.
         pdf.concatenate(solution_files, response, is_duplex)

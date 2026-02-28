@@ -21,7 +21,12 @@ class CurrentGradeAppliationForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("applied"),
-            Submit("submit", "Přihlásit se do ročníku", css_class="is-medium", disabled=is_btn_disabled),
+            Submit(
+                "submit",
+                "Přihlásit se do ročníku",
+                css_class="is-medium",
+                disabled=is_btn_disabled,
+            ),
         )
         self.helper.form_action = reverse("core:current_grade_application")
 

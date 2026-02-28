@@ -44,8 +44,7 @@ def prepare_export_ready_files_forwards(apps, schema_editor):
             submission.save()
 
 
-def prepare_export_ready_files_backwards(apps, schema_editor):
-    ...
+def prepare_export_ready_files_backwards(apps, schema_editor): ...
 
 
 class Migration(migrations.Migration):

@@ -60,9 +60,9 @@ def get_event_stickers(series):
         .first()
     )
     related_events = models.Event.objects.filter(
-        start_date__gte=prev_series.submission_deadline
-        if prev_series
-        else series.grade.start_date,
+        start_date__gte=(
+            prev_series.submission_deadline if prev_series else series.grade.start_date
+        ),
         end_date__lte=series.submission_deadline,
     ).prefetch_related("reward_stickers", "attendees")
 

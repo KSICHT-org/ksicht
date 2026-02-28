@@ -50,14 +50,16 @@ class SeriesTaskEnvelopesPrintout(View):
 
 class ParticipantEnvelopesPrintout:
     def render_to_response(self, context):
-        participants = self.get_participants(context).order_by(
-            "user__last_name", "user__first_name", "user__email"
-        ).distinct()
+        participants = (
+            self.get_participants(context)
+            .order_by("user__last_name", "user__first_name", "user__email")
+            .distinct()
+        )
         title = self.get_title(context)
         response = HttpResponse(content_type="application/pdf")
-        response[
-            "Content-Disposition"
-        ] = f"attachment; filename*=UTF-8''{quote(title)}.pdf"
+        response["Content-Disposition"] = (
+            f"attachment; filename*=UTF-8''{quote(title)}.pdf"
+        )
 
         lines = [
             {

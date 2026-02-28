@@ -41,7 +41,7 @@ class User(AbstractCUser):
         ).first()
 
         return GradeApplication.objects.filter(
-             grade=current_grade, participant=self.participant_profile
+            grade=current_grade, participant=self.participant_profile
         ).exists()
 
 
@@ -246,7 +246,10 @@ class GradeSeries(models.Model):
         )
 
     def is_expected_publish_date_passed(self):
-        return self.expected_publish_date and self.expected_publish_date < datetime.now().date()
+        return (
+            self.expected_publish_date
+            and self.expected_publish_date < datetime.now().date()
+        )
 
     @property
     def accepts_solution_submissions(self):
@@ -552,6 +555,7 @@ class Participant(models.Model):
     def get_full_name(self):
         return f"{self.user.get_full_name() or self.user.email}"
 
+
 class GradeApplication(models.Model):
     GRADE_CHOICES = (
         ("5", "absolvent"),
@@ -563,7 +567,7 @@ class GradeApplication(models.Model):
         ("-1", "ZŠ, 8."),
         ("-2", "ZŠ, 7."),
         ("-3", "ZŠ, 6."),
-        #("l", "nižší"),
+        # ("l", "nižší"),
     )
 
     grade = models.ForeignKey(
