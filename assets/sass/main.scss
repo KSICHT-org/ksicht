@@ -1,5 +1,4 @@
-@use "bulma/sass/utilities" with (
-    $family-sans-serif: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Helvetica", "Arial", sans-serif',
+@use "bulma/sass/utilities" with ($family-sans-serif: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Helvetica", "Arial", sans-serif',
     $family-monospace: '"Inconsolata", "Consolas", "Monaco", monospace',
 );
 
@@ -19,14 +18,11 @@
 
 // Components
 @forward "bulma/sass/components/breadcrumb";
-@use "bulma/sass/components/card" with (
-    $card-radius: 0.5rem,
-    $card-header-shadow: 0 1px 0 0 hsla(
-        var(--bulma-scheme-h),
+@use "bulma/sass/components/card" with ($card-radius: 0.5rem,
+    $card-header-shadow: 0 1px 0 0 hsla(var(--bulma-scheme-h),
         var(--bulma-scheme-s),
         var(--bulma-scheme-invert-l),
-        0.1
-    ),
+        0.1),
 );
 @forward "bulma/sass/components/dropdown";
 @forward "bulma/sass/components/menu";
@@ -57,8 +53,6 @@
 
 
 // FontAwesome
-$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
-
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/solid";
 @import "~@fortawesome/fontawesome-free/scss/brands";
