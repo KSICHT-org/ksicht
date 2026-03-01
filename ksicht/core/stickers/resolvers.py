@@ -1,5 +1,6 @@
 from datetime import timedelta
 from decimal import Decimal
+import heapq
 import math
 import random
 
@@ -115,21 +116,31 @@ def random_2_percent(context: StickerContext):
 
 @sticker(14)
 def late_submission(context: StickerContext):
-    """Given to anyone who has submitted a solution in series less than 4 hours before submission deadline via this web app."""
+    """Given to max 10 participants who submitted their solutions within 30 minutes of the deadline."""
     current_series = context["current"]["series"]
 
     def _is_eligible(submission):
-        ## Only when file is provided, e.g. was submitted digitally
+        ## checks whether file is provided, e.g. was submitted digitally
         return bool(submission.file) and (
             current_series.submission_deadline - submission.submitted_at
         ) <= timedelta(hours=4)
 
-    return any(
-        _is_eligible(sub)
-        for sub in context["current"]["participant"]["submissions"]["by_series"][
-            current_series
-        ]
-    )
+    latest_submissions = []
+
+    # iterates over all participants as they are already prefetched
+    for participant, details in context["current"]["grade"]["by_participant"].items():
+        submissions = details["submissions"]["by_series"].get(current_series, [])
+        eligible_submissions = [sub for sub in submissions if _is_eligible(sub)]
+
+        if eligible_submissions:
+            latest_time = max(sub.submitted_at for sub in eligible_submissions)
+            latest_submissions.append((latest_time, participant.pk))
+
+    top_10_submissions = heapq.nlargest(10, latest_submissions, key=lambda x: x[0])
+
+    most_recent_10_pks = {pk for _, pk in top_10_submissions}
+
+    return context["participant"].pk in most_recent_10_pks
 
 
 @sticker(15)
