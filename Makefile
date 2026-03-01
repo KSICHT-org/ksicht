@@ -6,9 +6,9 @@
 #######################
 
 init-env:
-	python3 -m venv .env
+	python3 -m venv .venv
 win-init-env:
-	python -m venv .env
+	python -m venv .venv
 
 install:
 	pip install pip-tools && CFLAGS="-Wno-error=implicit-function-declaration" pip install -r requirements.txt && npm install
