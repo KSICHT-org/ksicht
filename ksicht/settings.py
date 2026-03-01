@@ -14,6 +14,7 @@ import os
 
 from django.contrib.messages import constants as messages
 import dsnparse
+import sentry_sdk
 
 
 ADMINS = (
@@ -262,6 +263,15 @@ HTML_MINIFY = os.environ.get("MINIFY_HTML", DEBUG)
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Sentry
+sentry_sdk.init(
+    dsn="https://8a61926b3ea3fe077bf9a81413a62e95@o4510969114853376.ingest.de.sentry.io/4510969122652240",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+    environment="development" if DEBUG else "production",
+)
 
 # Custom settings
 # ---------------
