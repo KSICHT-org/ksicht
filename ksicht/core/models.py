@@ -634,6 +634,7 @@ class TaskSolutionSubmission(models.Model):
     class Meta:
         verbose_name = "Odevzdané řešení"
         verbose_name_plural = "Odevzdaná řešení"
+        unique_together = ("application", "task")
         permissions = (
             ("change_solution_submission_presence", "Úprava stavu odevzdání řešení"),
             ("scoring", "Bodování"),
@@ -643,7 +644,15 @@ class TaskSolutionSubmission(models.Model):
         return f"Řešení <{self.task}> pro přihlášku <{self.application_id}>"
 
     def delete(self, *args, **kwargs):
-        self.file.delete()
+        if self.file:
+            self.file.close()
+            self.file.delete(save=False)
+        if self.file_for_export_normal:
+            self.file_for_export_normal.close()
+            self.file_for_export_normal.delete(save=False)
+        if self.file_for_export_duplex:
+            self.file_for_export_duplex.close()
+            self.file_for_export_duplex.delete(save=False)
         super().delete(*args, **kwargs)
 
     def can_delete(self, user: User) -> bool:
@@ -664,9 +673,7 @@ class TaskSolutionSubmission(models.Model):
         if self.file:
             file_normal, file_duplex = prepare_submission_for_export(
                 in_file=self.file,
-                label=f"Řešitel: {self.application.participant.get_full_name()}       Úloha č. {self.task.nr}".encode(
-                    "utf8"
-                ),
+                label=f"Řešitel: {self.application.participant.get_full_name()}       Úloha č. {self.task.nr}",
             )
 
             with tempfile.TemporaryFile() as tf:
@@ -686,6 +693,7 @@ class TaskSolutionSubmission(models.Model):
             logger.debug("Export versions prepared OK")
             file_duplex.close()
             file_normal.close()
+            self.file.close()
         else:
             logger.warning("Export version prepare failed - no valid file available")
 

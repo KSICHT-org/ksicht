@@ -1,5 +1,4 @@
 import os
-from copy import deepcopy
 import io
 from pathlib import Path
 from typing import List, Optional, Sequence
@@ -146,35 +145,41 @@ def page_with_memo(x: int, y: int, label: str):
 
 def prepare_submission_for_export(in_file, label: str):
     """Prepare submission for exporting later on."""
-    working_file = io.BytesIO()
     out_pdf = PdfFileWriter()
 
     # Make sure the PDF file is valid. If it isn't render a PDF with error message contained.
     try:
-        in_pdf = PdfFileReader(in_file)
+        in_file.seek(0)
+        in_memory_pdf = io.BytesIO(in_file.read())
+        in_pdf = PdfFileReader(in_memory_pdf)
         out_pdf.append_pages_from_reader(in_pdf)
-    except PdfReadError:  # noqa: F821
+    except Exception:
         out_pdf.add_page(page_with_memo(10, 200, "!! Tento PDF soubor je poškozený !!"))
 
+    # Write person label on every page
+    working_file = io.BytesIO()
     out_pdf.write(working_file)
     working_file.seek(0)
 
-    # Write person label
     in_pdf = PdfFileReader(working_file)
-    out_pdf = PdfFileWriter()
     memo_page = page_with_memo(10, 10, label)
 
-    for pagenum, _ in enumerate(in_pdf.pages):
-        # add the "watermark" (which is the new pdf) on the existing page
-        page = in_pdf.pages[pagenum]
+    out_normal = PdfFileWriter()
+    for page in in_pdf.pages:
         page.merge_page(memo_page)
-        out_pdf.add_page(page)
+        out_normal.add_page(page)
 
-    out_normal = deepcopy(out_pdf)
-    out_duplex = out_pdf
+    # Write normal version to buffer, then create duplex from it
+    normal_buf = io.BytesIO()
+    out_normal.write(normal_buf)
+    normal_buf.seek(0)
 
-    # Ensure number of pages is even. Useful for duplex printing.
-    num_pages = len(in_pdf.pages)
+    # Build duplex version by reading from normal and optionally adding blank page
+    out_duplex = PdfFileWriter()
+    duplex_reader = PdfFileReader(normal_buf)
+    out_duplex.append_pages_from_reader(duplex_reader)
+
+    num_pages = len(duplex_reader.pages)
     if (num_pages % 2 == 1) and num_pages > 1:
         out_duplex.add_blank_page(width=PaperSize.A4.width, height=PaperSize.A4.height)
 
