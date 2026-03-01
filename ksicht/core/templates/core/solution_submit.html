@@ -10,19 +10,17 @@
         <div class="column is-6">
             {% for task, form, submission, can_delete in forms %}
             <h2 class="subsubtitle is-size-7">{{ task.title }} úloha</h2>
-            {% if form %}
-                {% crispy form %}
-            {% else %}
+            {% if submission %}
             <article class="message is-warning is-size-6">
                 <div class="message-body">
                     <p>Pro tuto úlohu jste již <strong>odevzdal/a</strong> řešení <strong>{{ submission.file|filename }}</strong>.</p>
-                    <p>Pro odevzdání nové verze, musíte nejdříve smazat tuto verzi.</p>
-
-                    {% if can_delete %}<a class="button is-danger is-outlined pt-3 mt-4" href="{% url 'core:solution_submit_delete' submission.id %}">Smazat řešení</a>{% endif %}
+                    <p>Nahráním nového souboru bude stávající řešení <strong>nahrazeno</strong>.</p>
                 </div>
-
             </article>
-
+            {% endif %}
+            {% crispy form %}
+            {% if submission and can_delete %}
+            <a class="button is-danger is-outlined is-small mt-2" href="{% url 'core:solution_submit_delete' submission.id %}">Smazat řešení</a>
             {% endif %}
             {% if not forloop.last %}<hr>{% endif %}
             {% endfor %}

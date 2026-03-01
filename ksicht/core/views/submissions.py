@@ -94,18 +94,14 @@ class SolutionSubmitView(TemplateView):
             formset.append(
                 (
                     task,
-                    (
-                        forms.SolutionSubmitForm(
-                            files=(
-                                self.request.FILES
-                                if self.request.method == "POST"
-                                and str(task.id) == form_task_id
-                                else None
-                            ),
-                            task=task,
-                        )
-                        if task.id not in task_submissions
-                        else None
+                    forms.SolutionSubmitForm(
+                        files=(
+                            self.request.FILES
+                            if self.request.method == "POST"
+                            and str(task.id) == form_task_id
+                            else None
+                        ),
+                        task=task,
                     ),
                     submission,
                     submission.can_delete(self.request.user) if submission else False,
@@ -126,7 +122,7 @@ class SolutionSubmitView(TemplateView):
 
     @transaction.atomic
     def save_solution(self, task):
-        """Create new solution submissions for given files."""
+        """Create or replace solution submission for given task."""
         file_descriptor = self.request.FILES.get(f"file_{task.pk}")
 
         if not file_descriptor:
@@ -154,11 +150,18 @@ class SolutionSubmitView(TemplateView):
         submission.prepare_for_export()
         submission.save()
 
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            f"<i class='fas fa-check-circle notification-icon'></i> Řešení úlohy {task} bylo <strong>úspěšně odesláno</strong>.",
-        )
+        if created:
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                f"<i class='fas fa-check-circle notification-icon'></i> Řešení úlohy {task} bylo <strong>úspěšně odesláno</strong>.",
+            )
+        else:
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                f"<i class='fas fa-check-circle notification-icon'></i> Řešení úlohy {task} bylo <strong>nahrazeno novou verzí</strong>.",
+            )
 
 
 class SolutionSubmitDeleteView(DeleteView):
