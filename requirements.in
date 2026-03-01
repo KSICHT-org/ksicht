@@ -24,3 +24,4 @@ pilkit==3.0
 # markdownx installs old version of markdown which breaks the app
 Markdown==3.10.2
 django-cabinet==0.18.1
+sentry-sdk==2.53.0
