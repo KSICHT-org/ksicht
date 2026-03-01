@@ -139,12 +139,17 @@ class SolutionSubmitView(TemplateView):
         )
 
         if not created:
-            messages.add_message(
-                self.request,
-                messages.WARNING,
-                f"<i class='fas fa-exclamation-circle notification-icon'></i> Řešení pro úlohu {task} již bylo dříve odevzdáno.",
-            )
-            return
+            # Replace existing file
+            if submission.file:
+                submission.file.close()
+                submission.file.delete(save=False)
+            if submission.file_for_export_normal:
+                submission.file_for_export_normal.close()
+                submission.file_for_export_normal.delete(save=False)
+            if submission.file_for_export_duplex:
+                submission.file_for_export_duplex.close()
+                submission.file_for_export_duplex.delete(save=False)
+            submission.file = file_descriptor
 
         submission.prepare_for_export()
         submission.save()

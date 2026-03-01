@@ -644,7 +644,15 @@ class TaskSolutionSubmission(models.Model):
         return f"Řešení <{self.task}> pro přihlášku <{self.application_id}>"
 
     def delete(self, *args, **kwargs):
-        self.file.delete()
+        if self.file:
+            self.file.close()
+            self.file.delete(save=False)
+        if self.file_for_export_normal:
+            self.file_for_export_normal.close()
+            self.file_for_export_normal.delete(save=False)
+        if self.file_for_export_duplex:
+            self.file_for_export_duplex.close()
+            self.file_for_export_duplex.delete(save=False)
         super().delete(*args, **kwargs)
 
     def can_delete(self, user: User) -> bool:
@@ -685,6 +693,7 @@ class TaskSolutionSubmission(models.Model):
             logger.debug("Export versions prepared OK")
             file_duplex.close()
             file_normal.close()
+            self.file.close()
         else:
             logger.warning("Export version prepare failed - no valid file available")
 
