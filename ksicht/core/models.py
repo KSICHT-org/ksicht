@@ -634,6 +634,7 @@ class TaskSolutionSubmission(models.Model):
     class Meta:
         verbose_name = "Odevzdané řešení"
         verbose_name_plural = "Odevzdaná řešení"
+        unique_together = ("application", "task")
         permissions = (
             ("change_solution_submission_presence", "Úprava stavu odevzdání řešení"),
             ("scoring", "Bodování"),
@@ -664,9 +665,7 @@ class TaskSolutionSubmission(models.Model):
         if self.file:
             file_normal, file_duplex = prepare_submission_for_export(
                 in_file=self.file,
-                label=f"Řešitel: {self.application.participant.get_full_name()}       Úloha č. {self.task.nr}".encode(
-                    "utf8"
-                ),
+                label=f"Řešitel: {self.application.participant.get_full_name()}       Úloha č. {self.task.nr}",
             )
 
             with tempfile.TemporaryFile() as tf:
