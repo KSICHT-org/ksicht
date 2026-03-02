@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from decimal import Decimal
 from functools import reduce
 from operator import or_
 from urllib.parse import quote
@@ -35,6 +36,7 @@ __all__ = (
     "ScoringView",
     "SolutionSubmitDeleteView",
     "SolutionExportView",
+    "MySubmissionsView",
 )
 
 
@@ -427,3 +429,82 @@ class SolutionExportView(View):
         pdf.concatenate(solution_files, response, is_duplex)
 
         return response
+
+
+@method_decorator([login_required, is_participant], name="dispatch")
+class MySubmissionsView(TemplateView):
+    template_name = "core/my_submissions.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        participant = self.request.user.participant_profile
+
+        applications = (
+            GradeApplication.objects.filter(participant=participant)
+            .select_related("grade")
+            .order_by("-grade__end_date")
+        )
+
+        grades_data = []
+
+        for application in applications:
+            grade = application.grade
+            series_list = (
+                GradeSeries.objects.filter(grade=grade)
+                .prefetch_related("tasks")
+                .order_by("-series")
+            )
+
+            submissions = {
+                s.task_id: s
+                for s in TaskSolutionSubmission.objects.filter(
+                    application=application,
+                )
+                .select_related("task")
+                .prefetch_related("stickers")
+            }
+
+            series_data = []
+            for series in series_list:
+                # Only show series that have started (has task_file or publish date has passed)
+                if not series.task_file and not series.is_expected_publish_date_passed():
+                    continue
+
+                tasks_data = []
+                submitted_count = 0
+                total_points = Decimal("0")
+
+                for task in series.tasks.all():
+                    submission = submissions.get(task.id)
+                    tasks_data.append(
+                        {
+                            "task": task,
+                            "submission": submission,
+                        }
+                    )
+                    if submission:
+                        submitted_count += 1
+                        if series.results_published:
+                            total_points += submission.score or Decimal("0")
+
+                series_data.append(
+                    {
+                        "series": series,
+                        "tasks": tasks_data,
+                        "submitted_count": submitted_count,
+                        "total_count": len(tasks_data),
+                        "total_points": total_points,
+                        "results_published": series.results_published,
+                    }
+                )
+
+            grades_data.append(
+                {
+                    "grade": grade,
+                    "series": series_data,
+                    "is_current": grade.is_in_progress,
+                }
+            )
+
+        context["grades_data"] = grades_data
+        return context
