@@ -46,15 +46,6 @@
 {% if object %}
     <p class="is-size-5 mb-5">Každým rokem vyjdou čtyři série KSICHTu, <strong>první začátkem října</strong>. V brožuře vždy naleznete zadání úloh aktuální série, řešení úloh předchozí série a jeden díl seriálu.</p>
 
-    {% if is_grade_participant %}
-    <div class="mb-5">
-        <a href="{% url "core:my_submissions" %}" class="button is-info is-outlined">
-            <span class="icon"><i class="fas fa-list-alt"></i></span>
-            <span>Moje odeslaná řešení</span>
-        </a>
-    </div>
-    {% endif %}
-
     <nav class="columns is-multiline mb-5">
         <div class="column is-6-tablet is-3-desktop">
             <div>
@@ -79,6 +70,14 @@
                 </div>
             </div>
         </div>
+        {% endif %}
+        {% if is_grade_participant %}
+            <div class="column is-6-desktop">
+                <a href="{% url "core:my_submissions" %}" class="button is-info is-light">
+                    <span class="icon"><i class="fas fa-list-alt"></i></span>
+                    <span>Moje odeslaná řešení</span>
+                </a>
+            </div>
         {% endif %}
     </nav>
 
