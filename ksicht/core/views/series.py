@@ -26,6 +26,54 @@ class SeriesResultsView(DetailView):
         .prefetch_related("tasks")
     )
 
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        series = data["object"]
+
+        # Determine if this is the last series in the grade
+        all_series = list(
+            models.GradeSeries.objects.filter(grade=series.grade).order_by("series")
+        )
+        is_last_series = len(all_series) > 0 and series == all_series[-1]
+        data["is_last_series"] = is_last_series
+
+        if is_last_series:
+            rankings = series.get_rankings()
+            max_score = rankings["max_score"] or 0
+            successful_ids = set()
+
+            for application, rank, task_scores, total_score in rankings["listing"]:
+                if total_score >= max_score * 0.5 or rank <= 30:
+                    successful_ids.add(application.pk)
+
+            data["successful_application_ids"] = successful_ids
+
+        # Compute rank and score changes from the previous series
+        current_index = next(
+            (i for i, s in enumerate(all_series) if s == series), 0
+        )
+        if current_index > 0:
+            prev_series = all_series[current_index - 1]
+            prev_rankings = prev_series.get_rankings()
+            prev_by_app = {
+                app.pk: (rank, total_score)
+                for app, rank, _, total_score in prev_rankings["listing"]
+            }
+
+            current_rankings = series.get_rankings()
+            rank_changes = {}
+            score_changes = {}
+            for application, rank, _, total_score in current_rankings["listing"]:
+                prev_data = prev_by_app.get(application.pk)
+                if prev_data is not None:
+                    prev_rank, prev_score = prev_data
+                    rank_changes[application.pk] = prev_rank - rank  # positive = moved up
+                    score_changes[application.pk] = total_score - prev_score
+            data["rank_changes"] = rank_changes
+            data["score_changes"] = score_changes
+
+        return data
+
 
 def sticker_nrs_to_objects(listing):
     """Replace sticker numbers in eligibility listing with real sticker objects."""

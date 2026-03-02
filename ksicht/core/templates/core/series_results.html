@@ -1,54 +1,98 @@
 {% extends "page.html" %}
+{% load grades %}
 
 {% block headline %}Výsledková listina{% endblock %}
 {% block header_sub %}<h3 class="subtitle">{{ object.get_series_display }} série ročníku {{ object.grade }}</h3>{% endblock %}
 
 {% block article %}
     {% with object.get_rankings as rankings %}
+        {% if is_last_series %}
+        <p class="is-size-7 has-text-grey mb-3">
+            <i class="fas fa-award" style="color: #d4a843; font-size: 0.7em; opacity: 0.8;"></i>  úspěšný řešitel &ndash; řešitel, který získal alespoň 50&nbsp;% z celkového počtu bodů nebo se umístil do 30. místa
+        </p>
+        {% endif %}
+
         <div class="table-container">
             <table class="table is-striped is-hoverable is-bordered is-fullwidth is-narrow">
                 <thead>
-                    <tr>
-                        <th rowspan="2" class="is-size-6" style="min-width: 40px">Pořadí</th>
-                        <th rowspan="2" class="is-size-6" style="width: 100%">Jméno</th>
-                        <th rowspan="2" class="is-size-6" style="min-width: 80px">Ročník</th>
-                        <th colspan="5" class="is-size-6 has-text-centered">Úloha</th>
-                        <th rowspan="2" class="is-size-6" style="min-width: 70px">Body</th>
+                    <tr class="has-background-light">
+                        <th rowspan="2" class="has-text-centered" style="vertical-align: middle; min-width: 70px; font-size: 0.85rem; letter-spacing: 0.03em;">Pořadí</th>
+                        <th rowspan="2" style="vertical-align: middle; font-size: 0.85rem; letter-spacing: 0.03em;">Jméno</th>
+                        <th rowspan="2" class="has-text-centered" style="vertical-align: middle; min-width: 80px; font-size: 0.85rem; letter-spacing: 0.03em;">Ročník</th>
+                        <th colspan="5" class="has-text-centered" style="font-size: 0.85rem; letter-spacing: 0.03em;">Úloha</th>
+                        <th rowspan="2" class="has-text-centered" style="vertical-align: middle; min-width: 100px; font-size: 0.85rem; letter-spacing: 0.03em;">Body</th>
                     </tr>
-                    <tr>
+                    <tr class="has-background-light">
                         <th style="min-width: 50px" class="has-text-centered">1.</th>
                         <th style="min-width: 50px" class="has-text-centered">2.</th>
                         <th style="min-width: 50px" class="has-text-centered">3.</th>
                         <th style="min-width: 50px" class="has-text-centered">4.</th>
                         <th style="min-width: 50px" class="has-text-centered">5.</th>
                     </tr>
+                    <tr class="has-background-light" style="font-style: italic;">
+                        <td>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
+                                <span style="min-width: 2em; text-align: right;"><strong>0.</strong></span>
+                                <span style="min-width: 3em;"></span>
+                            </div>
+                        </td>
+                        <td>Lapis Philosophorum</td>
+                        <td class="has-text-centered">5.</td>
+                        {% for task in object.tasks.all %}
+                            <td class="has-text-centered">{{ task.points|floatformat:2 }}</td>
+                        {% endfor %}
+                        <td class="has-text-centered"><strong>{{ rankings.max_score|floatformat:2 }}</strong></td>
+                    </tr>
+                    <tr style="height: 15px; background-color: white;">
+                        <th colspan="9" style="border: none; padding: 0;"></th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><i><strong>0.</strong></i></td>
-                        <td><i>Lapis Philosophorum</i></td>
-                        <td><i>5.</i></td>
-                        {% for task in object.tasks.all %}
-                            <td><i>{{ task.points|floatformat:2 }}</i></td>
-                        {% endfor %}
-                        <td><i>{{ rankings.max_score|floatformat:2 }}</i></td>
-                    </tr>
                     {% for application, rank, task_scores, total_score in rankings.listing %}
                     <tr>
-                        <td><strong>{{ rank }}.</strong></td>
-                        <td>{{ application.participant.get_full_name }}</td>
+                        <td style="vertical-align: middle;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
+                                <span style="min-width: 2em; text-align: right;"><strong>{{ rank }}.</strong></span>
+                                <span style="min-width: 3em;">
+                                {% with rank_changes|dict_get:application.pk as change %}
+                                    {% if change and change > 0 %}
+                                        <span class="tag is-success is-light is-small" title="Posun o {{ change }} nahoru oproti minulé sérii">▲{{ change }}</span>
+                                    {% elif change and change < 0 %}
+                                        <span class="tag is-danger is-light is-small" title="Posun o {{ change|negate }} dolů oproti minulé sérii">▼{{ change|negate }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                                </span>
+                            </div>
+                        </td>
+                        <td style="vertical-align: middle;">
+                            {{ application.participant.get_full_name }}
+                            {% if is_last_series and application.pk in successful_application_ids %}
+                                <i class="fas fa-award" style="color: #d4a843; font-size: 0.7em; opacity: 0.8; margin-left: 0.4em;" title="úspěšný řešitel"></i>
+                            {% endif %}
+                        </td>
                         {% if application.participant_current_grade %}
-                        <td>{{ application.get_participant_current_grade_display }}</td>
+                        <td class="has-text-centered" style="vertical-align: middle;">{{ application.get_participant_current_grade_display }}</td>
                         {% else %}
-                        <td>{{ application.participant.get_school_year_display }}</td>
+                        <td class="has-text-centered" style="vertical-align: middle;">{{ application.participant.get_school_year_display }}</td>
                         {% endif %}
-                        
 
                         {% for task, score in task_scores.items %}
-                            <td>{{ score|floatformat:2|default:"&mdash;" }}</td>
+                            <td class="has-text-centered" style="vertical-align: middle;">{{ score|floatformat:2|default:"&mdash;" }}</td>
                         {% endfor %}
 
-                        <td>{{ total_score|floatformat:2 }}</td>
+                        <td class="has-text-centered" style="vertical-align: middle;">
+                            <div><strong>{{ total_score|floatformat:2 }}</strong></div>
+                            <div style="white-space: nowrap; line-height: 1.2;">
+                                <span class="is-size-7 has-text-grey">{% widthratio total_score rankings.max_score 100 %}&nbsp;%</span>
+                                {% with score_changes|dict_get:application.pk as sc %}
+                                    {% if sc and sc > 0 %}
+                                        <span class="tag is-success is-light is-small" style="font-size: 0.65rem;">+{{ sc|floatformat:2 }}</span>
+                                    {% elif sc and sc < 0 %}
+                                        <span class="tag is-danger is-light is-small" style="font-size: 0.65rem;">&minus;{{ sc|negate|floatformat:2 }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
