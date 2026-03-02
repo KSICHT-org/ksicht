@@ -30,12 +30,16 @@
                         <th style="min-width: 50px" class="has-text-centered">5.</th>
                     </tr>
                     <tr class="has-background-light" style="font-style: italic;">
+                        {% if has_previous_series %}
                         <td>
                             <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
                                 <span style="min-width: 2em; text-align: right;"><strong>0.</strong></span>
                                 <span style="min-width: 3em;"></span>
                             </div>
                         </td>
+                        {% else %}
+                        <td class="has-text-centered" style="vertical-align: middle;"><strong>0.</strong></td>
+                        {% endif %}
                         <td>Lapis Philosophorum</td>
                         <td class="has-text-centered">5.</td>
                         {% for task in object.tasks.all %}
@@ -50,6 +54,7 @@
                 <tbody>
                     {% for application, rank, task_scores, total_score in rankings.listing %}
                     <tr>
+                        {% if has_previous_series %}
                         <td style="vertical-align: middle;">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 0.3em;">
                                 <span style="min-width: 2em; text-align: right;"><strong>{{ rank }}.</strong></span>
@@ -64,6 +69,9 @@
                                 </span>
                             </div>
                         </td>
+                        {% else %}
+                        <td class="has-text-centered" style="vertical-align: middle;"><strong>{{ rank }}.</strong></td>
+                        {% endif %}
                         <td style="vertical-align: middle;">
                             {{ application.participant.get_full_name }}
                             {% if is_last_series and application.pk in successful_application_ids %}

@@ -52,6 +52,7 @@ class SeriesResultsView(DetailView):
         current_index = next(
             (i for i, s in enumerate(all_series) if s == series), 0
         )
+        data["has_previous_series"] = current_index > 0
         if current_index > 0:
             prev_series = all_series[current_index - 1]
             prev_rankings = prev_series.get_rankings()
