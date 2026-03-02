@@ -116,14 +116,14 @@ def random_2_percent(context: StickerContext):
 
 @sticker(14)
 def late_submission(context: StickerContext):
-    """Given to max 10 participants who submitted their solutions within 30 minutes of the deadline."""
+    """Given to max 10 participants who submitted their solutions most recently and within 60 minutes of the deadline."""
     current_series = context["current"]["series"]
 
     def _is_eligible(submission):
         ## checks whether file is provided, e.g. was submitted digitally
         return bool(submission.file) and (
             current_series.submission_deadline - submission.submitted_at
-        ) <= timedelta(hours=4)
+        ) <= timedelta(minutes=60)
 
     latest_submissions = []
 
