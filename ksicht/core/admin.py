@@ -202,7 +202,8 @@ class SolutionSubmissionAdmin(admin.ModelAdmin):
 @admin.register(models.Sticker)
 class StickerAdmin(admin.ModelAdmin):
     search_fields = ("nr", "title")
-    list_display = ("nr", "title", "handpicked")
+    list_display = ("nr", "title", "handpicked", "assignment_limit")
+    list_filter = ("handpicked", "assignment_limit")
 
 
 class EventAttendeeInline(admin.TabularInline):
