@@ -704,6 +704,11 @@ class StickerManager(models.Manager):
 
 
 class Sticker(models.Model):
+    class AssignmentLimit(models.TextChoices):
+        UNLIMITED = "unlimited", "Neomezeně"
+        ONCE_PER_GRADE = "once_per_grade", "Jednou za ročník"
+        ONCE_IN_LIFETIME = "once_in_lifetime", "Jednou za život"
+
     title = models.CharField(
         verbose_name="Název", max_length=255, null=False, blank=False
     )
@@ -712,7 +717,14 @@ class Sticker(models.Model):
         verbose_name="Číslo", null=False, db_index=True, unique=True
     )
     handpicked = models.BooleanField(
-        verbose_name="Přiřazován ručně", default=True, null=False, db_index=True
+        verbose_name="Přiřazována ručně", default=True, null=False, db_index=True
+    )
+    assignment_limit = models.CharField(
+        verbose_name="Omezení přiřazení",
+        max_length=20,
+        choices=AssignmentLimit.choices,
+        default=AssignmentLimit.UNLIMITED,
+        db_index=True,
     )
 
     objects = StickerManager()
@@ -727,6 +739,60 @@ class Sticker(models.Model):
 
     def natural_key(self):
         return (self.nr,)
+
+
+class StickerAssignment(models.Model):
+    participant = models.ForeignKey(
+        Participant, on_delete=models.CASCADE, related_name="sticker_assignments"
+    )
+    sticker = models.ForeignKey(
+        Sticker, on_delete=models.CASCADE, related_name="assignments"
+    )
+
+    awarded_in_series = models.ForeignKey(
+        "GradeSeries", on_delete=models.CASCADE, null=True, blank=True
+    )
+    awarded_for_submission = models.ForeignKey(
+        "TaskSolutionSubmission", on_delete=models.CASCADE, null=True, blank=True
+    )
+    awarded_for_event = models.ForeignKey(
+        "Event", on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    awarded_at = models.DateTimeField(auto_now_add=True)
+    ignore_limit = models.BooleanField(
+        default=False,
+        help_text="If true, this assignment does not count against the assignment limit (used for historical stickers).",
+    )
+    assigned_after_publication = models.BooleanField(
+        default=False,
+        help_text="If true, this sticker was assigned after the series results were already published.",
+    )
+
+    class Meta:
+        verbose_name = "Přiřazená nálepka"
+        verbose_name_plural = "Přiřazené nálepky"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["participant", "sticker", "awarded_in_series"],
+                name="unique_sticker_per_series",
+                condition=models.Q(awarded_in_series__isnull=False),
+            ),
+            models.UniqueConstraint(
+                fields=["participant", "sticker", "awarded_for_submission"],
+                name="unique_sticker_per_submission",
+                condition=models.Q(awarded_for_submission__isnull=False),
+            ),
+            models.UniqueConstraint(
+                fields=["participant", "sticker", "awarded_for_event"],
+                name="unique_sticker_per_event",
+                condition=models.Q(awarded_for_event__isnull=False),
+            ),
+        ]
+        ordering = ("-awarded_at",)
+
+    def __str__(self):
+        return f"Nálepka {self.sticker} pro {self.participant}"
 
 
 class EventAttendee(models.Model):
