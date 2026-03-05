@@ -1,6 +1,8 @@
 .table.sticker-table {
     td {
         vertical-align: middle;
+        padding-top: 0.25em;
+        padding-bottom: 0.25em;
     }
 
     td:first-child {
@@ -11,4 +13,27 @@
         width: 100%;
     }
 
+    .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 0;
+
+        .tags {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.sticker-outline-dark {
+    background-color: transparent !important;
+    border: 2px solid #363636;
+    color: #363636 !important;
+}
+
+.sticker-outline-link {
+    background-color: transparent !important;
+    border: 2px solid #485fc7;
+    color: #485fc7 !important;
 }
