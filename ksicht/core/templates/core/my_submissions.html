@@ -1,5 +1,5 @@
 {% extends "page.html" %}
-{% load filename %}
+{% load filename stickers %}
 
 {% block headline %}Moje odeslaná řešení{% endblock %}
 
@@ -91,14 +91,14 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if item.submission %}
-                                                {% for sticker in item.submission.stickers.all %}
-                                                    <span class="tag is-warning is-light" title="{{ sticker.title }}">
-                                                        {{ sticker }}
-                                                    </span>
-                                                {% empty %}
-                                                    &mdash;
+                                            {% if item.stickers_with_limits %}
+                                                <div class="tag-list" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                                {% for s, grayed, label in item.stickers_with_limits %}
+                                                    {% sticker s grayed label force_link_color=True %}
                                                 {% endfor %}
+                                                </div>
+                                            {% elif item.submission %}
+                                                &mdash;
                                             {% else %}
                                                 &mdash;
                                             {% endif %}
@@ -108,6 +108,17 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+                        {% if series_entry.series_stickers_with_limits %}
+                        <div class="content p-4 has-background-light" style="border-top: 1px solid #dbdbdb;">
+                            <p class="is-size-7 has-text-grey mb-2">Nálepky přiřazené k sérii:</p>
+                            <div class="tag-list" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                {% for s, grayed, label in series_entry.series_stickers_with_limits %}
+                                    {% sticker s grayed label force_link_color=True %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

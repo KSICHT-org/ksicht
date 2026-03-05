@@ -24,9 +24,11 @@ from ..models import (
     GradeSeries,
     Participant,
     Sticker,
+    StickerAssignment,
     Task,
     TaskSolutionSubmission,
 )
+from ..sticker_utils import get_sticker_display_info, get_assignment_series_id
 from .decorators import current_grade_exists, is_participant
 
 
@@ -310,14 +312,14 @@ class SubmissionOverview(FormView):
                 to_create.append(
                     TaskSolutionSubmission(application_id=app_id, task_id=task_id)
                 )
-
-        TaskSolutionSubmission.objects.bulk_create(to_create)
-
+                
         # Handle submissions to delete
         filtering = []
         for s in overdue_submissions:
             app_id, task_id, _ = s
             filtering.append(models.Q(application_id=app_id, task_id=task_id))
+
+        TaskSolutionSubmission.objects.bulk_create(to_create)
 
         if len(filtering) > 0:
             TaskSolutionSubmission.objects.filter(reduce(or_, filtering)).delete()
@@ -330,14 +332,13 @@ class SubmissionOverview(FormView):
 
         return redirect(".")
 
-
 @method_decorator([permission_required("core.scoring")], name="dispatch")
 class ScoringView(FormView):
     template_name = "core/manage/scoring.html"
     form_class = modelformset_factory(
         TaskSolutionSubmission,
         form=forms.ScoringForm,
-        fields=("id", "score", "stickers"),
+        fields=("id", "score"),
         extra=0,
     )
 
@@ -353,25 +354,42 @@ class ScoringView(FormView):
         return context
 
     def get_form_kwargs(self):
-        return {
-            **super().get_form_kwargs(),
-            "queryset": TaskSolutionSubmission.objects.filter(task=self.task)
+        res = super().get_form_kwargs()
+        
+        # Cache sticker choices so they are evaluated only once, not 100+ times during template rendering
+        sticker_choices = Sticker.objects.filter(handpicked=True).order_by("nr")
+        list(sticker_choices)
+        
+        # Prefetch manual sticker assignments so form init doesn't hit the DB for each student
+        qs = (
+            TaskSolutionSubmission.objects.filter(task=self.task)
             .select_related("application__participant__user")
-            .prefetch_related("stickers")
+            .prefetch_related("stickerassignment_set")
             .order_by(
                 "application__participant__user__last_name",
                 "application__participant__user__first_name",
-            ),
+            )
+        )
+        
+        res.update({
+            "queryset": qs,
             "form_kwargs": {
                 "max_score": self.task.points,
-                "sticker_choices": Sticker.objects.filter(handpicked=True).order_by(
-                    "nr"
-                ),
+                "sticker_choices": sticker_choices,
             },
-        }
+        })
+        return res
 
     def form_valid(self, form):
         form.save()
+
+        if "recalculate_stickers" in self.request.POST:
+            from ksicht.core.stickers.services import grant_stickers_for_series
+            grant_stickers_for_series(self.task.series)
+            messages.success(
+                self.request,
+                f"<i class='fas fa-check-circle notification-icon'></i> Nálepky pro sérii {self.task.series} byly úspěšně přepočítány."
+            )
 
         messages.add_message(
             self.request,
@@ -445,6 +463,12 @@ class MySubmissionsView(TemplateView):
             .order_by("-grade__end_date")
         )
 
+        # Pre-fetch sticker limits
+        sticker_limits = {
+            s.nr: s.assignment_limit
+            for s in Sticker.objects.all()
+        }
+
         grades_data = []
 
         for application in applications:
@@ -461,8 +485,16 @@ class MySubmissionsView(TemplateView):
                     application=application,
                 )
                 .select_related("task")
-                .prefetch_related("stickers")
             }
+
+            # Fetch all assignments for this participant
+            all_assignments = list(StickerAssignment.objects.filter(
+                participant=participant,
+            ).select_related(
+                "sticker", "awarded_in_series",
+                "awarded_for_submission__task__series",
+                "awarded_for_event"
+            ))
 
             series_data = []
             for series in series_list:
@@ -470,16 +502,52 @@ class MySubmissionsView(TemplateView):
                 if not series.task_file and not series.is_expected_publish_date_passed():
                     continue
 
+                # Collect assignments belonging to this series
+                series_assignments = [
+                    a for a in all_assignments
+                    if get_assignment_series_id(a, grade, series)
+                ]
+
+                # Build auto & event stickers for the series header
+                series_stickers_with_limits = []
+                seen_nrs = set()
+                for a in sorted(series_assignments, key=lambda x: x.sticker.nr):
+                    if a.sticker.nr in seen_nrs:
+                        continue
+                    # Only show auto (awarded_in_series) and event stickers here
+                    if not a.awarded_for_submission_id:
+                        seen_nrs.add(a.sticker.nr)
+                        grayed_out, limit_label = get_sticker_display_info(
+                            a, grade, series, all_assignments, sticker_limits
+                        )
+                        series_stickers_with_limits.append((a.sticker, grayed_out, limit_label))
+
+                # Build task rows
                 tasks_data = []
                 submitted_count = 0
                 total_points = Decimal("0")
 
                 for task in series.tasks.all():
                     submission = submissions.get(task.id)
+
+                    # Build stickers for this submission
+                    stickers_with_limits = []
+                    if submission:
+                        sub_assignments = [
+                            a for a in series_assignments
+                            if a.awarded_for_submission_id == submission.id
+                        ]
+                        for a in sorted(sub_assignments, key=lambda x: x.sticker.nr):
+                            grayed_out, limit_label = get_sticker_display_info(
+                                a, grade, series, all_assignments, sticker_limits
+                            )
+                            stickers_with_limits.append((a.sticker, grayed_out, limit_label))
+
                     tasks_data.append(
                         {
                             "task": task,
                             "submission": submission,
+                            "stickers_with_limits": stickers_with_limits,
                         }
                     )
                     if submission:
@@ -495,6 +563,7 @@ class MySubmissionsView(TemplateView):
                         "total_count": len(tasks_data),
                         "total_points": total_points,
                         "results_published": series.results_published,
+                        "series_stickers_with_limits": series_stickers_with_limits,
                     }
                 )
 
