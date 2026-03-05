@@ -263,6 +263,7 @@ class GradeSeries(models.Model):
         _applications_cache: Optional[List["GradeApplication"]] = None,
         _tasks_cache: Optional[List["Task"]] = None,
         _submissions_cache: Optional[List["TaskSolutionSubmission"]] = None,
+        _max_score: Optional[Decimal] = None,
     ):
         """Calculate results for series.
 
@@ -274,6 +275,7 @@ class GradeSeries(models.Model):
             please note that `exclude_submissionless` is ignored when this is provided.
         :param _tasks_cache: Optional cache of tasks to use instead of fetching them from DB.
         :param _submissions_cache: Optional cache of submissions to use instead of fetching them from DB.
+        :param _max_score: Optional pre-calculated max score for this series (including previous ones) (performance optimization).
         :return: Dictionary with `max_score` and `listing` keys where `listing` is a list of tuples
             with application, task scores and total score.
         """
@@ -306,15 +308,12 @@ class GradeSeries(models.Model):
             for a in applications
         }
 
-        def _find_application(app_id):
-            return py_.find(applications, lambda a: a.pk == app_id)
-
-        def _find_task(task_id):
-            return py_.find(tasks, lambda t: t.pk == task_id)
+        applications_by_pk = {a.pk: a for a in applications}
+        tasks_by_pk = {t.pk: t for t in tasks}
 
         for s in submissions:
-            a = _find_application(s.application_id)
-            t = _find_task(s.task_id)
+            a = applications_by_pk.get(s.application_id)
+            t = tasks_by_pk.get(s.task_id)
 
             if t:
                 scoring_dict[a]["by_tasks"][t] = s.score
@@ -335,10 +334,13 @@ class GradeSeries(models.Model):
             )
         ]
 
-        return {
-            "max_score": Task.objects.filter(
+        if _max_score is None:
+            _max_score = Task.objects.filter(
                 series__grade=self.grade, series__series__lte=self.series
-            ).aggregate(models.Sum("points"))["points__sum"],
+            ).aggregate(models.Sum("points"))["points__sum"]
+
+        return {
+            "max_score": _max_score,
             "listing": sorted_scoring,
         }
 
@@ -627,9 +629,6 @@ class TaskSolutionSubmission(models.Model):
         verbose_name="Skóre", max_digits=5, decimal_places=2, null=True, blank=True
     )
     submitted_at = models.DateTimeField(verbose_name="Datum nahrání", auto_now_add=True)
-    stickers = models.ManyToManyField(
-        "Sticker", blank=True, related_name="solution_uses"
-    )
 
     class Meta:
         verbose_name = "Odevzdané řešení"
