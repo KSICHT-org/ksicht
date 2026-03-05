@@ -18,17 +18,40 @@
 {% block header_sub %}<h3 class="subtitle">pro ročník {{ object.grade }}</h3>{% endblock %}
 
 {% block article %}
+    <div class="mb-5 is-flex is-justify-content-space-between is-align-items-flex-end">
+        <p class="is-size-7 has-text-grey">
+            <span class="tag is-dark is-small"><b>X</b></span> automaticky přiřazená &emsp;
+            <span class="tag is-link is-small"><b>X</b></span> ručně přiřazená &emsp;
+            <span class="tag is-danger is-small"><b>X</b></span> přidána po zveřejnění výsledků &emsp;
+            <span class="tag is-dark is-small is-light"><b>X</b></span>
+            <span class="tag is-link is-small is-light"><b>X</b></span>
+            <span class="tag is-danger is-small is-light"><b>X</b></span> již udělená (porušuje limit přiřazení) &emsp;
+        </p>
+        
+        <form method="post" action="{% url 'core:series_sticker_assignment_overview' grade_id=object.grade_id pk=object.id %}" onsubmit="return confirm('{% if object.results_published %}POZOR: Výsledky této série jsou již zveřejněny! Přepočítání může přidat nové nálepky účastníkům. Opravdu chcete pokračovat?{% else %}Opravdu chcete přepočítat automatické nálepky pro tuto sérii?{% endif %}');">
+            {% csrf_token %}
+            <button type="submit" class="button {% if object.results_published %}is-danger{% else %}is-warning{% endif %} is-small">
+                <span class="icon is-small"><i class="fas fa-sync-alt"></i></span>
+                <span>Přepočítat nálepky</span>
+            </button>
+        </form>
+    </div>
     <div class="table-container">
         <table class="table is-fullwidth sticker-table">
             <tbody>
-                {% for application, stickers in results.items %}
+                {% for application, data in results.items %}
                 <tr>
                     <td class="is-size-5 has-text-right has-text-weight-bold">{{ application.participant.get_full_name }}</td>
                     <td>
                         <div class="tag-list">
-                            {% for s in stickers %}
-                                {% sticker s %}
+                            {% for s, grayed, label, after_pub in data.eligible %}
+                                {% sticker s grayed label after_publication=after_pub %}
                             {% endfor %}
+                            {% if data.grayed %}
+                                {% for s, grayed, label, after_pub in data.grayed %}
+                                    {% sticker s grayed label after_publication=after_pub %}
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

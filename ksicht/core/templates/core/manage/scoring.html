@@ -65,7 +65,16 @@
                         </table>
                     </div>
 
-                    <button type="submit" class="button is-primary is-medium">Uložit</button>
+                    <div class="has-background-white" style="position: sticky; bottom: 0; padding: 1rem 0; z-index: 10; border-top: 1px solid #eee; display: flex; justify-content: flex-end; align-items: center; gap: 1rem; margin-top: 1rem; box-shadow: 0 -10px 15px -10px rgba(0, 0, 0, 0.05);">
+                        <button type="submit" name="recalculate_stickers" class="button {% if task.series.results_published %}is-danger{% else %}is-warning{% endif %}" onclick="return confirm('{% if task.series.results_published %}POZOR: Výsledky této série jsou již zveřejněny! Přepočítání může přidat nové nálepky účastníkům. Opravdu chcete pokračovat?{% else %}Opravdu chcete uložit hodnocení a přepočítat automatické nálepky pro tuto sérii?{% endif %}');">
+                            <span class="icon"><i class="fas fa-sync-alt"></i></span>
+                            <span>Uložit a přepočítat nálepky</span>
+                        </button>
+                        <button type="submit" class="button is-primary">
+                            <span class="icon"><i class="fas fa-save"></i></span>
+                            <span>Uložit</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 

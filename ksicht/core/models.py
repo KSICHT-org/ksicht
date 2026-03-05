@@ -263,6 +263,7 @@ class GradeSeries(models.Model):
         _applications_cache: Optional[List["GradeApplication"]] = None,
         _tasks_cache: Optional[List["Task"]] = None,
         _submissions_cache: Optional[List["TaskSolutionSubmission"]] = None,
+        _max_score: Optional[Decimal] = None,
     ):
         """Calculate results for series.
 
@@ -274,6 +275,7 @@ class GradeSeries(models.Model):
             please note that `exclude_submissionless` is ignored when this is provided.
         :param _tasks_cache: Optional cache of tasks to use instead of fetching them from DB.
         :param _submissions_cache: Optional cache of submissions to use instead of fetching them from DB.
+        :param _max_score: Optional pre-calculated max score for this series (including previous ones) (performance optimization).
         :return: Dictionary with `max_score` and `listing` keys where `listing` is a list of tuples
             with application, task scores and total score.
         """
@@ -306,15 +308,12 @@ class GradeSeries(models.Model):
             for a in applications
         }
 
-        def _find_application(app_id):
-            return py_.find(applications, lambda a: a.pk == app_id)
-
-        def _find_task(task_id):
-            return py_.find(tasks, lambda t: t.pk == task_id)
+        applications_by_pk = {a.pk: a for a in applications}
+        tasks_by_pk = {t.pk: t for t in tasks}
 
         for s in submissions:
-            a = _find_application(s.application_id)
-            t = _find_task(s.task_id)
+            a = applications_by_pk.get(s.application_id)
+            t = tasks_by_pk.get(s.task_id)
 
             if t:
                 scoring_dict[a]["by_tasks"][t] = s.score
@@ -335,10 +334,13 @@ class GradeSeries(models.Model):
             )
         ]
 
-        return {
-            "max_score": Task.objects.filter(
+        if _max_score is None:
+            _max_score = Task.objects.filter(
                 series__grade=self.grade, series__series__lte=self.series
-            ).aggregate(models.Sum("points"))["points__sum"],
+            ).aggregate(models.Sum("points"))["points__sum"]
+
+        return {
+            "max_score": _max_score,
             "listing": sorted_scoring,
         }
 
@@ -627,9 +629,6 @@ class TaskSolutionSubmission(models.Model):
         verbose_name="Skóre", max_digits=5, decimal_places=2, null=True, blank=True
     )
     submitted_at = models.DateTimeField(verbose_name="Datum nahrání", auto_now_add=True)
-    stickers = models.ManyToManyField(
-        "Sticker", blank=True, related_name="solution_uses"
-    )
 
     class Meta:
         verbose_name = "Odevzdané řešení"
@@ -704,6 +703,11 @@ class StickerManager(models.Manager):
 
 
 class Sticker(models.Model):
+    class AssignmentLimit(models.TextChoices):
+        UNLIMITED = "unlimited", "Neomezeně"
+        ONCE_PER_GRADE = "once_per_grade", "Jednou za ročník"
+        ONCE_IN_LIFETIME = "once_in_lifetime", "Jednou za život"
+
     title = models.CharField(
         verbose_name="Název", max_length=255, null=False, blank=False
     )
@@ -712,7 +716,14 @@ class Sticker(models.Model):
         verbose_name="Číslo", null=False, db_index=True, unique=True
     )
     handpicked = models.BooleanField(
-        verbose_name="Přiřazován ručně", default=True, null=False, db_index=True
+        verbose_name="Přiřazována ručně", default=True, null=False, db_index=True
+    )
+    assignment_limit = models.CharField(
+        verbose_name="Omezení přiřazení",
+        max_length=20,
+        choices=AssignmentLimit.choices,
+        default=AssignmentLimit.UNLIMITED,
+        db_index=True,
     )
 
     objects = StickerManager()
@@ -727,6 +738,60 @@ class Sticker(models.Model):
 
     def natural_key(self):
         return (self.nr,)
+
+
+class StickerAssignment(models.Model):
+    participant = models.ForeignKey(
+        Participant, on_delete=models.CASCADE, related_name="sticker_assignments"
+    )
+    sticker = models.ForeignKey(
+        Sticker, on_delete=models.CASCADE, related_name="assignments"
+    )
+
+    awarded_in_series = models.ForeignKey(
+        "GradeSeries", on_delete=models.CASCADE, null=True, blank=True
+    )
+    awarded_for_submission = models.ForeignKey(
+        "TaskSolutionSubmission", on_delete=models.CASCADE, null=True, blank=True
+    )
+    awarded_for_event = models.ForeignKey(
+        "Event", on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    awarded_at = models.DateTimeField(auto_now_add=True)
+    ignore_limit = models.BooleanField(
+        default=False,
+        help_text="If true, this assignment does not count against the assignment limit (used for historical stickers).",
+    )
+    assigned_after_publication = models.BooleanField(
+        default=False,
+        help_text="If true, this sticker was assigned after the series results were already published.",
+    )
+
+    class Meta:
+        verbose_name = "Přiřazená nálepka"
+        verbose_name_plural = "Přiřazené nálepky"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["participant", "sticker", "awarded_in_series"],
+                name="unique_sticker_per_series",
+                condition=models.Q(awarded_in_series__isnull=False),
+            ),
+            models.UniqueConstraint(
+                fields=["participant", "sticker", "awarded_for_submission"],
+                name="unique_sticker_per_submission",
+                condition=models.Q(awarded_for_submission__isnull=False),
+            ),
+            models.UniqueConstraint(
+                fields=["participant", "sticker", "awarded_for_event"],
+                name="unique_sticker_per_event",
+                condition=models.Q(awarded_for_event__isnull=False),
+            ),
+        ]
+        ordering = ("-awarded_at",)
+
+    def __str__(self):
+        return f"Nálepka {self.sticker} pro {self.participant}"
 
 
 class EventAttendee(models.Model):

@@ -1,3 +1,5 @@
 <div class="tags has-addons">
-    <span class="tag {% if automatic %}is-dark{% else %}is-link{% endif %}" title="{{ title }}"><b>{{ nr }}</b></span>
+    <span class="tag {% if after_publication %}is-danger{% if grayed_out %} is-light{% endif %}{% elif grayed_out %}{% if automatic and not force_link_color %}is-dark is-light{% else %}is-link is-light{% endif %}{% elif automatic and not force_link_color %}is-dark{% else %}is-link{% endif %}" title="{{ title }}{% if limit_label %} — {{ limit_label }}{% endif %}{% if after_publication %} — Přidáno po zveřejnění výsledků{% endif %}">
+        <b>{{ nr }}</b> <span class="ml-1">{{ title }}</span>
+    </span>
 </div>
