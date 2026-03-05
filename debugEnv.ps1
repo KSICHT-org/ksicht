@@ -1,3 +1,7 @@
+# Activate virtual environment
+.\.venv\Scripts\Activate.ps1;
+
+# Set environment variables
 $env:DEBUG = 1;
 
 $env:DEBUG_TOOLBAR = 1;
