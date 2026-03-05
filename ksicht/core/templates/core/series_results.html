@@ -91,12 +91,10 @@
                         <td class="has-text-centered" style="vertical-align: middle;">
                             <div><strong>{{ total_score|floatformat:2 }}</strong></div>
                             <div style="white-space: nowrap; line-height: 1.2;">
-                                <span class="is-size-7 has-text-grey">{% widthratio total_score rankings.max_score 100 %}&nbsp;%</span>
+                                <span class="is-size-7 has-text-grey" title="Procento získaných bodů z maxima">{% widthratio total_score rankings.max_score 100 %}&nbsp;%</span>
                                 {% with score_changes|dict_get:application.pk as sc %}
                                     {% if sc and sc > 0 %}
-                                        <span class="tag is-success is-light is-small" style="font-size: 0.65rem;">+{{ sc|floatformat:2 }}</span>
-                                    {% elif sc and sc < 0 %}
-                                        <span class="tag is-danger is-light is-small" style="font-size: 0.65rem;">&minus;{{ sc|negate|floatformat:2 }}</span>
+                                        <span class="tag is-success is-light is-small" style="font-size: 0.65rem;" title="Bodový přírůstek získaný v této sérii">+{{ sc|floatformat:2 }}</span>
                                     {% endif %}
                                 {% endwith %}
                             </div>
