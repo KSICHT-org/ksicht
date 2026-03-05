@@ -45,6 +45,16 @@
         {% endif %}
     </nav>
 
+    {% if perms.core.change_solution_submission_presence and not object.results_published %}
+    <article class="message is-info is-small mt-4">
+        <div class="message-body">
+            <strong><i class="fas fa-info-circle"></i> Připomínka:</strong> Před zveřejněním výsledků nezapomeňte
+            <a href="{% url 'core:series_sticker_assignment_overview' grade_id=object.grade_id pk=object.pk %}">přepočítat nálepky</a>
+            pro tuto sérii.
+        </div>
+    </article>
+    {% endif %}
+
     {% with object.tasks_with_submission_count as tasks %}
         {% if tasks|length > 0 %}
             <section class="columns is-multiline mt-6">

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List, Set, Tuple
 
 from . import registry, types
@@ -22,34 +23,39 @@ def _grade_details(grade: models.Grade) -> types.GradeDetails:
     )
     series = list(
         models.GradeSeries.objects.filter(grade=grade)
+        .order_by("series")
         .select_related("grade")
-        .prefetch_related("grade__applications")
     )
     tasks = list(models.Task.objects.filter(series__grade=grade))
-    submitted_solutions = models.TaskSolutionSubmission.objects.filter(
+    submitted_solutions = list(models.TaskSolutionSubmission.objects.filter(
         task__series__grade=grade
-    ).select_related("task__series")
+    ).select_related("task__series"))
 
-    rankings_by_series = {
-        s: s.get_rankings(
+    # Optimization: Group submissions by application PK once
+    submissions_by_app = {}
+    for s in submitted_solutions:
+        submissions_by_app.setdefault(s.application_id, []).append(s)
+
+    # Optimization: Pre-calculate rankings for all series and map them by application PK
+    rankings_by_series = {}
+    for s in series:
+        # Calculate max_score for this series (including previous ones) in memory
+        current_series_max_score = sum(
+            t.points for t in tasks 
+            if int(t.series.series) <= int(s.series)
+        )
+
+        r = s.get_rankings(
             _applications_cache=applications,
             _tasks_cache=[t for t in tasks if t.series_id == s.pk],
-            _submissions_cache=[sol for sol in submitted_solutions],
+            _submissions_cache=submitted_solutions,
+            _max_score=current_series_max_score,
         )
-        for s in series
-    }
-
-    def _series_details(
-        series: models.GradeSeries, application: models.GradeApplication
-    ) -> types.SeriesDetails:
-        rankings = rankings_by_series[series]
-        application_ranking = next(
-            row for row in rankings["listing"] if row[0].pk == application.pk
-        )
-        return {
-            "rank": application_ranking[1],
-            "score": application_ranking[3],
-            "max_score": rankings["max_score"],
+        # Create a fast lookup map for this series: app_pk -> (rank, score)
+        r_map = {row[0].pk: (row[1], row[3]) for row in r["listing"]}
+        rankings_by_series[s.pk] = {
+            "max_score": r["max_score"],
+            "map": r_map
         }
 
     grade_details: types.GradeDetails = {
@@ -59,20 +65,32 @@ def _grade_details(grade: models.Grade) -> types.GradeDetails:
     }
 
     for application in applications:
-        submissions = [
-            s for s in submitted_solutions if s.application_id == application.pk
-        ]
+        submissions = submissions_by_app.get(application.pk, [])
+        
+        # Pre-build series details for this participant
+        participant_series_details = {}
+        for s in series:
+            r_info = rankings_by_series[s.pk]
+            app_ranking = r_info["map"].get(application.pk, (None, Decimal("0")))
+            participant_series_details[s] = {
+                "rank": app_ranking[0],
+                "score": app_ranking[1],
+                "max_score": r_info["max_score"],
+            }
+
+        # Pre-map submissions by task for faster lookup in by_tasks
+        submissions_by_task = {s.task_id: s for s in submissions}
 
         grade_details["by_participant"][application.participant] = {
-            "series": {s: _series_details(s, application) for s in series},
+            "series": participant_series_details,
             "submissions": {
                 "all": submissions,
                 "by_series": {
-                    s: list(sub for sub in submissions if sub.task.series_id == s.pk)
+                    s: [sub for sub in submissions if sub.task.series_id == s.pk]
                     for s in series
                 },
                 "by_tasks": {
-                    t: next((sub for sub in submissions if sub.task_id == t.pk), None)
+                    t: submissions_by_task.get(t.pk)
                     for t in tasks
                 },
             },
@@ -81,8 +99,15 @@ def _grade_details(grade: models.Grade) -> types.GradeDetails:
     return grade_details
 
 
-def get_eligibility(current_series: models.GradeSeries):
+def get_eligibility(current_series: models.GradeSeries, _grade_details_cache: dict = None):
     """Find out sticker eligibility for every participant in the series."""
+    if _grade_details_cache is None:
+        _grade_details_cache = {}
+
+    def _get_cached_details(g):
+        if g.pk not in _grade_details_cache:
+            _grade_details_cache[g.pk] = _grade_details(g)
+        return _grade_details_cache[g.pk]
 
     current_grade = current_series.grade
     grades = [current_grade]
@@ -95,7 +120,7 @@ def get_eligibility(current_series: models.GradeSeries):
         current_grade.applications.select_related("participant__user")
     )
     base_context = {
-        "by_grades": {grades.index(grade): _grade_details(grade) for grade in grades}
+        "by_grades": {grades.index(grade): _get_cached_details(grade) for grade in grades}
     }
     eligibility: List[Tuple[models.GradeApplication, Set[int]]] = []
     current_grade_details = base_context["by_grades"][0]
