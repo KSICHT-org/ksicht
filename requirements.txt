@@ -91,7 +91,7 @@ psycopg2-binary==2.9.11
     # via -r requirements.in
 pydash==8.0.6
     # via -r requirements.in
-pypdf==6.7.4
+pypdf==6.7.5
     # via -r requirements.in
 reportlab==4.4.10
     # via -r requirements.in
@@ -101,7 +101,5 @@ sqlparse==0.5.5
     # via django
 typing-extensions==4.15.0
     # via pydash
-tzdata==2025.3
-    # via django
 urllib3==2.6.3
     # via sentry-sdk
