@@ -48,7 +48,6 @@
                                 {% sticker s grayed label after_publication=after_pub %}
                             {% endfor %}
                             {% if data.grayed %}
-                                <!-- <span class="has-text-grey is-size-7 mx-2">Již udělené:</span> -->
                                 {% for s, grayed, label, after_pub in data.grayed %}
                                     {% sticker s grayed label after_publication=after_pub %}
                                 {% endfor %}
