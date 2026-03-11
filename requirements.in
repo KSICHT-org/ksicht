@@ -14,7 +14,7 @@ django-imagekit==6.1.0
 django_select2==8.4.8
 gunicorn==25.1.0
 pydash==8.0.6
-pypdf==6.7.5
+pypdf==6.8.0
 pdfrw==0.4
 reportlab==4.4.10
 pillow==12.1.1
