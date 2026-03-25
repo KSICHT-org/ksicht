@@ -52,7 +52,7 @@ def _get_assignment_series(assignment):
     """Get the GradeSeries associated with an assignment, if any."""
     if assignment.awarded_in_series_id:
         return assignment.awarded_in_series
-    elif assignment.awarded_for_submission_id:
+    if assignment.awarded_for_submission_id:
         return assignment.awarded_for_submission.task.series
     return None
 
