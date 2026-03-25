@@ -214,11 +214,10 @@ class StickerAssignmentAdmin(admin.ModelAdmin):
     list_display = (
         "participant_name",
         "sticker",
-        "awarded_in_series",
+        "series_display",
         "awarded_for_submission",
-        "awarded_for_event",
+        "event_display",
         "awarded_at",
-        "ignore_limit",
         "assigned_after_publication",
     )
     list_filter = (
@@ -240,9 +239,17 @@ class StickerAssignmentAdmin(admin.ModelAdmin):
         "participant__user__email",
         "sticker__title",
     )
-    autocomplete_fields = ("participant", "sticker", "awarded_in_series", "awarded_for_submission")
+    autocomplete_fields = ("participant", "sticker", "awarded_for_submission")
     readonly_fields = ("awarded_at",)
     ordering = ("-awarded_at",)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == "awarded_in_series":
+            field.label_from_instance = lambda obj: f"{obj.grade} – {obj.get_series_display()} série"
+        elif db_field.name == "awarded_for_event":
+            field.label_from_instance = lambda obj: f"{obj.title} ({obj.start_date.year})"
+        return field
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -270,6 +277,22 @@ class StickerAssignmentAdmin(admin.ModelAdmin):
 
     participant_name.short_description = "Řešitel"
     participant_name.admin_order_field = "participant__user__last_name"
+
+    def series_display(self, obj):
+        if obj.awarded_in_series:
+            return f"{obj.awarded_in_series.grade} – {obj.awarded_in_series.get_series_display()} série"
+        return "-"
+
+    series_display.short_description = "Série"
+    series_display.admin_order_field = "awarded_in_series"
+
+    def event_display(self, obj):
+        if obj.awarded_for_event:
+            return f"{obj.awarded_for_event.title} ({obj.awarded_for_event.start_date.year})"
+        return "-"
+
+    event_display.short_description = "Akce"
+    event_display.admin_order_field = "awarded_for_event"
 
 
 class EventAttendeeInline(admin.TabularInline):

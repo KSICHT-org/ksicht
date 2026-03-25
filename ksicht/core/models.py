@@ -238,7 +238,7 @@ class GradeSeries(models.Model):
         )
 
     def __str__(self):
-        return f"{self.grade} – {self.get_series_display()} série"
+        return f"{self.get_series_display()} série"
 
     def get_absolute_url(self):
         return reverse(
