@@ -120,7 +120,7 @@ class Grade(models.Model):
     def __str__(self):
         return str(self.school_year)
 
-    def full_clean(self, exclude=None, validate_unique=True):
+    def full_clean(self, exclude=None, validate_unique=True, **kwargs):
         """Validate the grade.
 
         Make sure 'valid_through' does not overlap."""
