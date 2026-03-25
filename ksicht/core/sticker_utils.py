@@ -57,7 +57,7 @@ def _get_assignment_series(assignment):
     return None
 
 
-def get_assignment_series_id(assignment, grade, series):
+def is_assignment_in_series(assignment, grade, series):
     """
     Determine if an assignment belongs to a specific series.
     Returns True if the assignment is associated with the given series.

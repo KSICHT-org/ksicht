@@ -3,7 +3,7 @@ from decimal import Decimal
 import logging
 from operator import attrgetter
 import tempfile
-from typing import List, Optional
+from typing import Optional
 import uuid
 
 from cuser.models import AbstractCUser
@@ -260,9 +260,9 @@ class GradeSeries(models.Model):
     def get_rankings(
         self,
         exclude_submissionless: bool = True,
-        _applications_cache: Optional[List["GradeApplication"]] = None,
-        _tasks_cache: Optional[List["Task"]] = None,
-        _submissions_cache: Optional[List["TaskSolutionSubmission"]] = None,
+        _applications_cache: Optional[list["GradeApplication"]] = None,
+        _tasks_cache: Optional[list["Task"]] = None,
+        _submissions_cache: Optional[list["TaskSolutionSubmission"]] = None,
         _max_score: Optional[Decimal] = None,
     ):
         """Calculate results for series.

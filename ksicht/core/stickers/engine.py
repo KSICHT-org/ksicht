@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import List, Set, Tuple
+from typing import Optional
 
 from . import registry, types
 from .. import models
@@ -7,7 +7,7 @@ from .. import models
 
 def resolve_stickers(context: types.StickerContext):
     """Get set of stickers where provided context resolves truthy."""
-    entitled_to: Set[int] = set()
+    entitled_to: set[int] = set()
 
     for sticker_nr, sticker_resolver in registry.get_all():
         if sticker_resolver(context):
@@ -99,7 +99,7 @@ def _grade_details(grade: models.Grade) -> types.GradeDetails:
     return grade_details
 
 
-def get_eligibility(current_series: models.GradeSeries, _grade_details_cache: dict = None):
+def get_eligibility(current_series: models.GradeSeries, _grade_details_cache: Optional[dict] = None):
     """Find out sticker eligibility for every participant in the series."""
     if _grade_details_cache is None:
         _grade_details_cache = {}
@@ -116,13 +116,13 @@ def get_eligibility(current_series: models.GradeSeries, _grade_details_cache: di
             "-end_date"
         )[:3]
     )
-    applications: List[models.GradeApplication] = list(
+    applications: list[models.GradeApplication] = list(
         current_grade.applications.select_related("participant__user")
     )
     base_context = {
         "by_grades": {grades.index(grade): _get_cached_details(grade) for grade in grades}
     }
-    eligibility: List[Tuple[models.GradeApplication, Set[int]]] = []
+    eligibility: list[tuple[models.GradeApplication, set[int]]] = []
     current_grade_details = base_context["by_grades"][0]
 
     for application in applications:

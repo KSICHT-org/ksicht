@@ -28,7 +28,7 @@ from ..models import (
     Task,
     TaskSolutionSubmission,
 )
-from ..sticker_utils import get_sticker_display_info, get_assignment_series_id
+from ..sticker_utils import get_sticker_display_info, is_assignment_in_series
 from .decorators import current_grade_exists, is_participant
 
 
@@ -357,8 +357,7 @@ class ScoringView(FormView):
         res = super().get_form_kwargs()
         
         # Cache sticker choices so they are evaluated only once, not 100+ times during template rendering
-        sticker_choices = Sticker.objects.filter(handpicked=True).order_by("nr")
-        list(sticker_choices)
+        sticker_choices = list(Sticker.objects.filter(handpicked=True).order_by("nr"))
         
         # Prefetch manual sticker assignments so form init doesn't hit the DB for each student
         qs = (
@@ -471,6 +470,15 @@ class MySubmissionsView(TemplateView):
 
         grades_data = []
 
+        # Fetch all assignments for this participant
+        all_assignments = list(StickerAssignment.objects.filter(
+            participant=participant,
+        ).select_related(
+            "sticker", "awarded_in_series",
+            "awarded_for_submission__task__series",
+            "awarded_for_event"
+        ))
+
         for application in applications:
             grade = application.grade
             series_list = (
@@ -487,15 +495,6 @@ class MySubmissionsView(TemplateView):
                 .select_related("task")
             }
 
-            # Fetch all assignments for this participant
-            all_assignments = list(StickerAssignment.objects.filter(
-                participant=participant,
-            ).select_related(
-                "sticker", "awarded_in_series",
-                "awarded_for_submission__task__series",
-                "awarded_for_event"
-            ))
-
             series_data = []
             for series in series_list:
                 # Only show series that have started (has task_file or publish date has passed)
@@ -505,7 +504,7 @@ class MySubmissionsView(TemplateView):
                 # Collect assignments belonging to this series
                 series_assignments = [
                     a for a in all_assignments
-                    if get_assignment_series_id(a, grade, series)
+                    if is_assignment_in_series(a, grade, series)
                 ]
 
                 # Build auto & event stickers for the series header

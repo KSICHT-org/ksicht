@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 from .. import models
-from ..sticker_utils import get_sticker_display_info, get_assignment_series_id
+from ..sticker_utils import get_sticker_display_info, is_assignment_in_series
 from ksicht.core.stickers.services import grant_stickers_for_series
 
 
@@ -79,7 +79,7 @@ class StickerAssignmentOverview(DetailView):
         for a in all_assignments:
             assignments_by_participant[a.participant_id].append(a)
 
-        # Run eligibility engine to find what stickers each participant WOULD earn
+        # Run eligibility engine to find which stickers each participant WOULD earn
         from ksicht.core.stickers.engine import get_eligibility
         eligibility = get_eligibility(series)
         eligible_by_participant = {}
@@ -94,7 +94,7 @@ class StickerAssignmentOverview(DetailView):
             # 1. Collect stickers actually assigned in this series (solid tags)
             assigned_in_series = [
                 a for a in participant_assignments
-                if get_assignment_series_id(a, grade, series)
+                if is_assignment_in_series(a, grade, series)
             ]
 
             result = []
@@ -132,24 +132,27 @@ class StickerAssignmentOverview(DetailView):
                 # Find prior assignments of this sticker (not in current series)
                 prior_assignments = [
                     a for a in participant_assignments
-                    if a.sticker_id == sticker.id and not get_assignment_series_id(a, grade, series)
+                    if a.sticker_id == sticker.id and not is_assignment_in_series(a, grade, series)
                 ]
-                if prior_assignments:
-                    # Check if any prior assignment was made after publication
-                    any_after_pub = any(a.assigned_after_publication for a in prior_assignments)
 
-                    if limit == "once_in_lifetime":
-                        grayed_list.append((sticker, True, "Již udělena dříve", any_after_pub))
-                    elif limit == "once_per_grade":
-                        # Check if prior assignment is from the same grade
-                        same_grade_assignments = [
-                            a for a in prior_assignments
-                            if a.awarded_in_series_id
-                            and a.awarded_in_series.grade_id == grade.id
-                        ]
-                        if same_grade_assignments:
-                            any_after_pub_grade = any(a.assigned_after_publication for a in same_grade_assignments)
-                            grayed_list.append((sticker, True, "Již udělena v tomto ročníku", any_after_pub_grade))
+                if not prior_assignments:
+                    continue
+
+                # Check if any prior assignment was made after publication
+                any_after_pub = any(a.assigned_after_publication for a in prior_assignments)
+
+                if limit == "once_in_lifetime":
+                    grayed_list.append((sticker, True, "Již udělena dříve", any_after_pub))
+                elif limit == "once_per_grade":
+                    # Check if prior assignment is from the same grade
+                    same_grade_assignments = [
+                        a for a in prior_assignments
+                        if a.awarded_in_series_id
+                        and a.awarded_in_series.grade_id == grade.id
+                    ]
+                    if same_grade_assignments:
+                        any_after_pub_grade = any(a.assigned_after_publication for a in same_grade_assignments)
+                        grayed_list.append((sticker, True, "Již udělena v tomto ročníku", any_after_pub_grade))
 
                     seen_nrs.add(nr)
 

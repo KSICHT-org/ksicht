@@ -24,10 +24,7 @@ def _is_limit_reached(participant_id, sticker, current_series, assignment_cache_
 
     if sticker.assignment_limit == models.Sticker.AssignmentLimit.ONCE_IN_LIFETIME:
         # Any prior assignment (not in current series) means limit reached
-        for a in assignments:
-            if a.awarded_in_series_id != current_series.id:
-                return True
-        return False
+        return any(a.awarded_in_series_id != current_series.id for a in assignments)
 
     if sticker.assignment_limit == models.Sticker.AssignmentLimit.ONCE_PER_GRADE and current_series:
         for a in assignments:
@@ -40,6 +37,8 @@ def _is_limit_reached(participant_id, sticker, current_series, assignment_cache_
                 a_grade_id = a.awarded_in_series.grade_id
             elif a.awarded_for_submission_id:
                 a_grade_id = a.awarded_for_submission.task.series.grade_id
+            elif a.awarded_for_event_id:
+                a_grade_id = a.awarded_for_event.grade_id
 
             if a_grade_id == current_series.grade_id:
                 return True
