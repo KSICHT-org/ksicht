@@ -238,7 +238,7 @@ class GradeSeries(models.Model):
         )
 
     def __str__(self):
-        return f"{self.get_series_display()} série"
+        return f"{self.grade} – {self.get_series_display()} série"
 
     def get_absolute_url(self):
         return reverse(
@@ -640,7 +640,15 @@ class TaskSolutionSubmission(models.Model):
         )
 
     def __str__(self):
-        return f"Řešení <{self.task}> pro přihlášku <{self.application_id}>"
+        try:
+            task_str = str(self.task)
+        except Exception:
+            task_str = f"(chybějící úloha {self.task_id})"
+        try:
+            participant_name = self.application.participant.get_full_name()
+        except Exception:
+            participant_name = f"přihláška {self.application_id}"
+        return f"Řešení <{task_str}> – {participant_name}"
 
     def delete(self, *args, **kwargs):
         if self.file:
