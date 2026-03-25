@@ -1,8 +1,3 @@
-"""
-Shared utility functions for sticker display logic.
-Centralizes the "is this sticker grayed out?" check used by multiple views.
-"""
-
 from datetime import datetime
 
 from ksicht.core import models
