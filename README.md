@@ -81,11 +81,36 @@ make test
 
 This app is distributed as a Docker container
 and [hosted on Docker Hub](https://hub.docker.com/r/ksicht/web).
-Makefile provides all the necessary commands:
+
+#### CI/CD Pipeline
+
+A GitHub Actions workflow (`.github/workflows/main.yml`) automatically builds and pushes the Docker image on every push to `master` or when a version tag is created.
+
+**What happens automatically:**
+
+| Trigger | Docker Hub tags |
+|---|---|
+| Push to `master` | `latest`, `sha-<short>` |
+| Push tag `vX.Y.Z` | `latest`, `X.Y.Z`, `X.Y`, `X` |
+
+#### Creating a release
+
+After merging a PR to `master`, the image is automatically built and pushed as `latest`. To also create a named version:
 
 ```bash
-make build && make push
+git checkout master
+git pull
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
 
-# Shortcut to the above:
-make release
+#### Local builds
+
+Makefile provides commands for local builds:
+
+```bash
+make build                    # builds as ksicht/web:latest
+make build VERSION=X.Y.Z      # builds as ksicht/web:X.Y.Z
+make release                  # builds + pushes (latest by default)
+make release VERSION=X.Y.Z    # builds + pushes as ksicht/web:X.Y.Z
 ```

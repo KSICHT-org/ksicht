@@ -3,9 +3,10 @@ name: Docker Build & Push
 on:
   push:
     branches: [master]
+    tags: ["v*"]
 
 jobs:
-  build-test-push:
+  build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
@@ -29,33 +30,20 @@ jobs:
           restore-keys: ${{ runner.os }}-buildx-
 
       # 4. setup node.js
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.9.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
-          node-version: 22.16.0
-          # Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm.
+          node-version-file: .nvmrc
           cache: npm
-          # Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies.
           cache-dependency-path: package-lock.json
 
-      # 5. cache npm dependencies
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        with:
-          path: '~/.npm'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      # 6. npm install
+      # 5. install npm dependencies
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
-      # 7. build assets [TODO]
+      # 6. build webpack assets
       - name: Build Assets
-        run: |
-          node ./node_modules/webpack/bin/webpack.js --mode production --progress --config webpack.config.js
+        run: node ./node_modules/webpack/bin/webpack.js --mode production --progress --config webpack.config.js
 
       # 8. login to docker hub
       - name: Log in to Docker Hub
@@ -64,7 +52,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 9. build and push image
+      # 8. extract docker metadata (automatic versioning)
+      - name: Extract Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}
+          tags: |
+            # On master push: tag as "latest" and "sha-<short>"
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,enable={{is_default_branch}}
+
+            # On tag push (vX.Y.Z): tag as "X.Y.Z", "X.Y", "X"
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+
+      # 9. build and push docker image
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
@@ -72,7 +76,13 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/amd64
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
-      
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      # 10. Move cache (prevents cache from growing unbounded)
+      - name: Move Cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache

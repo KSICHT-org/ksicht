@@ -42,18 +42,20 @@ migrations:
 win-migrations:
 	python manage.py makemigrations
 
+VERSION ?= latest
+
 build-assets:
 	.\node_modules\.bin\webpack --config webpack.config.js --mode production
 
 build-image:
-	docker buildx build --platform linux/amd64 -t ksicht/web:latest .
+	docker buildx build --platform linux/amd64 -t ksicht/web:$(VERSION) .
 
 build:
 	make build-assets
 	make build-image
 
 push:
-	docker push ksicht/web:latest
+	docker push ksicht/web:$(VERSION)
 
 release:
 	make build
