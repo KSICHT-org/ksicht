@@ -80,7 +80,7 @@ pilkit==3.0
     # via
     #   -r requirements.in
     #   django-imagekit
-pillow==12.1.1
+pillow==12.2.0
     # via
     #   -r requirements.in
     #   django-imagefield
