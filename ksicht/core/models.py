@@ -246,9 +246,9 @@ class GradeSeries(models.Model):
         )
 
     def is_expected_publish_date_passed(self):
-        return (
+        return bool(
             self.expected_publish_date
-            and self.expected_publish_date < datetime.now().date()
+            and self.expected_publish_date <= datetime.now().date()
         )
 
     @property
