@@ -497,8 +497,18 @@ class MySubmissionsView(TemplateView):
 
             series_data = []
             for series in series_list:
-                # Only show series that have started (has task_file or publish date has passed)
-                if not series.task_file and not series.is_expected_publish_date_passed():
+                # check if this series has any submissions for this participant
+                has_submissions = any(
+                    task.id in submissions for task in series.tasks.all()
+                )
+
+                # only show series that have started, have submissions, or are currently accepting submissions
+                if (
+                    not series.task_file
+                    and not series.is_expected_publish_date_passed()
+                    and not has_submissions
+                    and series != grade.get_current_series()
+                ):
                     continue
 
                 # Collect assignments belonging to this series
