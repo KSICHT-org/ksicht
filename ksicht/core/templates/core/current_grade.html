@@ -3,35 +3,22 @@
 {% load crispy_forms_tags %}
 {% load markdown_deux_tags %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li class="is-active"><a href="#" aria-current="page">{% block headline %}Aktuální ročník{% if object %} ({{ object }}){% endif %}{% endblock %}</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
+{% block headline %}Ročníky{% endblock %}
 
 {% block header_sub %}
     {% if can_apply %}
-        <div class="notification">
-            <p class="title is-4">Do tohoto ročníku se ještě můžeš přihlásit!</p>
-            <article class="message is-info">
-                <div class="message-body">
-                    Před přihlášením si, prosím, zkontroluj správnost údajů na <a href="{% url 'edit_profile' %}">svém profilu</a>.
-                </div>
-            </article>
+        <div class="notification is-link is-light p-5 my-4" style="border-radius: 0.75rem;">
+            <p class="title is-4 has-text-link mb-2"><i class="fas fa-bullhorn pr-2"></i> Do tohoto ročníku se ještě můžeš přihlásit!</p>
+            <p class="mb-3">Před přihlášením si, prosím, zkontroluj správnost údajů na <a href="{% url 'edit_profile' %}" class="has-text-weight-bold">svém profilu</a>.</p>
             {% if not has_birth_date %}
-                <article class="message is-danger">
+                <article class="message is-danger mb-3">
                     <div class="message-body">
-                        Pro účast je nově potřeba mít vyplněné datum narození!
+                        Pro účast je nově potřeba mít vyplněné datum narození na profilu!
                     </div>
                 </article>
             {% endif %}
             {% if is_graduate %}
-                <article class="message is-danger">
+                <article class="message is-danger mb-3">
                     <div class="message-body">
                         Jako absolvent střední školy se již nemůžeš účastnit KSICHTu.
                     </div>
@@ -44,122 +31,258 @@
 
 {% block article %}
 {% if object %}
-    <p class="is-size-5 mb-5">Každým rokem vyjdou čtyři série KSICHTu, <strong>první začátkem října</strong>. V brožuře vždy naleznete zadání úloh aktuální série, řešení úloh předchozí série a jeden díl seriálu.</p>
-
-    <nav class="columns is-multiline mb-5">
-        <div class="column is-6-tablet is-3-desktop">
-            <div>
-                <h2 class="subsubtitle">Začíná</h2>
-                <p class="title is-5"><i class="fas fa-calendar-alt pr-1"></i> {{ object.start_date | date }}</p>
+    <div class="box p-5 mb-6" style="background: linear-gradient(135deg, #f0f6ff 0%, #ffffff 100%); border: 1px solid #d4e2f5; border-radius: 0.75rem;">
+        <div class="columns is-vcentered">
+            <div class="column is-8">
+                <p class="subsubtitle has-text-link">Aktuální ročník soutěže</p>
+                <h2 class="title is-3 mb-2">{{ object }}</h2>
+                <p class="is-size-6 has-text-grey">
+                    Každý rok vyjdou 4 série KSICHTu. V brožuře vždy naleznete zadání úloh aktuální série, řešení úloh předchozí série a jeden díl seriálu.
+                </p>
             </div>
-        </div>
-        <div class="column is-6-tablet is-3-desktop">
-            <div>
-                <h2 class="subsubtitle">Řešitelé</h2>
-                <p class="title is-5"><i class="fas fa-user-friends pr-1"></i> {{ object.applications.count }} přihlášených řešitelů</p>
-            </div>
-        </div>
-        {% if object.errata %}
-        <div class="column is-6-desktop">
-            <h2 class="subsubtitle">Errata</h2>
-            <div class="content content-readable">
-                <div class="message is-warning is-size-6">
-                    <div class="message-body">
-                        {{ object.errata | markdown }}
-                    </div>
+            <div class="column is-4 has-text-right-tablet">
+                <div class="tags has-addons is-justify-content-flex-end-tablet mb-2">
+                    <span class="tag is-medium is-link"><i class="fas fa-calendar-alt pr-1"></i> Zahájení</span>
+                    <span class="tag is-medium is-white has-text-weight-bold">{{ object.start_date | date }}</span>
+                </div>
+                <div class="tags has-addons is-justify-content-flex-end-tablet mb-0">
+                    <span class="tag is-medium is-link is-light"><i class="fas fa-user-friends pr-1"></i> Řešitelé</span>
+                    <span class="tag is-medium is-white has-text-weight-bold">{{ object.applications.count }} přihlášených</span>
                 </div>
             </div>
         </div>
-        {% endif %}
-        {% if is_grade_participant %}
-            <div class="column is-6-desktop">
-                <a href="{% url "core:my_submissions" %}" class="button is-info is-light">
-                    <span class="icon"><i class="fas fa-list-alt"></i></span>
-                    <span>Moje odeslaná řešení</span>
-                </a>
+
+        {% if object.errata %}
+            <div class="message is-warning is-small mt-4 mb-0">
+                <div class="message-header">
+                    <span><i class="fas fa-exclamation-triangle pr-1"></i> Errata k aktuálnímu ročníku</span>
+                </div>
+                <div class="message-body content">
+                    {{ object.errata | markdown }}
+                </div>
             </div>
         {% endif %}
-    </nav>
+    </div>
 
-    <div class="columns is-multiline">
+    <div class="mb-6">
+        <h3 class="title is-4 mb-4"><i class="fas fa-stream has-text-link pr-2"></i> Časový harmonogram a série</h3>
+
         {% with object.get_current_series as current_series %}
-            {% with object.get_future_series as future_series %}
-                {% for series in object.prefetch_series %}
-                    <div class="column is-12-mobile is-6-tablet is-3-desktop">
-                        {% comment %}Highlight current series only when the task file is already available as per Jan Hrubeš's request.{% endcomment %}
-                        <div class="card series-card {% if series == current_series and series.task_file %}is-current{% endif %}">
-                            <div class="card-content">
-                                <h2 class="is-6 is-uppercase has-text-weight-bold">{{ series }}</h2>
-                                {% if not series.is_expected_publish_date_passed %}
-                                    <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey mb-4">
-                                        <p>
-                                            zveřejnění:
-                                            {% if series.expected_publish_date %}
-                                                {{ series.expected_publish_date | date:"d.m." }}
-                                            {% else %}
-                                                datum není známo
-                                            {% endif %}
-                                        </p>
-                                        <p class="subtitle is-7 has-text-grey">datum je pouze orientační</p>
-                                    </div>
-                                {% endif %}
+        {% with object.get_future_series as future_series %}
+            {% for series in object.prefetch_series %}
+                <div class="series-timeline-card {% if series.is_active %}is-active-series{% endif %}">
+                    <div class="series-timeline-header">
+                        <div>
+                            <span class="title is-5 has-text-weight-bold mr-3">{{ series }}</span>
+                            {% if series.results_published %}
+                                <span class="tag is-success is-light is-rounded"><i class="fas fa-check pr-1"></i> Vyhodnoceno</span>
+                            {% elif series.is_evaluating %}
+                                <span class="tag is-warning is-light is-rounded"><i class="fas fa-hourglass-half pr-1"></i> Probíhá hodnocení</span>
+                            {% elif series.is_active %}
+                                <span class="tag is-primary is-rounded has-text-weight-bold"><i class="fas fa-play-circle pr-1"></i> Právě probíhá</span>
+                            {% elif series.is_expected_publish_date_passed and not series.task_file %}
+                                <span class="tag is-warning is-light is-rounded"><i class="fas fa-flask pr-1"></i> Zadání se připravuje</span>
+                            {% else %}
+                                <span class="tag is-light is-rounded"><i class="fas fa-clock pr-1"></i> Připravuje se</span>
+                            {% endif %}
+                        </div>
 
-                                <div class="{% if series not in future_series %}subtitle{% endif %} is-6 has-text-grey">
-                                        odevzdání do {{ series.submission_deadline | date:"d.m." }}
+                        <div class="buttons are-small mb-0">
+                            {% if series.task_file %}
+                                <a href="{{ series.task_file.url }}" class="button is-link is-light">
+                                    <i class="fas fa-file-pdf pr-1"></i> Zadání v PDF
+                                </a>
+                            {% endif %}
+                            {% if series.results_published %}
+                                <a href="{% url "core:series_results" grade_id=series.grade_id pk=series.pk %}" class="button is-success is-light">
+                                    <i class="fas fa-trophy pr-1"></i> Výsledky
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="series-timeline-body">
+                        <div class="timeline-track">
+                            <div class="milestone-point {% if series.is_expected_publish_date_passed %}is-passed{% endif %}">
+                                <div class="point-icon"><i class="fas fa-book-open"></i></div>
+                                <div>
+                                    <p class="is-size-7 has-text-grey mb-0">Zveřejnění zadání</p>
+                                    <p class="is-size-6 has-text-weight-bold mb-0">
+                                        {% if series.expected_publish_date %}{{ series.expected_publish_date | date:"d.m.Y" }}{% else %}Podzim{% endif %}
+                                    </p>
                                 </div>
-                                {% if series in future_series %}
-                                    <p class="subtitle is-7 has-text-grey">datum je pouze orientační</p>
-                                {% endif %}
-
-                                {% with series.tasks.all as tasks %}
-                                    {% if tasks.count > 0 %}
-                                    <h2 class="is-size-6 has-text-weight-bold">Úlohy</h2>
-                                    <ul>
-                                        {% for task in tasks %}
-                                            <li>{{ task.nr }}. {{ task.title }} <span class="has-text-grey">(max. {{ task.points }} bodů)</span></li>
-                                        {% endfor %}
-                                    </ul>
-                                    {% endif %}
-                                {% endwith %}
-
-                                {% if series.task_file or series.results_published %}
-                                <hr class="card-splitter">
-                                {% endif %}
-
-                                {% if series.task_file %}
-                                <p><a href="{{ series.task_file.url }}" class="mr-4"><i class="fas fa-file-pdf pr-1"></i> Brožura zadání v PDF</a></p>
-                                {% endif %}
-
-                                {% if series.results_published %}
-                                <p><a href="{% url "core:series_results" grade_id=series.grade_id pk=series.pk %}" class="mr-4"><i class="fas fa-trophy pr-1"></i> Výsledková listina</a></p>
-                                {% endif %}
-
-                                {% with series.attachments.all as attachments %}
-                                    {% if attachments %}
-                                        <hr class="card-splitter">
-
-                                        <h2 class="is-size-6 has-text-weight-bold">Přílohy</h2>
-
-                                        {% for a in attachments %}
-                                            <p><a href="{{ a.file.url }}" class="mr-4"><i class="fas fa-file pr-1"></i> {{ a }}</a></p>
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endwith %}
                             </div>
 
-                            {% if series.accepts_solution_submissions and series == current_series and is_grade_participant %}
-                                <footer class="card-footer">
-                                    <p class="card-footer-item">
-                                        <a href="{% url "core:solution_submit" %}">Odevzdat řešení</a>
+                            <div class="timeline-segment {% if series.is_expected_publish_date_passed %}is-passed{% endif %}"></div>
+
+                            <div class="milestone-point {% if series.is_submission_deadline_passed %}is-passed{% endif %}">
+                                <div class="point-icon"><i class="fas fa-hourglass-half"></i></div>
+                                <div>
+                                    <p class="is-size-7 has-text-grey mb-0">Deadline odevzdání</p>
+                                    <p class="is-size-6 has-text-weight-bold mb-0">
+                                        {{ series.submission_deadline | date:"d.m.Y (H:i)" }}
                                     </p>
-                                </footer>
-                            {% endif%}
+                                </div>
+                            </div>
+
+                            <div class="timeline-segment {% if series.is_submission_deadline_passed %}is-passed{% endif %}"></div>
+
+                            <div class="milestone-point {% if series.results_published %}is-passed{% endif %}">
+                                <div class="point-icon"><i class="fas fa-award"></i></div>
+                                <div>
+                                    <p class="is-size-7 has-text-grey mb-0">Výsledková listina</p>
+                                    <p class="is-size-6 has-text-weight-bold mb-0">
+                                        {% if series.results_published %}Zveřejněna{% else %}Po vyhodnocení{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if series.task_file and series.is_expected_publish_date_passed %}
+                            {% with series.tasks.all as tasks %}
+                                {% if tasks.count > 0 %}
+                                    <div class="timeline-tasks">
+                                        <p class="is-size-7 has-text-grey has-text-weight-semibold mb-2">ÚLOHY V TÉTO SÉRII:</p>
+                                        <div>
+                                            {% for task in tasks %}
+                                                <span class="task-badge-item">
+                                                    <span>{{ task.nr }}. {{ task.title }}</span>
+                                                    <span class="task-points">{{ task.points }} b</span>
+                                                </span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        {% elif not series.task_file and series.is_expected_publish_date_passed and not series.is_submission_deadline_passed %}
+                            <div class="timeline-tasks">
+                                <div class="notification is-info is-light is-size-7 py-2 px-3 mb-0" style="border-radius: 0.5rem; display: inline-flex; align-items: center; gap: 0.6rem;">
+                                    <i class="fas fa-flask has-text-warning-dark is-size-6"></i>
+                                    <span><strong>Brožurka zatím nevykrystalizovala!</strong> Zadání této série potřebuje ještě nějaký čas. Omlouváme se za zpoždění a nezapomeň tuto stránku brzy zkontrolovat znovu! 👀</span>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="timeline-actions">
+                            {% if series.accepts_solution_submissions and series == current_series and is_grade_participant %}
+                                <a href="{% url "core:solution_submit" %}" class="button is-primary is-medium">
+                                    <i class="fas fa-upload pr-2"></i> Odevzdat řešení této série
+                                </a>
+                            {% endif %}
+
+                            {% with series.attachments.all as attachments %}
+                                {% for a in attachments %}
+                                    <a href="{{ a.file.url }}" class="button is-small is-light">
+                                        <i class="fas fa-paperclip pr-1"></i> Příloha: {{ a }}
+                                    </a>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endwith %}
+        {% endwith %}
+    </div>
+
+    {% if archive_grades %}
+        <div id="archiv" class="mt-6 p-5" style="background: #f8fafc; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); scroll-margin-top: 2rem;">
+            <div class="level mb-5">
+                <div class="level-left">
+                    <div>
+                        <p class="subsubtitle has-text-grey has-text-weight-bold">HISTORIE KSICHTu</p>
+                        <h3 class="title is-4 mb-1"><i class="fas fa-archive has-text-link pr-2"></i> Archiv minulých ročníků</h3>
+                        <p class="is-size-6 has-text-grey">Zde najdeš zadání úloh, řešení a výsledkové listiny všech předchozích ročníků.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns is-multiline">
+                {% for grade in archive_grades %}
+                    <div class="column is-6-desktop is-12-tablet mb-4">
+                        <div class="card h-100" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 2px 6px rgba(0,0,0,0.03); background: #ffffff;">
+                            <div class="card-header p-4 has-background-white-bis is-flex is-justify-content-between is-align-items-center">
+                                <div>
+                                    <h4 class="title is-5 mb-0 has-text-weight-bold">Ročník {{ grade }}</h4>
+                                </div>
+                                <span class="tag is-light is-rounded">
+                                    <i class="fas fa-user-friends pr-1"></i> {{ grade.applications.count }} řešitelů
+                                </span>
+                            </div>
+                            <div class="card-content p-4">
+                                <div class="columns is-multiline">
+                                    {% if grade.has_task_files %}
+                                        <div class="column {% if grade.has_published_results %}is-6{% else %}is-12{% endif %}">
+                                            <p class="is-size-7 has-text-weight-bold has-text-grey mb-2">BROŽURY ZADÁNÍ:</p>
+                                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem;">
+                                                {% for s in grade.series.all %}
+                                                    {% if s.task_file %}
+                                                        <a href="{{ s.task_file.url }}" class="button is-small is-link is-light is-outlined is-fullwidth" style="margin-bottom: 0;">
+                                                            <i class="fas fa-file-pdf pr-1"></i> {{ s.series }}. série
+                                                        </a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if grade.has_published_results %}
+                                        <div class="column {% if grade.has_task_files %}is-6{% else %}is-12{% endif %}">
+                                            <p class="is-size-7 has-text-weight-bold has-text-grey mb-2">VÝSLEDKOVÉ LISTINY:</p>
+                                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem;">
+                                                {% for s in grade.series.all %}
+                                                    {% if s.results_published %}
+                                                        <a href="{% url "core:series_results" grade_id=s.grade_id pk=s.pk %}" class="button is-small is-success is-light is-outlined is-fullwidth" style="margin-bottom: 0;">
+                                                            <i class="fas fa-trophy pr-1"></i> {{ s.series }}. série
+                                                        </a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% for s in grade.series.all %}
+                                        {% with s.attachments.all as attachments %}
+                                            {% if attachments|length > 0 %}
+                                                <div class="column is-12 pt-2 pb-1">
+                                                    <p class="is-size-7 has-text-weight-bold has-text-grey mb-1">Přílohy {{ s }}:</p>
+                                                    <div class="buttons are-small">
+                                                        {% for a in attachments %}
+                                                            <a href="{{ a.file.url }}" class="button is-small is-light" target="_blank" rel="noopener">
+                                                                <i class="fas fa-paperclip pr-1"></i> {{ a }}
+                                                            </a>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endfor %}
+
+                                    {% with grade.attachments.all as grade_attachments %}
+                                        {% if grade_attachments|length > 0 %}
+                                            <div class="column is-12 pt-2 pb-1">
+                                                <p class="is-size-7 has-text-weight-bold has-text-grey mb-1">DOKUMENTY ROČNÍKU:</p>
+                                                <div class="buttons are-small">
+                                                    {% for a in grade_attachments %}
+                                                        <a href="{{ a.file.url }}" class="button is-small is-light" target="_blank" rel="noopener">
+                                                            <i class="fas fa-file-alt pr-1"></i> {{ a }}
+                                                        </a>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
-            {% endwith %}
-        {% endwith %}
-    </div>
+            </div>
+
+            {% include "includes/pagination.html" %}
+        </div>
+    {% endif %}
+
 {% else %}
     <article class="message is-warning is-size-5">
         <div class="message-body">
