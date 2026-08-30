@@ -1,11 +1,11 @@
 {% load webpack_static from webpack_loader %}
 {% load pages %}
 
-<nav class="navbar {% if request.path == "/" and not user.is_authenticated %}is-link{% else %}{% endif %}" role="navigation" aria-label="main navigation">
+<nav class="navbar {% if request.path == "/" %}is-link{% endif %}" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
             <a href="/" class="navbar-item">
-                {% if request.path == "/" and not user.is_authenticated %}
+                {% if request.path == "/" %}
                     <img src="{% webpack_static "img/brand/logo-round-inverted.svg" %}" alt="KSICHT" height="50" />
                 {% else %}
                     <img src="{% webpack_static "img/brand/logo-round.svg" %}" alt="KSICHT" height="50" />
@@ -27,48 +27,35 @@
                 {% url "core:event_listing" as event_listing_url %}
                 {% url "core:people" as people_url %}
 
-                {% if user.is_authenticated %}
-                <a class="navbar-item {% if request.get_full_path == home_url %}is-selected has-text-white{% endif %}" href="{{ home_url }}">
-                    Nástěnka
+                <a class="navbar-item {% if request.get_full_path == current_grade_url or request.get_full_path == grade_archive_url or '/aktualni-rocnik' in request.path or '/archiv-rocniku' in request.path %}is-selected{% endif %}" href="{{ current_grade_url }}">
+                    Ročníky
                 </a>
-                {% endif %}
-                <a class="navbar-item {% if request.get_full_path == current_grade_url %}is-selected has-text-white{% endif %}" href="{{ current_grade_url }}">
-                    Aktuální ročník
-                </a>
-                <a class="navbar-item {% if request.get_full_path == grade_archive_url %}is-selected has-text-white{% endif %}" href="{{ grade_archive_url }}">
-                    Minulé ročníky
-                </a>
-                <a class="navbar-item {% if request.get_full_path == event_listing_url %}is-selected has-text-white{% endif %}" href="{{ event_listing_url }}">
+
+                <a class="navbar-item {% if request.get_full_path == event_listing_url or '/akce' in request.path %}is-selected{% endif %}" href="{{ event_listing_url }}">
                     Akce
                 </a>
-                <a class="navbar-item {% if request.get_full_path == people_url %}is-selected has-text-white{% endif %}" href="{{ people_url }}">
-                    Lidé
+
+                <a class="navbar-item {% if '/navody' in request.path %}is-selected{% endif %}" href="/navody/">
+                    Návody
+                </a>
+
+                <a class="navbar-item {% if request.get_full_path == people_url or '/lide' in request.path %}is-selected{% endif %}" href="{{ people_url }}">
+                    Organizátoři
                 </a>
 
                 {% pages_by_prefix "/info/" as infopages %}
-                {% pages_by_prefix "/navody/" as guides %}
-
-                {% for infopage in infopages %}
-                    <a class="navbar-item {% if request.get_full_path == infopage.url %}is-selected has-text-white{% endif %}" href="{{ infopage.url }}">
-                        {{ infopage.title }}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link {% if '/info/' in request.path %}is-selected{% endif %}">
+                        O KSICHTu
                     </a>
-                {% endfor %}
-
-                {% if guides|length > 0%}
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">Návody</a>
-
-                        <div class="navbar-dropdown">
-                            {% for guide in guides %}
-                            {% comment %} Workaround: use navbar-item instead navbar-item {% endcomment %}
-                            {% comment %} @see: https://github.com/jgthms/bulma/issues/3009 {% endcomment %}
-                            <a href="{{ guide.url }}" class="navbar-item {% if request.get_full_path == guide.url %}is-selected has-text-white{% endif %}">
-                                {{ guide.title }}
-                            </a>
-                            {% endfor %}
-                        </div>
+                    <div class="navbar-dropdown">
+                        {% for infopage in infopages %}
+                        <a class="navbar-item {% if request.get_full_path == infopage.url %}is-selected{% endif %}" href="{{ infopage.url }}">
+                            {{ infopage.title }}
+                        </a>
+                        {% endfor %}
                     </div>
-                {% endif %}
+                </div>
 
             </div>
 
@@ -76,46 +63,56 @@
                 {% if user.is_authenticated %}
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
-                        <span class="icon"><i class="fas fa-user"></i></span>
-                        <span class="is-size-6 pl-2 has-text-weight-bold">{{ user.get_full_name }}</span>
+                        <span class="icon"><i class="fas fa-user-circle"></i></span>
+                        <span class="is-size-6 pl-2 has-text-weight-bold">{{ user.get_full_name|default:user.email }}</span>
                     </a>
                     <div class="navbar-dropdown is-right">
                         <div class="navbar-item is-flex-direction-column is-align-items-flex-start">
-                            <p>{{ user.get_full_name }}</p>
-                            <p class="has-text-grey">{{ user.email }}</p>
+                            <p class="has-text-weight-bold">{{ user.get_full_name }}</p>
+                            <p class="has-text-grey is-size-7">{{ user.email }}</p>
                         </div>
                         <hr class="navbar-divider" />
-                        <a href="{% url "edit_profile" %}" class="navbar-item">Můj profil</a>
-                        <a href="{% url "core:my_submissions" %}" class="navbar-item">Moje řešení</a>
-                        <a href="{% url "password_change" %}" class="navbar-item">Změnit heslo</a>
+                        <a href="{% url "edit_profile" %}" class="navbar-item">
+                            <i class="fas fa-id-card pr-2 has-text-link"></i> Profil
+                        </a>
+                        {% if user.is_participant %}
+                            <a href="{% url "core:my_submissions" %}" class="navbar-item">
+                                <i class="fas fa-tasks pr-2 has-text-link"></i> Moje řešení
+                            </a>
+                            <a href="{% url "core:my_events" %}" class="navbar-item">
+                                <i class="fas fa-calendar-check pr-2 has-text-link"></i> Moje akce
+                            </a>
+                        {% endif %}
                         {% if user.is_staff %}
                             <hr class="navbar-divider">
-                            <a href="{% url "admin:index" %}" class="navbar-item">Vstup do administrace</a>
+                            <a href="{% url "core:organizers" %}" class="navbar-item has-text-weight-semibold">
+                                <i class="fas fa-tools pr-2 has-text-warning"></i> Organizátorská sekce
+                            </a>
+                            <a href="{% url "admin:index" %}" class="navbar-item">
+                                <i class="fas fa-cog pr-2 has-text-grey"></i> Administrace
+                            </a>
                         {% endif %}
                         <hr class="navbar-divider" />
                         <div class="navbar-item">
                             <form method="post" action="{% url "logout" %}" class="is-flex is-flex-grow-1">
                                 {% csrf_token %}
-                                <button class="button is-danger is-small is-fullwidth"><strong>Odhlásit se</strong></button>
+                                <button class="button is-danger is-outlined is-small is-fullwidth"><strong>Odhlásit se</strong></button>
                             </form>
                         </div>
                     </div>
                 </div>
-                {% endif %}
+                {% else %}
                 <div class="navbar-item">
                     <div class="buttons">
-                        {% if user.is_authenticated %}
-
-                        {% else %}
                         <a class="button is-primary" href="{% url "django_registration_register" %}">
                             <strong>Registrace</strong>
                         </a>
                         <a class="button is-light" href="{% url "login" %}">
                             Přihlášení
                         </a>
-                        {% endif %}
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
