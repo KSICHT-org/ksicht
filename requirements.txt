@@ -97,7 +97,7 @@ reportlab==4.4.10
     # via -r requirements.in
 sentry-sdk==2.53.0
     # via -r requirements.in
-sqlparse==0.5.5
+sqlparse==0.6.0
     # via django
 typing-extensions==4.15.0
     # via pydash
