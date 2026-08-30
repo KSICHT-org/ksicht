@@ -1,19 +1,6 @@
 {% extends "page.html" %}
 {% load markdown_deux_tags %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li><a href="{% url "core:event_listing" %}">Akce</a></li>
-            <li><a href="{{ object.get_absolute_url }}" aria-current="page">{{ object }}</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Přihláška</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}{{ object }} - přihláška{% endblock %}
 
 {% block article %}

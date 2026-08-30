@@ -1,0 +1,83 @@
+{% extends "page.html" %}
+
+{% block headline %}Moje akce{% endblock %}
+
+{% block article %}
+<div class="columns is-desktop">
+    <div class="column is-4-desktop is-12-tablet mb-5">
+        {% include "includes/user_hub_sidebar.html" %}
+    </div>
+
+    <div class="column is-8-desktop is-12-tablet">
+        <div class="mb-5">
+            <h3 class="title is-4 mb-3"><i class="fas fa-calendar-check has-text-link pr-2"></i> Nadcházející akce</h3>
+            {% if upcoming_events %}
+                <div class="columns is-multiline">
+                    {% for event in upcoming_events %}
+                        <div class="column is-6-tablet is-12-mobile mb-3">
+                            <div class="card h-100 p-4" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                                <span class="tag is-success is-light is-rounded has-text-weight-bold mb-2">
+                                    <i class="fas fa-check pr-1"></i> Přihlášen(a)
+                                </span>
+                                <h4 class="title is-5 mb-2">
+                                    <a href="{{ event.get_absolute_url }}">{{ event }}</a>
+                                </h4>
+                                <p class="is-size-6 has-text-grey mb-1">
+                                    <i class="fas fa-clock pr-1 has-text-link"></i> {{ event.start_date|date:"d.m.Y" }} – {{ event.end_date|date:"d.m.Y" }}
+                                </p>
+                                {% if event.place %}
+                                    <p class="is-size-6 has-text-grey mb-3">
+                                        <i class="fas fa-map-marker-alt pr-1 has-text-danger"></i> {{ event.place }}
+                                    </p>
+                                {% endif %}
+                                <a href="{{ event.get_absolute_url }}" class="button is-small is-link is-outlined">
+                                    Detail akce
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="notification is-light p-4 mb-5" style="border-radius: 0.5rem;">
+                    <p class="has-text-grey is-size-6">Momentálně nejsi přihlášen(a) na žádnou nadcházející akci.</p>
+                    <a href="{% url 'core:event_listing' %}" class="button is-small is-link is-light mt-2">
+                        <i class="fas fa-calendar-alt pr-1"></i> Prohlédnout vypsané akce
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <h3 class="title is-4 mb-3"><i class="fas fa-history has-text-grey pr-2"></i> Absolvované akce</h3>
+            {% if past_events %}
+                <div class="columns is-multiline">
+                    {% for event in past_events %}
+                        <div class="column is-6-tablet is-12-mobile mb-3">
+                            <div class="card h-100 p-4" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.06);">
+                                <h4 class="title is-5 mb-2">
+                                    <a href="{{ event.get_absolute_url }}">{{ event }}</a>
+                                </h4>
+                                <p class="is-size-6 has-text-grey mb-1">
+                                    <i class="fas fa-calendar-alt pr-1"></i> {{ event.start_date|date:"d.m.Y" }} – {{ event.end_date|date:"d.m.Y" }}
+                                </p>
+                                {% if event.place %}
+                                    <p class="is-size-6 has-text-grey mb-3">
+                                        <i class="fas fa-map-marker-alt pr-1"></i> {{ event.place }}
+                                    </p>
+                                {% endif %}
+                                <a href="{{ event.get_absolute_url }}" class="button is-small is-light">
+                                    Zobrazit informace
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="notification is-light p-4" style="border-radius: 0.5rem;">
+                    <p class="has-text-grey is-size-6">Zatím jsi se nezúčastnil(a) žádných minulých akcí.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

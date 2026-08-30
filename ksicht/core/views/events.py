@@ -1,20 +1,37 @@
 from collections import defaultdict
 import csv
+from datetime import date
 from urllib.parse import quote
-
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import Http404, HttpResponse
 from django.utils import formats
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.detail import BaseDetailView
 
+from .decorators import is_participant
 from .. import models
 
 
 def is_enlisted(user, event):
     return user.is_authenticated and user in event.attendees.all()
+
+
+@method_decorator([login_required, is_participant], name="dispatch")
+class MyEventsView(ListView):
+    template_name = "core/my_events.html"
+
+    def get_queryset(self):
+        return models.Event.objects.filter(attendees=self.request.user).order_by("-start_date")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = date.today()
+        all_events = list(context["object_list"])
+        context["upcoming_events"] = [e for e in all_events if e.end_date >= today]
+        context["past_events"] = [e for e in all_events if e.end_date < today]
+        return context
 
 
 class EventListView(ListView):
