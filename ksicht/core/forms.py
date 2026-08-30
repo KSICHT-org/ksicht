@@ -56,7 +56,7 @@ class SolutionSubmitForm(forms.Form):
             return file
 
         self.fields[f"file_{task.pk}"] = FileField(
-            label="Vyber soubor s řešením (PDF)",
+            label="Vyber soubor s řešením",
             required=True,
             allow_empty_file=False,
         )
