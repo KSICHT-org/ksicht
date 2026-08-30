@@ -1,11 +1,15 @@
 import os
-
 from django import template
-
 
 register = template.Library()
 
 
 @register.filter
 def filename(value):
-    return os.path.basename(value.name)
+    if not value:
+        return ""
+    if isinstance(value, str):
+        return os.path.basename(value)
+    if hasattr(value, "name"):
+        return os.path.basename(value.name)
+    return str(value)

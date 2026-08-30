@@ -1,0 +1,12 @@
+.button {
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    transform: none !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+        transform: none !important;
+    }
+}
