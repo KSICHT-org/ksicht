@@ -1,58 +1,68 @@
 {% extends "page.html" %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Ročník {{ object }}</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}Ročník {{ object }}{% endblock %}
 
 {% block article %}
-    <nav class="columns is-mobile is-multiline">
-        <div class="column is-6-mobile is-3-tablet">
-            <div>
-                <p class="subsubtitle">Začíná</p>
+    <div class="box p-5 mb-5 has-background-white-bis">
+        <div class="columns is-mobile is-multiline is-vcentered">
+            <div class="column is-6-mobile is-3-tablet">
+                <p class="subsubtitle">Začátek</p>
                 <p class="title is-5"><i class="fas fa-calendar-alt pr-1"></i> {{ object.start_date | date }}</p>
             </div>
-        </div>
-        <div class="column is-6-mobile is-3-tablet">
-            <div>
-                <p class="subsubtitle">Končí</p>
+            <div class="column is-6-mobile is-3-tablet">
+                <p class="subsubtitle">Konec</p>
                 <p class="title is-5"><i class="fas fa-calendar-alt pr-1"></i> {{ object.end_date | date }}</p>
             </div>
-        </div>
-        <div class="column is-12-mobile is-3-tablet">
-            <div>
+            <div class="column is-12-mobile is-3-tablet">
                 <p class="subsubtitle">Řešitelé</p>
-                <p class="title is-5">
-                    <i class="fas fa-user-friends pr-1"></i> Celkem {{ object.applications.count }}
-                </p>
+                <p class="title is-5"><i class="fas fa-user-friends pr-1"></i> {{ object.applications.count }} přihlášených</p>
             </div>
-        </div>
-        <div class="column is-12-mobile is-3-tablet">
-            <div>
-                <p class="subsubtitle">Přehledy a akce</p>
+            <div class="column is-12-mobile is-3-tablet">
+                <p class="subsubtitle">Hromadné akce</p>
                 {% include "core/includes/admin_grade_actions.html" with object=object %}
             </div>
         </div>
-    </nav>
+    </div>
 
-    <div class="columns is-desktop mt-6">
-        {% for series in object.series.all %}
-            <div class="column is-one-fourth">
-                <div class="card">
-                    <div class="card-content">
-                        <h2 class="title is-6 is-uppercase has-text-weight-bold"><a href="{% url "core:series_detail" grade_id=object.pk pk=series.pk %}">{{ series }}</a></h2>
-                        <p class="subtitle is-6 has-text-grey">odevzdání do {{ series.submission_deadline | date:"SHORT_DATETIME_FORMAT" }}</p>
-                    </div>
+    <h3 class="title is-4 mt-6 mb-4"><i class="fas fa-tasks has-text-link pr-2"></i> Série a opravování úloh</h3>
+
+    {% for series in object.series.all %}
+        <div class="card mb-5" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08);">
+            <div class="card-header p-4 is-flex is-justify-content-between is-align-items-center" style="background: #f9fbfd;">
+                <div>
+                    <span class="title is-5 mr-3">{{ series }}</span>
+                    <span class="tag is-light is-rounded">Deadline: {{ series.submission_deadline | date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="buttons are-small mb-0">
+                    <a href="{% url "core:series_submission_overview" grade_id=object.pk series_id=series.pk %}" class="button is-link is-light">
+                        <i class="fas fa-inbox pr-1"></i> Odevzdaná řešení
+                    </a>
+                    <a href="{% url "core:series_sticker_assignment_overview" grade_id=object.pk pk=series.pk %}" class="button is-warning is-light">
+                        <i class="fas fa-award pr-1"></i> Nálepky
+                    </a>
+                    {% if series.results_published %}
+                        <a href="{% url "core:series_results" grade_id=object.pk pk=series.pk %}" class="button is-success is-light">
+                            <i class="fas fa-trophy pr-1"></i> Výsledky
+                        </a>
+                    {% endif %}
                 </div>
             </div>
-        {% endfor %}
-    </div>
+
+            <div class="card-content p-4">
+                {% with series.tasks_with_submission_count as tasks %}
+                    {% if tasks|length > 0 %}
+                        <div class="columns is-multiline">
+                            {% for task in tasks %}
+                                <div class="column is-4-desktop is-6-tablet">
+                                    {% include "core/includes/admin_task_card.html" with object=task %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="has-text-grey is-size-6">Žádné úlohy nebyly prozatím vypsány.</p>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}

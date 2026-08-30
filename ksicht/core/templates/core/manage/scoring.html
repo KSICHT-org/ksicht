@@ -5,19 +5,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
 {% endblock %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li><a href="{% url "core:grade_detail" pk=task.series.grade_id %}">Ročník {{ task.series.grade }}</a></li>
-            <li><a href="{% url "core:series_detail" grade_id=task.series.grade_id pk=task.series_id %}">{{ task.series }}</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Bodování úlohy {{ task }}</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}Bodování úlohy „{{ task }}“{% endblock %}
 {% block header_sub %}
 <h3 class="subtitle">ze {{ task.series }} ročníku {{ task.series.grade }}, maximální skóre: <strong>{{ task.points }} bodů</strong></h3>

@@ -1,18 +1,5 @@
 {% extends "page.html" %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li><a href="{% url "core:grade_detail" pk=grade.pk %}">Ročník {{ grade }}</a></li>
-            <li><a href="{% url "core:series_detail" grade_id=grade.pk pk=series.pk %}">{{ series }}</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Přehled odevzdaných řešení</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}Přehled odevzdaných řešení{% endblock %}
 {% block header_sub %}<h3 class="subtitle">{{ series}} ročníku {{ grade }}</h3>{% endblock %}
 

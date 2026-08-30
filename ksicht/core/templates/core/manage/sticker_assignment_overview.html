@@ -1,24 +1,11 @@
 {% extends "page.html" %}
 {% load stickers %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li><a href="{% url "core:grade_detail" pk=object.grade_id %}">Ročník {{ object.grade }}</a></li>
-            <li><a href="{% url "core:series_detail" grade_id=object.grade_id pk=object.id %}">{{ object }}</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Přehled přiřazených nálepek</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}Přehled přiřazených nálepek{% endblock %}
 {% block header_sub %}<h3 class="subtitle">pro ročník {{ object.grade }}</h3>{% endblock %}
 
 {% block article %}
-    <div class="mb-5 is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center gap-2">
+    <div class="mb-5 is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center is-gap-2">
         <p class="is-size-7 has-text-grey">
             <span class="tag is-dark is-small"><b>X</b></span> automaticky přiřazená &emsp;
             <span class="tag is-link is-small"><b>X</b></span> ručně přiřazená &emsp;
