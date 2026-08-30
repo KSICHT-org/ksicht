@@ -386,3 +386,53 @@ class TeamMemberAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.TeamMember, TeamMemberAdmin)
+
+
+@admin.register(models.Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = (
+        "__str__",
+        "style",
+        "is_active",
+        "only_authenticated",
+        "valid_from",
+        "valid_to",
+        "dismissible",
+        "created_at",
+    )
+    list_filter = ("is_active", "only_authenticated", "style", "dismissible")
+    search_fields = ("message", "link_text", "link_url")
+    readonly_fields = ("created_at", "updated_at")
+    formfield_overrides = {
+        TextField: {"widget": AdminMarkdownxWidget},
+    }
+    fieldsets = (
+        (
+            "Zpráva a styl",
+            {
+                "fields": ("message", "style", "is_active", "only_authenticated"),
+            },
+        ),
+        (
+            "Časové omezení (volitelné)",
+            {
+                "fields": ("valid_from", "valid_to"),
+                "classes": ("collapse",),
+                "description": "Pokud necháte prázdné, banner se zobrazuje neustále dokud je aktivní.",
+            },
+        ),
+        (
+            "Odkaz a chování",
+            {
+                "fields": ("link_url", "link_text", "dismissible"),
+            },
+        ),
+        (
+            "Systémové informace",
+            {
+                "fields": ("created_at", "updated_at"),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
