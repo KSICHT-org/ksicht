@@ -829,23 +829,29 @@ def test_random_2_percent(context, result):
 @pytest.mark.parametrize(
     "context, result",
     (
+        # p1 submitted digitally within 30 minutes of deadline → eligible
         (
             {
+                "participant": p1,
                 "current": {
                     "series": s1,
-                    "participant": {
-                        "submissions": {
-                            "by_series": {
-                                s1: (
-                                    models.TaskSolutionSubmission(
-                                        submitted_at=datetime(2019, 12, 10),
-                                        file="foo.pdf",
-                                    ),
-                                    models.TaskSolutionSubmission(
-                                        submitted_at=datetime(2019, 12, 31, 23),
-                                        file="foo.pdf",
-                                    ),
-                                ),
+                    "grade": {
+                        "by_participant": {
+                            p1: {
+                                "submissions": {
+                                    "by_series": {
+                                        s1: (
+                                            models.TaskSolutionSubmission(
+                                                submitted_at=datetime(2019, 12, 10),
+                                                file="foo.pdf",
+                                            ),
+                                            models.TaskSolutionSubmission(
+                                                submitted_at=datetime(2019, 12, 31, 23, 45),
+                                                file="foo.pdf",
+                                            ),
+                                        ),
+                                    },
+                                },
                             },
                         },
                     },
@@ -853,45 +859,96 @@ def test_random_2_percent(context, result):
             },
             True,
         ),
+        # p1 submitted but file=None → not eligible
         (
             {
+                "participant": p1,
                 "current": {
                     "series": s1,
-                    "participant": {
-                        "submissions": {
-                            "by_series": {
-                                s1: (
-                                    models.TaskSolutionSubmission(
-                                        submitted_at=datetime(2019, 12, 10),
-                                        file=None,
-                                    ),
-                                    models.TaskSolutionSubmission(
-                                        submitted_at=datetime(2019, 12, 31, 23),
-                                        file=None,
-                                    ),
-                                ),
-                            }
+                    "grade": {
+                        "by_participant": {
+                            p1: {
+                                "submissions": {
+                                    "by_series": {
+                                        s1: (
+                                            models.TaskSolutionSubmission(
+                                                submitted_at=datetime(2019, 12, 31, 23, 45),
+                                                file=None,
+                                            ),
+                                        ),
+                                    },
+                                },
+                            },
                         },
                     },
                 },
             },
             False,
         ),
+        # p1 submitted more than 30 min before deadline → not eligible
         (
             {
+                "participant": p1,
                 "current": {
                     "series": s1,
-                    "participant": {
-                        "submissions": {
-                            "by_series": {
-                                s1: (
-                                    models.TaskSolutionSubmission(
-                                        submitted_at=datetime(2019, 12, 10)
-                                    ),
-                                    models.TaskSolutionSubmission(
-                                        submitted_at=datetime(2019, 12, 31, 19, 59)
-                                    ),
-                                ),
+                    "grade": {
+                        "by_participant": {
+                            p1: {
+                                "submissions": {
+                                    "by_series": {
+                                        s1: (
+                                            models.TaskSolutionSubmission(
+                                                submitted_at=datetime(2019, 12, 31, 19, 59),
+                                                file="foo.pdf",
+                                            ),
+                                        ),
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            False,
+        ),
+        # p1 is NOT among top 10 latest (11 other participants submitted later)
+        (
+            {
+                "participant": p1,
+                "current": {
+                    "series": s1,
+                    "grade": {
+                        "by_participant": {
+                            **{
+                                models.Participant(user_id=str(i)): {
+                                    "submissions": {
+                                        "by_series": {
+                                            s1: (
+                                                models.TaskSolutionSubmission(
+                                                    submitted_at=datetime(
+                                                        2019, 12, 31, 23, 50
+                                                    ),
+                                                    file="bar.pdf",
+                                                ),
+                                            ),
+                                        },
+                                    },
+                                }
+                                for i in range(100, 111)
+                            },
+                            p1: {
+                                "submissions": {
+                                    "by_series": {
+                                        s1: (
+                                            models.TaskSolutionSubmission(
+                                                submitted_at=datetime(
+                                                    2019, 12, 31, 23, 35
+                                                ),
+                                                file="foo.pdf",
+                                            ),
+                                        ),
+                                    },
+                                },
                             },
                         },
                     },
