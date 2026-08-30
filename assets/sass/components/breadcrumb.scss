@@ -1,4 +1,18 @@
+@use "bulma/sass/utilities/mixins";
+
 .breadcrumb {
     padding-top: 1rem;
     padding-bottom: 0;
+    max-width: 100%;
+
+    .container {
+        min-width: 0;
+        max-width: 100%;
+
+        @include mixins.mobile {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+    }
 }
+

@@ -78,6 +78,7 @@ class GradeSeriesAdmin(admin.ModelAdmin):
     list_display = ("grade", "series", "submission_deadline")
     list_filter = ("grade",)
     list_select_related = ("grade",)
+    search_fields = ("grade__school_year", "series")
     inlines = (GradeSeriesAttachmentInline, TaskInline)
     ordering = ("grade", "-submission_deadline")
 
@@ -181,6 +182,8 @@ class SolutionSubmissionAdmin(admin.ModelAdmin):
     search_fields = (
         "application__participant__user__last_name",
         "application__participant__user__first_name",
+        "task__title",
+        "task__nr",
     )
 
     def user(self, obj: models.TaskSolutionSubmission):
@@ -202,7 +205,94 @@ class SolutionSubmissionAdmin(admin.ModelAdmin):
 @admin.register(models.Sticker)
 class StickerAdmin(admin.ModelAdmin):
     search_fields = ("nr", "title")
-    list_display = ("nr", "title", "handpicked")
+    list_display = ("nr", "title", "handpicked", "assignment_limit")
+    list_filter = ("handpicked", "assignment_limit")
+
+
+@admin.register(models.StickerAssignment)
+class StickerAssignmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "participant_name",
+        "sticker",
+        "series_display",
+        "awarded_for_submission",
+        "event_display",
+        "awarded_at",
+        "assigned_after_publication",
+    )
+    list_filter = (
+        "sticker",
+        "ignore_limit",
+        "assigned_after_publication",
+        "awarded_in_series__grade",
+    )
+    list_select_related = (
+        "participant__user",
+        "sticker",
+        "awarded_in_series__grade",
+        "awarded_for_submission__task__series",
+        "awarded_for_event",
+    )
+    search_fields = (
+        "participant__user__last_name",
+        "participant__user__first_name",
+        "participant__user__email",
+        "sticker__title",
+    )
+    autocomplete_fields = ("participant", "sticker", "awarded_for_submission")
+    readonly_fields = ("awarded_at",)
+    ordering = ("-awarded_at",)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == "awarded_in_series":
+            field.label_from_instance = lambda obj: f"{obj.grade} – {obj.get_series_display()} série"
+        elif db_field.name == "awarded_for_event":
+            field.label_from_instance = lambda obj: f"{obj.title} ({obj.start_date.year})"
+        return field
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        original_clean = form.clean
+
+        def clean(self_form):
+            cleaned_data = original_clean(self_form) if callable(original_clean) else self_form.cleaned_data
+            sources = [
+                cleaned_data.get("awarded_in_series"),
+                cleaned_data.get("awarded_for_submission"),
+                cleaned_data.get("awarded_for_event"),
+            ]
+            filled = sum(1 for s in sources if s)
+            if filled > 1:
+                raise forms.ValidationError(
+                    "Vyberte nejvýše jeden zdroj přiřazení (série, řešení nebo akce)."
+                )
+            return cleaned_data
+
+        form.clean = clean
+        return form
+
+    def participant_name(self, obj):
+        return obj.participant.get_full_name()
+
+    participant_name.short_description = "Řešitel"
+    participant_name.admin_order_field = "participant__user__last_name"
+
+    def series_display(self, obj):
+        if obj.awarded_in_series:
+            return f"{obj.awarded_in_series.grade} – {obj.awarded_in_series.get_series_display()} série"
+        return "-"
+
+    series_display.short_description = "Série"
+    series_display.admin_order_field = "awarded_in_series"
+
+    def event_display(self, obj):
+        if obj.awarded_for_event:
+            return f"{obj.awarded_for_event.title} ({obj.awarded_for_event.start_date.year})"
+        return "-"
+
+    event_display.short_description = "Akce"
+    event_display.admin_order_field = "awarded_for_event"
 
 
 class EventAttendeeInline(admin.TabularInline):

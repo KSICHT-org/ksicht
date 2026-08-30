@@ -86,6 +86,7 @@
                         </div>
                         <hr class="navbar-divider" />
                         <a href="{% url "edit_profile" %}" class="navbar-item">Můj profil</a>
+                        <a href="{% url "core:my_submissions" %}" class="navbar-item">Moje řešení</a>
                         <a href="{% url "password_change" %}" class="navbar-item">Změnit heslo</a>
                         {% if user.is_staff %}
                             <hr class="navbar-divider">

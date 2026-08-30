@@ -1,11 +1,12 @@
-.tag-list{
+.tag-list {
     display: flex;
-    margin-left: -0.5rem;
-    margin-bottom: -0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
 
     .tags {
-        margin-bottom: 0.5rem;
-        margin-left: 0.5rem;
+        margin-bottom: 0;
     }
 
     .tag {

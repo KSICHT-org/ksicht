@@ -104,7 +104,24 @@ class SubmissionOverviewFormSet(forms.BaseFormSet):
 
 
 class ScoringForm(forms.ModelForm):
+    stickers = forms.TypedMultipleChoiceField(
+        coerce=int,
+        widget=Select2MultipleWidget({"data-width": "100%"}),
+        required=False,
+    )
+
     def __init__(self, *args, max_score, sticker_choices, **kwargs):
+        instance = kwargs.get("instance")
+        if instance and instance.pk:
+            initial = kwargs.setdefault("initial", {})
+            try:
+                # Use prefetched objects to avoid N+1 queries during template rendering
+                initial["stickers"] = [sa.sticker_id for sa in instance.stickerassignment_set.all()]
+            except AttributeError:
+                initial["stickers"] = list(models.StickerAssignment.objects.filter(
+                    awarded_for_submission=instance
+                ).values_list("sticker_id", flat=True))
+
         super().__init__(*args, **kwargs)
 
         self.sticker_choices = sticker_choices
@@ -118,14 +135,58 @@ class ScoringForm(forms.ModelForm):
             required=False,
         )
 
-        self.fields["stickers"] = forms.ModelMultipleChoiceField(
-            queryset=models.Sticker.objects.filter(handpicked=True).order_by("nr"),
-            widget=Select2MultipleWidget({"data-width": "100%"}),
-            required=False,
-        )
+        # Set the choices explicitly so TypedMultipleChoiceField can validate them without hitting the DB
+        self.fields["stickers"].choices = [(s.pk, str(s)) for s in sticker_choices]
+
+    def clean_stickers(self):
+        # The base field already validates that the input IDs exist in self.fields["stickers"].choices
+        # We just need to map them back to model instances for save_m2m compatibility
+        selected_pks = self.cleaned_data.get("stickers", [])
+        if not selected_pks:
+            return []
+            
+        valid_stickers = []
+        for pk_val in selected_pks:
+            for s in self.sticker_choices:
+                if s.pk == pk_val:
+                    valid_stickers.append(s)
+                    break
+                    
+        return valid_stickers
 
     def save(self, commit=True):
-        self.instance.stickers.set(
-            self.sticker_choices.filter(pk__in=self.cleaned_data.get("stickers", []))
-        )
-        return super().save(commit)
+        instance = super().save(commit)
+        if commit:
+            self.save_stickers(instance)
+            
+        return instance
+        
+    def _save_m2m(self):
+        super()._save_m2m()
+        self.save_stickers(self.instance)
+        
+    def save_stickers(self, instance):
+        if not instance or not instance.pk:
+            return
+            
+        selected_stickers = self.cleaned_data.get("stickers", [])
+        
+        # Delete old assignments
+        models.StickerAssignment.objects.filter(
+            awarded_for_submission=instance
+        ).exclude(sticker__in=selected_stickers).delete()
+        
+        # Determine series context from submission
+        series = instance.task.series
+        
+        # Create new assignments
+        for sticker in selected_stickers:
+            models.StickerAssignment.objects.get_or_create(
+                participant_id=instance.application.participant_id,
+                sticker=sticker,
+                awarded_for_submission=instance,
+                defaults={
+                    "awarded_in_series": series,
+                    "assigned_after_publication": series.results_published,
+                }
+            )

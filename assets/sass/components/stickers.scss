@@ -1,14 +1,75 @@
+@use "bulma/sass/utilities/mixins";
+
 .table.sticker-table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+
     td {
         vertical-align: middle;
+        padding-top: 0.35em;
+        padding-bottom: 0.35em;
     }
 
     td:first-child {
-        white-space: nowrap;
+        width: 200px;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     td:last-child {
-        width: 100%;
+        width: auto;
+        min-width: 0;
     }
 
+    .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+        margin: 0;
+        width: 100%;
+        min-width: 0;
+
+        .tags {
+            margin-bottom: 0;
+            max-width: 100%;
+        }
+
+        .tag {
+            white-space: normal;
+            height: auto;
+            min-height: 2em;
+            padding-top: 0.2em;
+            padding-bottom: 0.2em;
+            line-height: 1.25;
+            max-width: 100%;
+            text-align: left;
+        }
+    }
+
+    @include mixins.mobile {
+        td {
+            padding-left: 0.35rem;
+            padding-right: 0.35rem;
+        }
+
+        td:first-child {
+            width: 35%;
+            font-size: 0.95rem;
+        }
+    }
+}
+
+.sticker-outline-dark {
+    background-color: transparent !important;
+    border: 2px solid #363636;
+    color: #363636 !important;
+}
+
+.sticker-outline-link {
+    background-color: transparent !important;
+    border: 2px solid #485fc7;
+    color: #485fc7 !important;
 }
