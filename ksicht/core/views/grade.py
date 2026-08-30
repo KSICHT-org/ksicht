@@ -4,6 +4,7 @@ from urllib.parse import quote
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
@@ -14,14 +15,11 @@ import pydash as py_
 from .. import forms, models
 from .decorators import current_grade_exists, is_participant
 
-
 __all__ = (
     "CurrentGradeView",
     "CurrentGradeApplicationView",
     "GradeResultsExportView",
 )
-
-from ..models import Participant
 
 
 @method_decorator(current_grade_exists, name="dispatch")
@@ -48,12 +46,25 @@ class CurrentGradeView(DetailView):
         data["is_graduate"] = (
             hasattr(self.request.user, "participant_profile")
             and self.request.user.participant_profile.school_year
-            is Participant.GRADE_CHOICES[0][0]
+            == models.Participant.GRADE_CHOICES[0][0]
         )
 
         data["application_form"] = forms.CurrentGradeAppliationForm(
             has_birth_date=data["has_birth_date"], is_graduate=data["is_graduate"]
         )
+
+        archive_qs = models.Grade.objects.archive().prefetch_related(
+            "series__attachments", "series__tasks"
+        )
+        paginator = Paginator(archive_qs, 6)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        data["paginator"] = paginator
+        data["page_obj"] = page_obj
+        data["is_paginated"] = page_obj.has_other_pages()
+        data["archive_grades"] = page_obj.object_list
+        data["hashtag"] = "#archiv"
         return data
 
 
@@ -77,8 +88,16 @@ class CurrentGradeApplicationView(BaseFormView):
         if not grade:
             return self.form_invalid()
 
+        is_graduate = (
+            hasattr(user, "participant_profile")
+            and user.participant_profile.school_year
+            == models.Participant.GRADE_CHOICES[0][0]
+        )
+
         can_apply = (
-            user.is_participant and not grade.participants.filter(user=user).exists()
+            user.is_participant
+            and not grade.participants.filter(user=user).exists()
+            and not is_graduate
         )
 
         if can_apply:
@@ -171,14 +190,33 @@ class GradeResultsExportView(BaseDetailView):
             )
         ]
 
+        def _format_school(participant):
+            if not participant:
+                return "-"
+            if participant.school == "--jiná--":
+                if participant.school_alt_city and participant.school_alt_name:
+                    return (
+                        f"{participant.school_alt_city} | {participant.school_alt_name}"
+                    )
+                return (
+                    participant.school_alt_name
+                    or participant.get_school_display()
+                    or "-"
+                )
+            return participant.get_school_display() or "-"
+
         for application, rank, task_scores, total_score in sorted_scoring:
             writer.writerow(
                 [
                     f"{rank}.",
                     application.participant.user.first_name,
                     application.participant.user.last_name,
-                    f"{application.participant_current_grade}.",
-                    application.participant.school,
+                    (
+                        f"{application.participant_current_grade}."
+                        if application.participant_current_grade
+                        else "-"
+                    ),
+                    _format_school(application.participant),
                 ]
                 + [task_scores[t] or "-" for t in all_tasks]
                 + [total_score]
