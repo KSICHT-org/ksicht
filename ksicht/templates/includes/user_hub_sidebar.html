@@ -1,0 +1,58 @@
+<div class="card" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); position: sticky; top: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+    <div class="card-header p-4 has-background-white-bis is-flex is-align-items-center">
+        <span class="icon is-medium mr-3 has-text-link"><i class="fas fa-user-circle fa-2x"></i></span>
+        <div style="overflow: hidden;">
+            <p class="title is-6 mb-0 has-text-weight-bold" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                {{ user.get_full_name|default:user.email }}
+            </p>
+            <p class="is-size-7 has-text-grey mb-0" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                {{ user.email }}
+            </p>
+        </div>
+    </div>
+    <div class="card-content p-3">
+        <aside class="menu">
+            <p class="menu-label is-size-7 has-text-grey-darker mb-2">Můj účet</p>
+            <ul class="menu-list">
+                <li>
+                    <a href="{% url 'edit_profile' %}" class="{% if request.resolver_match.url_name == 'edit_profile' or request.path == '/ucty/profil/' %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                        <i class="fas fa-id-card pr-2"></i> Profil
+                    </a>
+                </li>
+                {% if user.is_participant %}
+                <li>
+                    <a href="{% url 'core:my_submissions' %}" class="{% if request.resolver_match.url_name == 'my_submissions' or '/moje-reseni' in request.path %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                        <i class="fas fa-tasks pr-2"></i> Moje řešení
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'core:my_events' %}" class="{% if request.resolver_match.url_name == 'my_events' or '/moje-akce' in request.path or '/ucty/akce' in request.path %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                        <i class="fas fa-calendar-check pr-2"></i> Moje akce
+                    </a>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'password_change' %}" class="{% if request.resolver_match.url_name == 'password_change' or '/zmena-hesla' in request.path %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                        <i class="fas fa-key pr-2"></i> Změna hesla
+                    </a>
+                </li>
+            </ul>
+
+            {% if user.is_staff %}
+                <p class="menu-label is-size-7 has-text-grey-darker mt-4 mb-2">Správa</p>
+                <ul class="menu-list">
+                    <li>
+                        <a href="{% url 'core:organizers' %}" class="{% if request.resolver_match.url_name == 'organizers' or '/organizatori' in request.path %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                            <i class="fas fa-tools pr-2"></i> Organizátorská sekce
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:index' %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                            <i class="fas fa-cog pr-2"></i> Administrace
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
+        </aside>
+    </div>
+</div>

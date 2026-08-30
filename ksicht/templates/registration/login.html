@@ -1,37 +1,17 @@
-{% extends "base.html" %}
+{% extends "focused.html" %}
 {% load crispy_forms_tags %}
 {% load webpack_static from webpack_loader %}
 
 {% block headline %}{% block page_title %}Přihlášení{% endblock %}{% endblock %}
 
-{% block body %}
-<section class="hero is-fullheight is-link">
-  <div class="hero-body">
-    <div class="container">
-      <div class="column is-4 is-offset-4">
-        <div class="level">
-          <div class="level-left">
-            <div class="level-item">
-              <p class="subtitle has-text-weight-bold">Přihlašení</p><br>
-            </div>
-          </div>
-          <div class="level-right">
-            <div class="level-item">
-              <img src="{% webpack_static "img/brand/logo-round-inverted.svg" %}" alt="KSICHT" width="30" />
-            </div>
-          </div>
-        </div>
-        <div class="box">
-          {% crispy form %}
-        </div>
-        <p class="has-text-centered">
-          <a href="{% url "django_registration_register" %}" class="has-text-white">Registrace</a> &nbsp;·&nbsp;
-          <a href="{% url "password_reset" %}" class="has-text-white">Zapomenuté heslo</a> &nbsp;·&nbsp;
-          <a href="{% url "core:home" %}" class="has-text-white">Úvod</a>
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
+{% block container %}
+<div class="box">
+  {% crispy form %}
+</div>
+<p class="has-text-centered mt-4">
+  <a href="{% url "django_registration_register" %}">Registrace</a> &nbsp;·&nbsp;
+  <a href="{% url "password_reset" %}">Zapomenuté heslo</a> &nbsp;·&nbsp;
+  <a href="{% url "core:home" %}">Úvod</a>
+</p>
 {% endblock %}
 

@@ -1,31 +1,38 @@
-{% extends "focused.html" %}
+{% extends "page.html" %}
 {% load crispy_forms_tags %}
 {% load webpack_static from webpack_loader %}
 
-{% block headline %}{% block page_title %}Můj profil{% endblock %}{% endblock %}
+{% block headline %}{% block page_title %}Profil{% endblock %}{% endblock %}
 
-{% block container %}
-    <article class="message is-info">
-        <div class="message-header">
-            <p>Upozornění</p>
-            <button class="delete" aria-label="delete"></button>
-        </div>
-        <div class="message-body">
-            Školní ročník se nově zvýší o jednu úroveň automaticky při zahájení dalšího ročníku KSICHTu.
-            Pokud dojde k situaci, kdy ročník zde v profilu neodpovídá realitě, pošli nám email na <a
-            href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
-        </div>
-    </article>
+{% block article %}
+<div class="columns is-desktop">
+    <div class="column is-4-desktop is-12-tablet mb-5">
+        {% include "includes/user_hub_sidebar.html" %}
+    </div>
 
-    {% if no_birth_date %}
-        <article class="message is-warning">
-            <div class="message-body">
-                Pro účast v KSICHTu je nově potřeba mít vyplněné datum narození.
+    <div class="column is-8-desktop is-12-tablet">
+        <article class="message is-info is-light mb-4">
+            <div class="message-body is-size-6">
+                <i class="fas fa-info-circle pr-1"></i>
+                Školní ročník se automaticky zvýší o jednu úroveň při zahájení dalšího ročníku KSICHTu.
+                Pokud ročník níže neodpovídá realitě, napiš nám na <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-bold">ksicht@natur.cuni.cz</a>.
             </div>
         </article>
-    {% endif %}
 
-    {% crispy form %}
+        {% if no_birth_date %}
+            <article class="message is-warning is-light mb-4">
+                <div class="message-body is-size-6">
+                    <i class="fas fa-exclamation-triangle pr-1"></i>
+                    Pro účast v KSICHTu je potřeba mít vyplněné datum narození.
+                </div>
+            </article>
+        {% endif %}
+
+        <div class="box p-5" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            {% crispy form %}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block after_body %}
