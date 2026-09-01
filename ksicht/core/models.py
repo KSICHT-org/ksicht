@@ -257,6 +257,8 @@ class GradeSeries(models.Model):
     def is_expected_publish_date_passed(self):
         if self.expected_publish_date:
             return self.expected_publish_date <= date.today()
+
+        # fallback for older series where expected_publish_date is not set
         return bool(self.task_file)
 
     @property
