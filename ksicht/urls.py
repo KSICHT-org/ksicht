@@ -55,9 +55,7 @@ urlpatterns = (
         path("ucet/odhlaseni/", auth_views.LogoutView.as_view(), name="logout"),
         path(
             "ucet/zmena-hesla/",
-            auth_views.PasswordChangeView.as_view(
-                form_class=forms.KsichtChangePasswordForm
-            ),
+            views.KsichtPasswordChangeView.as_view(),
             name="password_change",
         ),
         path(
