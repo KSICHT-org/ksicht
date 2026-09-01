@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path, re_path
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView, TemplateView
 from django_registration.backends.activation import views as reg_views
 
 from . import forms, views
@@ -121,6 +121,11 @@ urlpatterns = (
                 template_name="django_registration/registration_closed.html"
             ),
             name="django_registration_disallowed",
+        ),
+        path(
+            "ucty/registrace/",
+            RedirectView.as_view(url="/ucet/registrace/", permanent=True),
+            name="registration_legacy_redirect",
         ),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
