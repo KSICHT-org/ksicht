@@ -40,7 +40,7 @@ urlpatterns = (
             name="django.contrib.sitemaps.views.sitemap",
         ),
         path(
-            "ucty/prihlaseni/",
+            "ucet/prihlaseni/",
             auth_views.LoginView.as_view(
                 template_name="registration/login.html",
                 form_class=forms.KsichtAuthenticationForm,
@@ -48,49 +48,49 @@ urlpatterns = (
             name="login",
         ),
         path(
-            "ucty/profil/",
+            "ucet/profil/",
             views.UserProfileEditView.as_view(),
             name="edit_profile",
         ),
-        path("ucty/odhlaseni/", auth_views.LogoutView.as_view(), name="logout"),
+        path("ucet/odhlaseni/", auth_views.LogoutView.as_view(), name="logout"),
         path(
-            "ucty/zmena-hesla/",
+            "ucet/zmena-hesla/",
             auth_views.PasswordChangeView.as_view(
                 form_class=forms.KsichtChangePasswordForm
             ),
             name="password_change",
         ),
         path(
-            "ucty/zmena-hesla/hotovo/",
+            "ucet/zmena-hesla/hotovo/",
             auth_views.PasswordChangeDoneView.as_view(),
             name="password_change_done",
         ),
         path(
-            "ucty/zapomenute-heslo/",
+            "ucet/zapomenute-heslo/",
             auth_views.PasswordResetView.as_view(
                 form_class=forms.KsichtPasswordResetForm
             ),
             name="password_reset",
         ),
         path(
-            "ucty/zapomenute-heslo/hotovo/",
+            "ucet/zapomenute-heslo/hotovo/",
             auth_views.PasswordResetDoneView.as_view(),
             name="password_reset_done",
         ),
         path(
-            "ucty/zapomenute-heslo/overeni/<uidb64>/<token>/",
+            "ucet/zapomenute-heslo/overeni/<uidb64>/<token>/",
             auth_views.PasswordResetConfirmView.as_view(
                 form_class=forms.KsichtSetPasswordForm
             ),
             name="password_reset_confirm",
         ),
         path(
-            "ucty/zapomenute-heslo/dokonceno/",
+            "ucet/zapomenute-heslo/dokonceno/",
             auth_views.PasswordResetCompleteView.as_view(),
             name="password_reset_complete",
         ),
         path(
-            "ucty/aktivace/dokonceno/",
+            "ucet/aktivace/dokonceno/",
             TemplateView.as_view(
                 template_name="django_registration/activation_complete.html"
             ),
@@ -99,24 +99,24 @@ urlpatterns = (
         # The activation key can make use of any character from the
         # URL-safe base64 alphabet, plus the colon as a separator.
         re_path(
-            r"^ucty/aktivace/",
+            r"^ucet/aktivace/",
             views.KsichtActivationView.as_view(),
             name="django_registration_activate",
         ),
         path(
-            "ucty/registrace/",
+            "ucet/registrace/",
             reg_views.RegistrationView.as_view(form_class=forms.KsichtRegistrationForm),
             name="django_registration_register",
         ),
         path(
-            "ucty/registrace/dokonceno/",
+            "ucet/registrace/dokonceno/",
             TemplateView.as_view(
                 template_name="django_registration/registration_complete.html"
             ),
             name="django_registration_complete",
         ),
         path(
-            "ucty/registrace-uzavrena/",
+            "ucet/registrace-uzavrena/",
             TemplateView.as_view(
                 template_name="django_registration/registration_closed.html"
             ),

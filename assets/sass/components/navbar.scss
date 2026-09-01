@@ -5,15 +5,15 @@
 div.navbar-item,
 .navbar-item:has(> .buttons),
 .navbar-item:not(a):not(.navbar-link) {
-    background-color: transparent !important;
-    background: transparent !important;
-    box-shadow: none !important;
+    background-color: transparent;
+    background: transparent;
+    box-shadow: none;
 
     &:hover,
     &:focus {
-        background-color: transparent !important;
-        background: transparent !important;
-        box-shadow: none !important;
+        background-color: transparent;
+        background: transparent;
+        box-shadow: none;
     }
 }
 
@@ -22,30 +22,30 @@ div.navbar-item,
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 
     .navbar-burger {
-        color: #1e293b !important;
+        color: #1e293b;
         span {
-            background-color: #1e293b !important;
+            background-color: #1e293b;
         }
     }
 
     a.navbar-item,
     .navbar-link {
-        color: #1e293b !important;
-        background-color: transparent !important;
+        color: #1e293b;
+        background-color: transparent;
 
         &:hover {
-            color: var(--bulma-link) !important;
-            background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06) !important;
+            color: var(--bulma-link);
+            background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06);
         }
 
         &.is-selected {
-            background-color: transparent !important;
-            color: var(--bulma-link) !important;
+            background-color: transparent;
+            color: var(--bulma-link);
             font-weight: 600;
 
             &:hover {
-                background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06) !important;
-                color: var(--bulma-link) !important;
+                background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06);
+                color: var(--bulma-link);
             }
         }
     }
@@ -53,18 +53,18 @@ div.navbar-item,
     @media screen and (min-width: 1024px) {
         a.navbar-item.is-selected,
         .navbar-link.is-selected {
-            background-color: transparent !important;
-            color: var(--bulma-link) !important;
-            box-shadow: inset 0 -3px 0 var(--bulma-link) !important;
+            background-color: transparent;
+            color: var(--bulma-link);
+            box-shadow: inset 0 -3px 0 var(--bulma-link);
             font-weight: 600;
 
             &:hover {
-                background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06) !important;
+                background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06);
             }
         }
 
         .navbar-dropdown {
-            background-color: #ffffff !important;
+            background-color: #ffffff;
             border-radius: 0.5rem;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             border: 1px solid rgba(0, 0, 0, 0.08);
@@ -74,18 +74,18 @@ div.navbar-item,
             }
 
             a.navbar-item {
-                color: #2c3e50 !important;
-                background-color: transparent !important;
+                color: #2c3e50;
+                background-color: transparent;
 
                 &:hover {
-                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.08) !important;
-                    color: var(--bulma-link) !important;
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.08);
+                    color: var(--bulma-link);
                 }
 
                 &.is-selected {
-                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.12) !important;
-                    color: var(--bulma-link) !important;
-                    box-shadow: none !important;
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.12);
+                    color: var(--bulma-link);
+                    box-shadow: none;
                 }
             }
         }
@@ -99,27 +99,27 @@ div.navbar-item,
 
             a.navbar-item,
             .navbar-link {
-                color: #1e293b !important;
+                color: #1e293b;
                 border-radius: 0.5rem;
                 padding: 0.65rem 0.85rem;
                 margin-bottom: 0.2rem;
-                background-color: transparent !important;
+                background-color: transparent;
 
                 &:hover {
-                    background-color: #f1f5f9 !important;
-                    color: var(--bulma-link) !important;
+                    background-color: #f1f5f9;
+                    color: var(--bulma-link);
                 }
 
                 &.is-selected {
-                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.1) !important;
-                    color: var(--bulma-link) !important;
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.1);
+                    color: var(--bulma-link);
                     font-weight: 600;
-                    box-shadow: none !important;
+                    box-shadow: none;
                 }
             }
 
             .navbar-dropdown {
-                background-color: #f8fafc !important;
+                background-color: #f8fafc;
                 border-radius: 0.5rem;
                 border: 1px solid #e2e8f0;
                 padding: 0.5rem;
@@ -128,19 +128,19 @@ div.navbar-item,
 
                 .navbar-item {
                     color: #334155;
-                    background-color: transparent !important;
+                    background-color: transparent;
                     padding: 0.5rem 0.75rem;
 
                     &.is-selected {
-                        background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.15) !important;
-                        color: var(--bulma-link) !important;
-                        box-shadow: none !important;
+                        background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.15);
+                        color: var(--bulma-link);
+                        box-shadow: none;
                     }
                 }
 
                 a.navbar-item:hover {
-                    background-color: #e2e8f0 !important;
-                    color: var(--bulma-link) !important;
+                    background-color: #e2e8f0;
+                    color: var(--bulma-link);
                 }
             }
         }
@@ -152,40 +152,40 @@ div.navbar-item,
     background-color: transparent;
 
     .navbar-burger {
-        color: #ffffff !important;
+        color: #ffffff;
 
         span {
-            color: #ffffff !important;
-            background-color: #ffffff !important;
+            color: #ffffff;
+            background-color: #ffffff;
             height: 2px;
         }
 
         &:hover {
-            background-color: rgba(255, 255, 255, 0.15) !important;
+            background-color: rgba(255, 255, 255, 0.15);
         }
     }
 
     @media screen and (min-width: 1024px) {
         a.navbar-item,
         .navbar-link {
-            color: #ffffff !important;
-            background-color: transparent !important;
+            color: #ffffff;
+            background-color: transparent;
 
             &:hover {
-                background-color: rgba(255, 255, 255, 0.15) !important;
-                color: #ffffff !important;
+                background-color: rgba(255, 255, 255, 0.15);
+                color: #ffffff;
             }
 
             &.is-selected {
-                background-color: rgba(255, 255, 255, 0.18) !important;
-                color: #ffffff !important;
+                background-color: rgba(255, 255, 255, 0.18);
+                color: #ffffff;
                 font-weight: 600;
-                box-shadow: inset 0 -3px 0 #ffffff !important;
+                box-shadow: inset 0 -3px 0 #ffffff;
             }
         }
 
         .navbar-dropdown {
-            background-color: #ffffff !important;
+            background-color: #ffffff;
             border-radius: 0.5rem;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(0, 0, 0, 0.08);
@@ -195,18 +195,18 @@ div.navbar-item,
             }
 
             a.navbar-item {
-                color: #2c3e50 !important;
-                background-color: transparent !important;
+                color: #2c3e50;
+                background-color: transparent;
 
                 &:hover {
-                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.08) !important;
-                    color: var(--bulma-link) !important;
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.08);
+                    color: var(--bulma-link);
                 }
 
                 &.is-selected {
-                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.12) !important;
-                    color: var(--bulma-link) !important;
-                    box-shadow: none !important;
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.12);
+                    color: var(--bulma-link);
+                    box-shadow: none;
                 }
             }
         }
@@ -214,103 +214,103 @@ div.navbar-item,
 
     @media screen and (max-width: 1023px) {
         .navbar-menu.is-active {
-            background-color: #014ca8 !important;
+            background-color: #014ca8;
             padding: 1rem;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
 
             a.navbar-item,
             .navbar-link {
-                color: #ffffff !important;
+                color: #ffffff;
                 border-radius: 0.5rem;
                 padding: 0.65rem 0.85rem;
                 margin-bottom: 0.2rem;
-                background-color: transparent !important;
-                background: transparent !important;
+                background-color: transparent;
+                background: transparent;
 
                 &:hover {
-                    background-color: rgba(255, 255, 255, 0.15) !important;
-                    background: rgba(255, 255, 255, 0.15) !important;
+                    background-color: rgba(255, 255, 255, 0.15);
+                    background: rgba(255, 255, 255, 0.15);
                 }
 
                 &.is-selected {
-                    background-color: rgba(255, 255, 255, 0.25) !important;
-                    background: rgba(255, 255, 255, 0.25) !important;
-                    color: #ffffff !important;
+                    background-color: rgba(255, 255, 255, 0.25);
+                    background: rgba(255, 255, 255, 0.25);
+                    color: #ffffff;
                     font-weight: 600;
-                    box-shadow: none !important;
+                    box-shadow: none;
                 }
 
                 p.has-text-grey {
-                    color: rgba(255, 255, 255, 0.75) !important;
+                    color: rgba(255, 255, 255, 0.75);
                 }
             }
 
             .navbar-dropdown {
-                background-color: rgba(0, 0, 0, 0.22) !important;
-                background: rgba(0, 0, 0, 0.22) !important;
+                background-color: rgba(0, 0, 0, 0.22);
+                background: rgba(0, 0, 0, 0.22);
                 border-radius: 0.5rem;
                 padding: 0.5rem;
                 margin: 0.25rem 0 0.5rem 0.5rem;
-                border: none !important;
-                box-shadow: none !important;
-                color: #ffffff !important;
+                border: none;
+                box-shadow: none;
+                color: #ffffff;
 
                 .navbar-item {
-                    color: #ffffff !important;
-                    background-color: transparent !important;
-                    background: transparent !important;
+                    color: #ffffff;
+                    background-color: transparent;
+                    background: transparent;
                     font-size: 0.95rem;
                     padding: 0.5rem 0.75rem;
                     border-radius: 0.4rem;
-                    box-shadow: none !important;
+                    box-shadow: none;
 
                     p, span, div, strong {
-                        color: #ffffff !important;
+                        color: #ffffff;
                     }
 
                     p.has-text-grey,
                     p.is-size-7,
                     span.has-text-grey {
-                        color: rgba(255, 255, 255, 0.72) !important;
+                        color: rgba(255, 255, 255, 0.72);
                     }
 
                     i.has-text-link,
                     i.has-text-grey {
-                        color: rgba(255, 255, 255, 0.85) !important;
+                        color: rgba(255, 255, 255, 0.85);
                     }
 
                     i.has-text-warning {
-                        color: #ffe08a !important;
+                        color: #ffe08a;
                     }
 
                     &.is-selected {
-                        background-color: rgba(255, 255, 255, 0.25) !important;
-                        background: rgba(255, 255, 255, 0.25) !important;
-                        color: #ffffff !important;
+                        background-color: rgba(255, 255, 255, 0.25);
+                        background: rgba(255, 255, 255, 0.25);
+                        color: #ffffff;
                     }
                 }
 
                 a.navbar-item:hover {
-                    background-color: rgba(255, 255, 255, 0.18) !important;
-                    background: rgba(255, 255, 255, 0.18) !important;
-                    color: #ffffff !important;
+                    background-color: rgba(255, 255, 255, 0.18);
+                    background: rgba(255, 255, 255, 0.18);
+                    color: #ffffff;
                 }
 
                 .navbar-divider {
-                    background-color: rgba(255, 255, 255, 0.15) !important;
+                    background-color: rgba(255, 255, 255, 0.15);
                     height: 1px;
                     margin: 0.4rem 0;
                 }
 
                 button.button.is-danger.is-outlined {
-                    color: #ff9999 !important;
-                    border-color: rgba(255, 150, 150, 0.5) !important;
-                    background-color: rgba(255, 50, 50, 0.1) !important;
+                    color: #ff9999;
+                    border-color: rgba(255, 150, 150, 0.5);
+                    background-color: rgba(255, 50, 50, 0.1);
 
                     &:hover {
-                        background-color: #f14668 !important;
-                        color: #ffffff !important;
-                        border-color: #f14668 !important;
+                        background-color: #f14668;
+                        color: #ffffff;
+                        border-color: #f14668;
                     }
                 }
             }

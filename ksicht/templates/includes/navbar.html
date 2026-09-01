@@ -22,12 +22,12 @@
         <div id="navbar" class="navbar-menu">
             <div class="navbar-start">
                 {% url "core:home" as home_url %}
-                {% url "core:current_grade" as current_grade_url %}
+                {% url "core:grades_hub" as grades_hub_url %}
                 {% url "core:grade_archive" as grade_archive_url %}
                 {% url "core:event_listing" as event_listing_url %}
                 {% url "core:people" as people_url %}
 
-                <a class="navbar-item {% if request.get_full_path == current_grade_url or request.get_full_path == grade_archive_url or '/aktualni-rocnik' in request.path or '/archiv-rocniku' in request.path %}is-selected{% endif %}" href="{{ current_grade_url }}">
+                <a class="navbar-item {% if request.get_full_path == grades_hub_url or request.get_full_path == grade_archive_url or '/rocniky' in request.path or '/aktualni-rocnik' in request.path or '/archiv-rocniku' in request.path %}is-selected{% endif %}" href="{{ grades_hub_url }}">
                     Ročníky
                 </a>
 
