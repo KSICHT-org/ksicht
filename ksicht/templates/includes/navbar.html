@@ -35,12 +35,12 @@
                     Akce
                 </a>
 
-                <a class="navbar-item {% if '/navody' in request.path %}is-selected{% endif %}" href="/navody/">
-                    Návody
-                </a>
-
                 <a class="navbar-item {% if request.get_full_path == people_url or '/lide' in request.path %}is-selected{% endif %}" href="{{ people_url }}">
                     Organizátoři
+                </a>
+
+                <a class="navbar-item {% if '/navody' in request.path %}is-selected{% endif %}" href="/navody/">
+                    Návody
                 </a>
 
                 {% pages_by_prefix "/info/" as infopages %}
