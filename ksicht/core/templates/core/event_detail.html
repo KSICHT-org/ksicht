@@ -1,78 +1,95 @@
 {% extends "page.html" %}
 {% load markdown_deux_tags %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li><a href="{% url "core:event_listing" %}">Akce</a></li>
-            <li class="is-active"><a href="#" aria-current="page">{{ object }}</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}{{ object }}{% endblock %}
 
 {% block article %}
-<div class="columns is-reversed-mobile">
-    <div class="column is-8-tablet is-6-widescreen">
-        <article class="content">
-            {% if object.description %}
-                {{ object.description|markdown }}
-            {% else %}
-                <p>Podrobnosti nejsou k dispozici.</p>
-            {% endif %}
-        </article>
+<div class="columns is-desktop">
+    <div class="column is-8-desktop mb-5">
+        <div class="box p-5" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08);">
+            <h3 class="title is-4 mb-4 has-text-link">O akci</h3>
+            <article class="content is-size-6" style="line-height: 1.7;">
+                {% if object.description %}
+                    {{ object.description|markdown }}
+                {% else %}
+                    <p class="has-text-grey">Podrobnosti a program této akce budou upřesněny.</p>
+                {% endif %}
+            </article>
+        </div>
     </div>
-    <div class="column is-4-tablet is-3-desktop is-offset-1-widescreen">
-        <div class="mb-4">
-            <p class="subsubtitle">Začátek</p>
-            <p class="title is-5"><i class="fas fa-calendar-alt pr-1"></i> {{ object.start_date | date }}</p>
-        </div>
-        <div class="mb-4">
-            <p class="subsubtitle">Konec</p>
-            <p class="title is-5"><i class="fas fa-calendar-alt pr-1"></i> {{ object.end_date | date }}</p>
-        </div>
-        <div class="mb-4">
-            <p class="subsubtitle">Místo konání</p>
-            <p class="title is-5"><i class="fas fa-map-marker-alt pr-1"></i> {{ object.place }}</p>
-        </div>
-        {% if object.publish_occupancy %}
-        <div class="mb-4">
-            <p class="subsubtitle">Volná místa</p>
-            <p class="title is-5"><i class="fas fa-chair pr-1"></i> {{ free_places }}/{{ object.capacity }}</p>
-        </div>
-        {% endif %}
-        {% if perms.core.export_event_attendees or object.publish_occupancy %}
-        <div class="mb-4">
-            <p class="subsubtitle">Účastníci</p>
-            {% if perms.core.export_event_attendees %}
-                <p class="title is-5"><a href="{{ object.get_export_url }}" title="Exportovat do CSV"><i class="fas fa-file-csv pr-1"></i> {{ object.attendees.count }} přihlášených</a></p>
+
+    <div class="column is-4-desktop">
+        <div class="box p-5" style="border-radius: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0;">
+            <h3 class="title is-5 mb-4 border-bottom pb-2">Informace o akci</h3>
+
+            <div class="mb-4">
+                <p class="is-size-7 has-text-weight-bold has-text-grey mb-1">TERMÍN KONÁNÍ</p>
+                <p class="is-size-6 has-text-weight-semibold">
+                    <i class="fas fa-calendar-alt pr-2 has-text-link"></i>
+                    {{ object.start_date|date:"d.m.Y" }} – {{ object.end_date|date:"d.m.Y" }}
+                </p>
+            </div>
+
+            {% if object.place %}
+            <div class="mb-4">
+                <p class="is-size-7 has-text-weight-bold has-text-grey mb-1">MÍSTO</p>
+                <p class="is-size-6 has-text-weight-semibold">
+                    <i class="fas fa-map-marker-alt pr-2 has-text-danger"></i>
+                    {{ object.place }}
+                </p>
+            </div>
+            {% endif %}
+
+            {% if object.publish_occupancy %}
+            <div class="mb-4">
+                <p class="is-size-7 has-text-weight-bold has-text-grey mb-1">KAPACITA & VOLNÁ MÍSTA</p>
+                <p class="is-size-6 has-text-weight-semibold">
+                    <i class="fas fa-chair pr-2 has-text-info"></i>
+                    {{ free_places }} volných z {{ object.capacity }}
+                </p>
+            </div>
+            {% endif %}
+
+            {% if perms.core.export_event_attendees or object.publish_occupancy %}
+            <div class="mb-4">
+                <p class="is-size-7 has-text-weight-bold has-text-grey mb-1">ÚČASTNÍCI</p>
+                {% if perms.core.export_event_attendees %}
+                    <p class="is-size-6">
+                        <a href="{{ object.get_export_url }}" class="button is-small is-light is-link">
+                            <i class="fas fa-file-csv pr-2"></i><span class="pl-2">Exportovat {{ object.attendees.count }} přihlášených</span>
+                        </a>
+                    </p>
+                {% else %}
+                    <p class="is-size-6 has-text-weight-semibold">
+                        <i class="fas fa-user-friends pr-2 has-text-grey"></i>
+                        {{ object.attendees.count }} přihlášených
+                    </p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <hr style="background-color: #e2e8f0;" />
+
+            {% if is_enlisted %}
+                <div class="notification is-success is-light p-3 has-text-centered">
+                    <i class="fas fa-check-circle pr-1"></i>
+                    <strong>Jsi přihlášen(a) na tuto akci!</strong>
+                </div>
+            {% elif can_enlist %}
+                <a href="{{ object.get_enlist_url }}" class="button is-link is-fullwidth has-text-weight-bold">
+                    <i class="fas fa-user-plus pr-2"></i><span class="pl-2">Přihlásit se na akci</span>
+                </a>
+            {% elif not user.is_authenticated %}
+                <div class="notification is-info is-light p-3">
+                    <p class="is-size-7 mb-2">Pro přihlášení na akci se prosím nejprve přihlaste:</p>
+                    <a href="{% url "login" %}?next={{ object.get_absolute_url }}" class="button is-link is-small is-fullwidth">
+                        Přihlásit se
+                    </a>
+                </div>
             {% else %}
-                <p class="title is-5"><i class="fas fa-user-friends pr-1"></i> {{ object.attendees.count }} přihlášených</p>
+                <p class="is-size-7 has-text-grey has-text-centered">Přihlašování na tuto akci není v tuto chvíli otevřeno.</p>
             {% endif %}
         </div>
-        {% endif %}
-
-        {% if not user.is_authenticated %}
-        <div class="pt-4">
-            <p>
-                Pokud se chceš akce zúčastnit, <a href="{% url "login" %}?next={{ object.get_absolute_url }}">přihlaš se</a>.
-            </p>
-        </div>
-        {% endif %}
-        {% if can_enlist %}
-        <div class="pt-4">
-            <a href="{{ event.get_enlist_url }}" class="button is-primary is-outlined is-fullwidth">Přihlásit se</a>
-        </div>
-        {% endif %}
-        {% if is_enlisted %}
-        <div class="mt-4">
-            <p class="is-5 has-text-success has-text-weight-bold"><i class="fas fa-check-circle pr-1"></i> Jste přihlášen/a</p>
-        </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -2,6 +2,7 @@ import logging
 
 from cuser.forms import AuthenticationForm, UserChangeForm, UserCreationForm
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import (
     PasswordChangeForm,
     PasswordResetForm,
@@ -179,13 +180,13 @@ class KsichtRegistrationForm(KsichtProfileMixin, UserCreationForm):
                 Column("city", css_class="is-6"),
                 Column("country", css_class="is-4"),
             ),
-            Row(Column("school", css_class="is-10"), Column("school_year")),
-            Row(Column("school_alt_name"), Column("school_alt_street")),
+            Row(Column("school", css_class="is-8"), Column("school_year", css_class="is-4")),
+            Row(Column("school_alt_name", css_class="is-6"), Column("school_alt_street", css_class="is-6")),
             Row(
-                Column("school_alt_zip_code", css_class="is-2"),
-                Column("school_alt_city", css_class="is-4"),
+                Column("school_alt_zip_code", css_class="is-3"),
+                Column("school_alt_city", css_class="is-9"),
             ),
-            Row(Column("brochures_by_mail", css_class="is-6")),
+            Row(Column("brochures_by_mail")),
             Row(Column("tos")),
             FormActions(
                 FormControl(Submit("submit", "Pokračovat")),
@@ -265,16 +266,15 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
                 Column("city", css_class="is-6"),
                 Column("country", css_class="is-4"),
             ),
-            Row(Column("school", css_class="is-10"), Column("school_year")),
-            Row(Column("school_alt_name"), Column("school_alt_street")),
+            Row(Column("school", css_class="is-8"), Column("school_year", css_class="is-4")),
+            Row(Column("school_alt_name", css_class="is-6"), Column("school_alt_street", css_class="is-6")),
             Row(
-                Column("school_alt_zip_code", css_class="is-2"),
-                Column("school_alt_city", css_class="is-4"),
+                Column("school_alt_zip_code", css_class="is-3"),
+                Column("school_alt_city", css_class="is-9"),
             ),
-            Row(Column("brochures_by_mail", css_class="is-6")),
+            Row(Column("brochures_by_mail")),
             FormActions(
                 FormControl(Submit("submit", "Uložit změny")),
-                FormControl(Link("core:home", "Zpět", "button is-text")),
             ),
         )
 
@@ -308,6 +308,25 @@ class KsichtAuthenticationForm(AuthenticationForm):
             Row(Column("password")),
             Submit("submit", "Přihlásit se"),
         )
+
+    def clean(self):
+        email = self.cleaned_data.get("email")
+        password = self.cleaned_data.get("password")
+
+        if email and password:
+            email = email.strip()
+            user_obj = User.objects.filter(email__iexact=email).first()
+            lookup_email = user_obj.email if user_obj else email
+
+            self.user_cache = authenticate(
+                self.request, email=lookup_email, password=password
+            )
+            if self.user_cache is None:
+                raise self.get_invalid_login_error()
+            else:
+                self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
 
 
 class KsichtPasswordResetForm(PasswordResetForm):
@@ -349,6 +368,5 @@ class KsichtChangePasswordForm(PasswordChangeForm):
                 FormControl(
                     Submit("submit", "Nastavit nové heslo"),
                 ),
-                FormControl(Link("core:home", "Zpět", "button is-text")),
             ),
         )

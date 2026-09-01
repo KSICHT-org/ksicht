@@ -1,37 +1,50 @@
-<div class="card">
-    <div class="card-header is-flex is-flex-grow-1">
-        <div class="p-4">
-            <h2 class="title is-5 has-text-weight-bold mb-0"><a href="{{ object.get_absolute_url }}">{{ object }}</a></h2>
+<div class="card h-100 is-flex is-flex-direction-column" style="border-radius: 0.75rem; border: 1px solid rgba(0, 0, 0, 0.08); overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+    <div class="p-4 has-background-white-bis border-bottom is-flex is-justify-content-between is-align-items-center" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+        <span class="tag is-link is-light is-rounded has-text-weight-bold">
+            <i class="fas fa-calendar-day pr-1"></i> {{ object.start_date|date:"d.m.Y" }}
+        </span>
+        {% if is_enlisted %}
+            <span class="tag is-success is-rounded has-text-weight-semibold">
+                <i class="fas fa-check pr-1"></i> Přihlášen(a)
+            </span>
+        {% elif can_enlist %}
+            <span class="tag is-warning is-light is-rounded has-text-weight-semibold">
+                Otevřené přihlašování
+            </span>
+        {% endif %}
+    </div>
 
-            {% if object.publish_occupancy or can_enlist or is_enlisted %}
-            <div class="level mt-2">
-                {% if object.publish_occupancy %}
-                <div class="level-left">
-                    <div class="level-item">
-                        <p class="is-6 has-text-grey"><i class="fas fa-user-friends pr-1"></i> {{ object.attendees.count }} účastní{{ object.attendees.count|pluralize:"k,ků" }}</p>
-                    </div>
-                </div>
-                {% endif %}
-                {% if can_enlist %}
-                    <div class="level-right">
-                        <div class="level-item">
-                            <a href="{{ object.get_enlist_url }}" class="button is-small is-primary is-outlined">Přihlásit se</a>
-                        </div>
-                    </div>
-                {% endif %}
-                {% if is_enlisted %}
-                    <div class="level-right">
-                        <div class="level-item">
-                            <p class="is-6 has-text-success"><i class="fas fa-check-circle pr-1"></i>  Jste přihlášen/a</p>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
+    <div class="card-content is-flex-grow-1 p-4">
+        <h3 class="title is-5 mb-2">
+            <a href="{{ object.get_absolute_url }}" class="has-text-dark">{{ object.title|default:object }}</a>
+        </h3>
+
+        <div class="is-size-6 has-text-grey mb-3">
+            <p class="mb-1">
+                <i class="fas fa-clock pr-2 has-text-link"></i>
+                {{ object.start_date|date:"d.m." }} – {{ object.end_date|date:"d.m.Y" }}
+            </p>
+            {% if object.place %}
+                <p class="mb-0">
+                    <i class="fas fa-map-marker-alt pr-2 has-text-danger"></i>
+                    {{ object.place }}
+                </p>
             {% endif %}
         </div>
+
+        {% if object.publish_occupancy %}
+            <div class="is-size-7 has-text-grey mt-2">
+                <i class="fas fa-user-friends mr-2"></i>
+                <strong>{{ object.attendees.count }}</strong> přihlášených{% if object.capacity %} / kapacita {{ object.capacity }}{% endif %}
+            </div>
+        {% endif %}
     </div>
-    <div class="card-content">
-        <p class="subtitle is-6 has-text-grey mb-0">{{ object.start_date|date:"d.m." }} - {{ object.end_date|date:"SHORT_DATE_FORMAT" }}</p>
-        <p class="subtitle is-6 has-text-grey">{{ object.place }}</p>
+
+    <div class="p-4 pt-0 mt-auto">
+        <div class="buttons">
+            <a href="{{ object.get_absolute_url }}" class="button is-link is-outlined is-fullwidth is-small has-text-weight-semibold">
+                Více informací <i class="fas fa-arrow-right pl-2"></i>
+            </a>
+        </div>
     </div>
 </div>

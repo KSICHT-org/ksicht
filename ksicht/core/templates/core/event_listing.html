@@ -1,36 +1,37 @@
 {% extends "page.html" %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Akce</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}Akce{% endblock %}
 
 {% block article %}
+<div class="mb-5">
+    <p class="is-size-5 has-text-grey">
+        Kromě řešení korespondenčního semináře pořádáme i jarní a podzimní výlety a tradiční červnové soustředění na PřF UK.
+    </p>
+</div>
+
 {% if year_list %}
     {% for year, events in year_list %}
-        <h2 class="title is-5">{{ year }}</h2>
-        <div class="columns is-desktop pb-5">
-            {% for event, is_enlisted, can_enlist in events %}
-                <div class="column is-one-quarter">
-                    {% include "core/includes/event_card.html" with object=event can_enlist=can_enlist is_enlisted=is_enlisted %}
-                </div>
-            {% endfor %}
+        <div class="mb-6">
+            <div class="is-flex is-align-items-center mb-4">
+                <span class="tag is-link is-medium is-rounded mr-3 has-text-weight-bold">{{ year }}</span>
+                <div style="flex-grow: 1; height: 1px; background-color: #e2e8f0;"></div>
+            </div>
+
+            <div class="columns is-multiline">
+                {% for event, is_enlisted, can_enlist in events %}
+                    <div class="column is-12-mobile is-6-tablet is-4-desktop mb-4">
+                        {% include "core/includes/event_card.html" with object=event can_enlist=can_enlist is_enlisted=is_enlisted %}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     {% endfor %}
 
     {% include "includes/pagination.html" %}
 {% else %}
-    <article class="message is-warning is-size-5">
+    <article class="message is-info is-light is-size-5">
         <div class="message-body">
-            <p>Žádné akce zatím neproběhly.</p>
+            <i class="fas fa-calendar-times pr-2"></i> Žádné akce zatím nebyly vypsány.
         </div>
     </article>
 {% endif %}
