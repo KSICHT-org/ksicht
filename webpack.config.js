@@ -51,6 +51,7 @@ module.exports = (env, argv) => {
                             options: {
                                 api: "modern-compiler",
                                 sassOptions: {
+                                    charset: false, // fix for crispy forms and BOM char in production build
                                     silenceDeprecations: ["import"],
                                     // https://github.com/jgthms/bulma/issues/3856
                                     quietDeps: true,
