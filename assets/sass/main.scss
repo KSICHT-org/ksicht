@@ -1,14 +1,22 @@
-@use "bulma/sass/utilities" with ($family-sans-serif: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Helvetica", "Arial", sans-serif',
+@use "bulma/sass/utilities" with (
+    $blue: hsl(211, 96%, 38%),
+    $turquoise: hsl(211, 96%, 38%),
+    $cyan: hsl(207, 44%, 49%),
+
+    $family-sans-serif: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Helvetica", "Arial", sans-serif',
     $family-monospace: '"Inconsolata", "Consolas", "Monaco", monospace',
 );
 
 // Selectively include Bulma modules.
-@forward "bulma/sass/base";
+@use "bulma/sass/base" with (
+    $body-line-height: 1.6,
+);
 
 // Elements
 @forward "bulma/sass/elements/box";
 @forward "bulma/sass/elements/button";
 @forward "bulma/sass/elements/content";
+@forward "bulma/sass/elements/delete";
 @forward "bulma/sass/elements/icon";
 @forward "bulma/sass/elements/image";
 @forward "bulma/sass/elements/notification";
@@ -49,7 +57,7 @@
 @forward "bulma/sass/themes";
 
 // Custom fonts
-@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700&display=swap&subset=latin-ext);
+@import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&subset=latin-ext);
 
 
 // FontAwesome
@@ -68,6 +76,12 @@
 @import "./components/tabs";
 @import "./components/tags";
 @import "./components/title";
+@import "./components/buttons";
+@import "./components/table";
+@import "./components/timeline";
+@import "./components/footer";
+@import "./components/forms";
+@import "./components/announcements";
 
 @import "./views/home";
 

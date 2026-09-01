@@ -1,33 +1,71 @@
-<footer role="contentinfo" id="footer">
-    <div class="footer">
-        <div class="container">
-            <div class="content has-text-centered">
-                <p>
-                    <strong>KSICHT</strong> ~ <strong>K</strong>orespondenční <strong>S</strong>eminář <strong>I</strong>nspirovaný <strong>C</strong>hemickou <strong>T</strong>ematikou.
+{% load webpack_static from webpack_loader %}
+
+<footer role="contentinfo" id="footer" class="footer">
+    <div class="container">
+        <div class="columns is-multiline">
+            <div class="column is-12-tablet is-5-widescreen mb-4">
+                <div class="is-flex is-align-items-center mb-3">
+                    <img src="{% webpack_static "img/brand/logo-round.svg" %}" alt="KSICHT" height="40" style="max-height: 40px;" class="mr-3" />
+                    <h3 class="title is-4 mb-0 has-text-weight-bold has-text-link">KSICHT</h3>
+                </div>
+                <p class="is-size-6 mb-3 has-text-weight-semibold">
+                    Korespondenční Seminář Inspirovaný Chemickou Tematikou
                 </p>
-                <p class="mb-0">Zdrojový kód je licencován pod <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener">AGPL-3.0</a> a je dostupný na <a href="https://github.com/ksicht-org/ksicht" target="_blank" rel="noopener">GitHubu</a>.</p>
-                <p class="mb-0">Organizátoři KSICHTu používají pro efektivní komunikaci mezi sebou platformu <a href="https://zulip.com/" target="_blank" rel="noopener">Zulip.com</a>.</p>
-                <p class="buttons is-centered mt-4">
-                    <a class="button is-link is-light" href="https://www.instagram.com/ksicht.seminar/" target="_blank" rel="noopener">
-                        <span class="icon">
-                            <i class="fab fa-instagram"></i>
-                        </span>
+                <p class="is-size-6 has-text-grey mb-3">
+                    Celoroční soutěž pro české a slovenské studenty základních a středních škol se zájmem o chemii.
+                </p>
+                
+                <div class="p-3 has-background-white" style="border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+                    <p class="is-size-7 has-text-weight-bold has-text-grey mb-1">
+                        <i class="fas fa-paper-plane pr-1 has-text-link"></i> ADRESA PRO ZASLÁNÍ ŘEŠENÍ:
+                    </p>
+                    <p class="is-size-7 mb-0 has-text-weight-semibold">KSICHT, Přírodovědecká fakulta UK</p>
+                    <p class="is-size-7 mb-0 text-muted">Hlavova 2030, 128 43 Praha 2</p>
+                </div>
+            </div>
+
+            <div class="column is-6-tablet is-3-widescreen mb-4">
+                <h4 class="footer-title">Rychlá navigace</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url "core:current_grade" %}"><i class="fas fa-flask pr-2 is-size-7"></i> Aktuální ročník</a></li>
+                    <li><a href="{% url "core:grade_archive" %}"><i class="fas fa-archive pr-2 is-size-7"></i> Minulé ročníky</a></li>
+                    <li><a href="{% url "core:event_listing" %}"><i class="fas fa-calendar-alt pr-2 is-size-7"></i> Akce</a></li>
+                    <li><a href="/navody/"><i class="fas fa-book pr-2 is-size-7"></i> Návody</a></li>
+                    <li><a href="{% url "core:people" %}"><i class="fas fa-users pr-2 is-size-7"></i> Organizátoři</a></li>
+                    <li><a href="/info/faq/"><i class="fas fa-question-circle pr-2 is-size-7"></i> Často kladené otázky</a></li>
+                </ul>
+            </div>
+
+            <div class="column is-6-tablet is-4-widescreen mb-4">
+                <h4 class="footer-title">Kontakt a sociální sítě</h4>
+                <p class="is-size-6 mb-3">
+                    <i class="fas fa-envelope pr-2 has-text-link"></i> <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-semibold">ksicht@natur.cuni.cz</a>
+                </p>
+                <div class="buttons mb-3">
+                    <a class="button is-small is-link is-light" href="https://www.instagram.com/ksicht.seminar/" target="_blank" rel="noopener">
+                        <span class="icon"><i class="fab fa-instagram"></i></span>
                         <span>Instagram</span>
                     </a>
-                    <a class="button is-link is-light" href="https://github.com/ksicht-org/ksicht" target="_blank" rel="noopener">
-                        <span class="icon">
-                            <i class="fab fa-github"></i>
-                        </span>
+                    <a class="button is-small is-link is-light" href="https://github.com/ksicht-org/ksicht" target="_blank" rel="noopener">
+                        <span class="icon"><i class="fab fa-github"></i></span>
                         <span>GitHub</span>
                     </a>
-                    <a class="button is-link is-light" href="https://ksicht.zulipchat.com/" target="_blank" rel="noopener">
-                        <span class is-light
-                            <i class="fab fa-zulip"></i>
-                        </span>
+                    <a class="button is-small is-link is-light" href="https://ksicht.zulipchat.com/" target="_blank" rel="noopener">
+                        <span class="icon"><i class="fab fa-zulip"></i></span>
                         <span>Zulip</span>
                     </a>
+                </div>
+                <p class="is-size-7 has-text-grey mb-3">
+                    <i class="fas fa-comments pr-1 has-text-link"></i> Organizátoři pro vzájemnou komunikaci využívají <a href="https://ksicht.zulipchat.com/" target="_blank" rel="noopener" class="has-text-weight-semibold has-text-link">Zulip</a>.
+                </p>
+                <p class="is-size-7 has-text-grey">
+                    Zdrojový kód je licencován pod <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener" class="has-text-link">AGPL-3.0</a>.
                 </p>
             </div>
+        </div>
+
+        <div class="footer-bottom is-flex is-justify-content-between is-flex-wrap-wrap">
+            <p class="mb-0">&copy; KSICHT – Korespondenční Seminář Inspirovaný Chemickou Tematikou</p>
         </div>
     </div>
 </footer>

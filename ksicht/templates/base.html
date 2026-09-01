@@ -17,7 +17,6 @@
     <meta property="og:description" content="{{ meta_description }}">
     <meta property="og:image" content="">
 
-    <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% webpack_static "img/favicons/apple-touch-icon.png" %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% webpack_static "img/favicons/favicon-32x32.png" %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% webpack_static "img/favicons/favicon-16x16.png" %}">
@@ -26,14 +25,13 @@
     <meta name="msapplication-TileColor" content="#2b5797">
     <meta name="theme-color" content="#ffffff">
 
-    <!-- preload-->
-    {% comment %} <link rel="preload" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&subset=latin-ext" as="style"> {% endcomment %}
-
     {% render_bundle 'main' 'css' %}
     {% block head %}{% endblock %}
 </head>
 <body class="layout {% block body_class %}{% endblock %}">
     {% block body %}
+        {% include "includes/announcements.html" %}
+
         {% block navbar %}
             {% include "includes/navbar.html" %}
         {% endblock %}

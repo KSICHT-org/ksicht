@@ -2,7 +2,318 @@
     max-height: 2.25rem;
 }
 
-// fix: https://github.com/jgthms/bulma/issues/1474
-// .hero.is-info .navbar-dropdown .navbar-item {
-//     color: $body-color;
-// }
+div.navbar-item,
+.navbar-item:has(> .buttons),
+.navbar-item:not(a):not(.navbar-link) {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+
+    &:hover,
+    &:focus {
+        background-color: transparent !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+}
+
+.navbar:not(.is-link) {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+
+    .navbar-burger {
+        color: #1e293b !important;
+        span {
+            background-color: #1e293b !important;
+        }
+    }
+
+    a.navbar-item,
+    .navbar-link {
+        color: #1e293b !important;
+        background-color: transparent !important;
+
+        &:hover {
+            color: var(--bulma-link) !important;
+            background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06) !important;
+        }
+
+        &.is-selected {
+            background-color: transparent !important;
+            color: var(--bulma-link) !important;
+            font-weight: 600;
+
+            &:hover {
+                background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06) !important;
+                color: var(--bulma-link) !important;
+            }
+        }
+    }
+
+    @media screen and (min-width: 1024px) {
+        a.navbar-item.is-selected,
+        .navbar-link.is-selected {
+            background-color: transparent !important;
+            color: var(--bulma-link) !important;
+            box-shadow: inset 0 -3px 0 var(--bulma-link) !important;
+            font-weight: 600;
+
+            &:hover {
+                background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.06) !important;
+            }
+        }
+
+        .navbar-dropdown {
+            background-color: #ffffff !important;
+            border-radius: 0.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+
+            .navbar-item {
+                color: #2c3e50;
+            }
+
+            a.navbar-item {
+                color: #2c3e50 !important;
+                background-color: transparent !important;
+
+                &:hover {
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.08) !important;
+                    color: var(--bulma-link) !important;
+                }
+
+                &.is-selected {
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.12) !important;
+                    color: var(--bulma-link) !important;
+                    box-shadow: none !important;
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width: 1023px) {
+        .navbar-menu.is-active {
+            background-color: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+
+            a.navbar-item,
+            .navbar-link {
+                color: #1e293b !important;
+                border-radius: 0.5rem;
+                padding: 0.65rem 0.85rem;
+                margin-bottom: 0.2rem;
+                background-color: transparent !important;
+
+                &:hover {
+                    background-color: #f1f5f9 !important;
+                    color: var(--bulma-link) !important;
+                }
+
+                &.is-selected {
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.1) !important;
+                    color: var(--bulma-link) !important;
+                    font-weight: 600;
+                    box-shadow: none !important;
+                }
+            }
+
+            .navbar-dropdown {
+                background-color: #f8fafc !important;
+                border-radius: 0.5rem;
+                border: 1px solid #e2e8f0;
+                padding: 0.5rem;
+                margin: 0.25rem 0 0.5rem 0.5rem;
+                box-shadow: none;
+
+                .navbar-item {
+                    color: #334155;
+                    background-color: transparent !important;
+                    padding: 0.5rem 0.75rem;
+
+                    &.is-selected {
+                        background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.15) !important;
+                        color: var(--bulma-link) !important;
+                        box-shadow: none !important;
+                    }
+                }
+
+                a.navbar-item:hover {
+                    background-color: #e2e8f0 !important;
+                    color: var(--bulma-link) !important;
+                }
+            }
+        }
+    }
+}
+
+.navbar.is-link,
+.hero.is-link .navbar {
+    background-color: transparent;
+
+    .navbar-burger {
+        color: #ffffff !important;
+
+        span {
+            color: #ffffff !important;
+            background-color: #ffffff !important;
+            height: 2px;
+        }
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+        }
+    }
+
+    @media screen and (min-width: 1024px) {
+        a.navbar-item,
+        .navbar-link {
+            color: #ffffff !important;
+            background-color: transparent !important;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.15) !important;
+                color: #ffffff !important;
+            }
+
+            &.is-selected {
+                background-color: rgba(255, 255, 255, 0.18) !important;
+                color: #ffffff !important;
+                font-weight: 600;
+                box-shadow: inset 0 -3px 0 #ffffff !important;
+            }
+        }
+
+        .navbar-dropdown {
+            background-color: #ffffff !important;
+            border-radius: 0.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+
+            .navbar-item {
+                color: #2c3e50;
+            }
+
+            a.navbar-item {
+                color: #2c3e50 !important;
+                background-color: transparent !important;
+
+                &:hover {
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.08) !important;
+                    color: var(--bulma-link) !important;
+                }
+
+                &.is-selected {
+                    background-color: hsla(var(--bulma-link-h), var(--bulma-link-s), var(--bulma-link-l), 0.12) !important;
+                    color: var(--bulma-link) !important;
+                    box-shadow: none !important;
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width: 1023px) {
+        .navbar-menu.is-active {
+            background-color: #014ca8 !important;
+            padding: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+
+            a.navbar-item,
+            .navbar-link {
+                color: #ffffff !important;
+                border-radius: 0.5rem;
+                padding: 0.65rem 0.85rem;
+                margin-bottom: 0.2rem;
+                background-color: transparent !important;
+                background: transparent !important;
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.15) !important;
+                    background: rgba(255, 255, 255, 0.15) !important;
+                }
+
+                &.is-selected {
+                    background-color: rgba(255, 255, 255, 0.25) !important;
+                    background: rgba(255, 255, 255, 0.25) !important;
+                    color: #ffffff !important;
+                    font-weight: 600;
+                    box-shadow: none !important;
+                }
+
+                p.has-text-grey {
+                    color: rgba(255, 255, 255, 0.75) !important;
+                }
+            }
+
+            .navbar-dropdown {
+                background-color: rgba(0, 0, 0, 0.22) !important;
+                background: rgba(0, 0, 0, 0.22) !important;
+                border-radius: 0.5rem;
+                padding: 0.5rem;
+                margin: 0.25rem 0 0.5rem 0.5rem;
+                border: none !important;
+                box-shadow: none !important;
+                color: #ffffff !important;
+
+                .navbar-item {
+                    color: #ffffff !important;
+                    background-color: transparent !important;
+                    background: transparent !important;
+                    font-size: 0.95rem;
+                    padding: 0.5rem 0.75rem;
+                    border-radius: 0.4rem;
+                    box-shadow: none !important;
+
+                    p, span, div, strong {
+                        color: #ffffff !important;
+                    }
+
+                    p.has-text-grey,
+                    p.is-size-7,
+                    span.has-text-grey {
+                        color: rgba(255, 255, 255, 0.72) !important;
+                    }
+
+                    i.has-text-link,
+                    i.has-text-grey {
+                        color: rgba(255, 255, 255, 0.85) !important;
+                    }
+
+                    i.has-text-warning {
+                        color: #ffe08a !important;
+                    }
+
+                    &.is-selected {
+                        background-color: rgba(255, 255, 255, 0.25) !important;
+                        background: rgba(255, 255, 255, 0.25) !important;
+                        color: #ffffff !important;
+                    }
+                }
+
+                a.navbar-item:hover {
+                    background-color: rgba(255, 255, 255, 0.18) !important;
+                    background: rgba(255, 255, 255, 0.18) !important;
+                    color: #ffffff !important;
+                }
+
+                .navbar-divider {
+                    background-color: rgba(255, 255, 255, 0.15) !important;
+                    height: 1px;
+                    margin: 0.4rem 0;
+                }
+
+                button.button.is-danger.is-outlined {
+                    color: #ff9999 !important;
+                    border-color: rgba(255, 150, 150, 0.5) !important;
+                    background-color: rgba(255, 50, 50, 0.1) !important;
+
+                    &:hover {
+                        background-color: #f14668 !important;
+                        color: #ffffff !important;
+                        border-color: #f14668 !important;
+                    }
+                }
+            }
+        }
+    }
+}
