@@ -1,17 +1,5 @@
 {% extends "page.html" %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li><a href="{% url "core:grade_detail" pk=object.grade_id %}">Ročník {{ object.grade }}</a></li>
-            <li class="is-active"><a href="#" aria-current="page">{{ object }}</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
-
 {% block headline %}{{ object }}{% endblock %}
 {% block header_sub %}<h3 class="subtitle">ročníku {{ object.grade }}</h3>{% endblock %}
 

@@ -1,0 +1,173 @@
+{% extends "page.html" %}
+{% load grades %}
+{% load markdown_deux_tags %}
+
+{% block headline %}Organizátorská sekce{% endblock %}
+
+{% block article %}
+    <div class="box p-5 mb-5" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem;">
+        <div class="columns is-vcentered is-multiline">
+            <div class="column is-6-desktop is-12-tablet">
+                <p class="subsubtitle has-text-warning has-text-weight-bold">ADMINISTRACE</p>
+                <h3 class="title is-4 mb-2">Správa ročníků a hodnocení</h3>
+            </div>
+            <div class="column is-6-desktop is-12-tablet has-text-right-desktop">
+                <div class="buttons is-justify-content-flex-end-desktop">
+                    <a href="{% url "admin:index" %}" class="button is-dark">
+                        <i class="fas fa-cog pr-2"></i><span class="pl-2">Administrace</span>
+                    </a>
+                    {% if perms.core.add_event %}
+                        <a href="{% url "admin:core_event_add" %}" class="button is-link is-outlined">
+                            <i class="fas fa-calendar-plus pr-2"></i><span class="pl-2">Nová akce</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5" style="border-radius: 0.75rem; border: 1px solid #e2e8f0;">
+        <div class="card-content p-4 is-flex is-align-items-center is-justify-content-between is-flex-wrap-wrap">
+            <div class="mr-3 mb-2 mb-0-desktop">
+                <span class="has-text-weight-bold is-size-6 mr-2">
+                    <i class="fas fa-layer-group has-text-link pr-1"></i> Vybraný ročník pro správu:
+                </span>
+                <span class="tag is-info is-light is-medium has-text-weight-bold">
+                    {{ selected_grade }}
+                    {% if selected_grade == current_grade %}(Aktuální){% else %}(Archiv){% endif %}
+                </span>
+            </div>
+            <div>
+                <form method="get" class="is-flex is-align-items-center">
+                    <label for="rocnik-select" class="is-size-7 has-text-grey mr-2 has-text-weight-semibold">Přepnout ročník:</label>
+                    <div class="select is-small">
+                        <select id="rocnik-select" name="rocnik" onchange="this.form.submit()">
+                            {% for g in all_grades %}
+                                <option value="{{ g.pk }}" {% if g.pk == selected_grade.pk %}selected{% endif %}>
+                                    {{ g }} {% if g == current_grade %}(Aktuální){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if selected_grade %}
+        <h3 class="title is-4 mb-4">
+            <i class="fas fa-tasks has-text-link pr-2"></i> Detail ročníku {{ selected_grade }}
+        </h3>
+
+        {% for series in all_series %}
+            <div class="card mb-5" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                <div class="card-header p-4 is-flex is-align-items-center" style="background: #f9fbfd;">
+                    <div>
+                        <span class="title is-5 mr-3">{{ series }}</span>
+                        <span class="tag is-light is-rounded">Deadline: {{ series.submission_deadline | date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="buttons are-small mb-0">
+                        {% if series.tasks_with_submission_count|length > 0 %}
+                            <a href="{% url "core:series_submission_overview" grade_id=selected_grade.pk series_id=series.pk %}" class="button is-link is-light">
+                                <i class="fas fa-inbox pr-1"></i> Odevzdaná řešení
+                            </a>
+                        {% endif %}
+                        {% if perms.core.view_gradeseries and series.tasks_with_submission_count|length > 0 %}
+                            <a href="{% url "core:series_sticker_assignment_overview" grade_id=selected_grade.pk pk=series.pk %}" class="button is-warning is-light">
+                                <i class="fas fa-award pr-1"></i> Udělené nálepky
+                            </a>
+                        {% endif %}
+                        {% if series.results_published %}
+                            <a href="{% url "core:series_results" grade_id=selected_grade.pk pk=series.pk %}" class="button is-success is-light">
+                                <i class="fas fa-trophy pr-1"></i> Výsledky
+                            </a>
+                        {% endif %}
+                        {% if perms.core.series_task_envelopes_printout %}
+                            <a href="{% url "core:series_task_envelopes_printout" grade_id=selected_grade.pk pk=series.pk %}" class="button is-light" title="Tisk obálek se zadáním pro školy">
+                                <i class="fas fa-school pr-1 mr-1"></i> Obálky školy
+                            </a>
+                        {% endif %}
+                        {% if perms.core.series_solution_envelopes_printout %}
+                            <a href="{% url "core:series_active_participants_envelopes_printout" grade_id=selected_grade.pk pk=series.pk %}" class="button is-light" title="Tisk obálek pro řešitele této série">
+                                <i class="fas fa-envelope pr-1"></i> Obálky řešitelé
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card-content p-4">
+                    {% with series.tasks_with_submission_count as tasks %}
+                        {% if tasks|length > 0 %}
+                            <div class="columns is-multiline">
+                                {% for task in tasks %}
+                                    <div class="column is-4-desktop is-6-tablet">
+                                        {% include "core/includes/admin_task_card.html" with object=task %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="has-text-grey is-size-6">Žádné úlohy pro tuto sérii nebyly vytvořeny.</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="columns is-desktop mt-5">
+            <div class="column is-6">
+                <div class="box p-5 h-100" style="border-radius: 0.75rem;">
+                    <h4 class="title is-5 mb-3"><i class="fas fa-envelope-open-text pr-2 has-text-link"></i> Tisk obálek</h4>
+                    <p class="is-size-7 has-text-weight-bold has-text-grey mb-2">CELÝ ROČNÍK:</p>
+                    <div class="buttons are-small mb-4">
+                        {% if perms.core.series_solution_envelopes_printout %}
+                            <a href="{% url "core:series_all_participants_envelopes_printout" pk=selected_grade.pk %}" class="button is-link is-light">
+                                <i class="fas fa-envelope pr-1"></i> Všichni přihlášení
+                            </a>
+                            <a href="{% url "core:series_all_participants_with_brochure_preference_envelopes_printout" pk=selected_grade.pk %}" class="button is-link is-light">
+                                <i class="fas fa-envelope pr-1"></i> Jen přihlášení s brožurou
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <p class="is-size-7 has-text-weight-bold has-text-grey mb-2">JEDNOTLIVÉ SÉRIE:</p>
+                    <div>
+                        {% for series in all_series %}
+                            <div class="is-flex is-justify-content-between is-align-items-center mb-2 pb-2" style="border-bottom: 1px solid #f1f5f9;">
+                                <span class="has-text-weight-semibold pr-2">{{ series }}</span>
+                                <div class="buttons are-small mb-0">
+                                    {% if perms.core.series_task_envelopes_printout %}
+                                        <a href="{% url "core:series_task_envelopes_printout" grade_id=selected_grade.pk pk=series.pk %}" class="button is-small is-light" title="Tisk obálek se zadáním pro školy">
+                                            <i class="fas fa-school pr-1 mr-1"></i> Školy
+                                        </a>
+                                    {% endif %}
+                                    {% if perms.core.series_solution_envelopes_printout %}
+                                        <a href="{% url "core:series_active_participants_envelopes_printout" grade_id=selected_grade.pk pk=series.pk %}" class="button is-small is-light" title="Tisk obálek pro řešitele">
+                                            <i class="fas fa-envelope pr-1 mr-1"></i> Řešitelé
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-6">
+                <div class="box p-5 h-100" style="border-radius: 0.75rem;">
+                    <h4 class="title is-5 mb-3"><i class="fas fa-file-export pr-2 has-text-success"></i> Export výsledků</h4>
+                    <p class="is-size-6 mb-3">Stažení kompletní tabulky výsledků všech sérií ročníku {{ selected_grade }}:</p>
+                    <a href="{% url "core:grade_results_export" pk=selected_grade.pk %}" class="button is-success is-outlined is-fullwidth">
+                        <i class="fas fa-file-csv pr-2"></i> Výsledky {{ selected_grade }} v CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <article class="message is-warning is-size-5">
+            <div class="message-body">
+                <p>Nebyly nalezeny žádné ročníky soutěže.</p>
+            </div>
+        </article>
+    {% endif %}
+{% endblock %}

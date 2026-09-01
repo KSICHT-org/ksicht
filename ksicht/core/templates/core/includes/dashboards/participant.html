@@ -27,8 +27,9 @@
             <div class="buttons are-medium">
                 {% if is_current_grade_participant %}
                     {% if current_series.accepts_solution_submissions %}
-                        <a href="{% url "core:solution_submit" %}" class="button is-primary is-outlined">Odevzdat řešení</a>
+                        <a href="{% url "core:solution_submit" %}" class="button is-primary">Odevzdat řešení</a>
                     {% endif %}
+                    <a href="{% url "core:my_submissions" %}" class="button is-link is-outlined"><i class="fas fa-tasks pr-2"></i> Moje řešení</a>
                     <a href="{% url "core:current_grade" %}" class="button is-text">Zobrazit podrobnosti</a>
                 {% else %}
                     <a href="{% url "core:current_grade" %}" class="button is-primary">Přihlásit se do ročníku</a>
