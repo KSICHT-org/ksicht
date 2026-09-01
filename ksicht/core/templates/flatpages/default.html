@@ -1,14 +1,86 @@
 {% extends "page.html" %}
 {% load markdown_deux_tags %}
+{% load pages %}
 
 {% block page_title %}{% block headline %}{% if flatpage.metadata.title %}{{ flatpage.metadata.title }}{% else %}{{ flatpage.title }}{% endif %}{% endblock %}{% endblock %}
 {% block page_description %}{% if flatpage.metadata %}{{ flatpage.metadata.description }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 {% block page_keywords %}{% if flatpage.metadata %}{{ flatpage.metadata.keywords }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
 {% block article %}
-<div class="columns is-desktop">
-    <div class="column is-8 content content-readable">
-        {{ flatpage.content | markdown }}
+{% if "/navody/" in flatpage.url %}
+    {% pages_by_prefix "/navody/" as guides %}
+    <div class="columns is-desktop">
+        <div class="column is-4-desktop is-12-tablet mb-5">
+            <div class="card" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); position: sticky; top: 1.5rem;">
+                <div class="card-header p-4 has-background-white-bis">
+                    <p class="title is-6 mb-0"><i class="fas fa-book-reader has-text-link pr-2"></i> Návody a pokyny</p>
+                </div>
+                <div class="card-content p-3">
+                    <aside class="menu">
+                        <ul class="menu-list">
+                            {% for guide in guides %}
+                                <li>
+                                    <a href="{{ guide.url }}" class="{% if request.path == guide.url %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                                        <i class="fas fa-chevron-right is-size-7 pr-2 opacity-75"></i> {{ guide.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-8-desktop is-12-tablet">
+            <div class="box p-5 content content-readable" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                {{ flatpage.content | markdown }}
+            </div>
+        </div>
     </div>
-</div>
+
+{% elif "/info/" in flatpage.url %}
+    {% pages_by_prefix "/info/" as infopages %}
+    <div class="columns is-desktop">
+        <div class="column is-4-desktop is-12-tablet mb-5">
+            <div class="card" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); position: sticky; top: 1.5rem;">
+                <div class="card-header p-4 has-background-white-bis">
+                    <p class="title is-6 mb-0"><i class="fas fa-info-circle has-text-link pr-2"></i> O semináři</p>
+                </div>
+                <div class="card-content p-3">
+                    <aside class="menu">
+                        <ul class="menu-list">
+                            <li>
+                                <a href="{% url "core:people" %}" class="{% if request.path == "/lide/" %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                                    <i class="fas fa-users is-size-7 pr-2"></i> Organizátoři
+                                </a>
+                            </li>
+                            {% for infopage in infopages %}
+                                <li>
+                                    <a href="{{ infopage.url }}" class="{% if request.path == infopage.url %}is-active has-background-link has-text-white has-text-weight-bold{% endif %}" style="border-radius: 0.5rem; padding: 0.6rem 0.85rem; margin-bottom: 0.25rem;">
+                                        <i class="fas fa-chevron-right is-size-7 pr-2 opacity-75"></i> {{ infopage.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-8-desktop is-12-tablet">
+            <div class="box p-5 content content-readable" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                {{ flatpage.content | markdown }}
+            </div>
+        </div>
+    </div>
+
+{% else %}
+    <div class="columns is-desktop">
+        <div class="column is-8 content content-readable">
+            <div class="box p-5" style="border-radius: 0.75rem;">
+                {{ flatpage.content | markdown }}
+            </div>
+        </div>
+    </div>
+{% endif %}
 {% endblock %}

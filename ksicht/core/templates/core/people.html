@@ -1,52 +1,54 @@
 {% extends "page.html" %}
 {% load markdown_deux_tags %}
+{% load images %}
 
-{% block breadcrumb %}
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-        <div class="container">
-            <ul>
-                <li><a href="/">KSICHT</a></li>
-                <li class="is-active"><a href="#" aria-current="page">Lidé</a></li>
-            </ul>
-        </div>
-    </nav>
-{% endblock %}
-
-{% block headline %}Lidé{% endblock %}
+{% block headline %}Organizátoři{% endblock %}
 
 {% block article %}
     <div class="columns is-multiline">
         {% for person in object_list %}
-            <div class="column is-12-mobile is-one-third-tablet is-3-widescreen">
-                <div class="card people-card">
+            <div class="column is-12-mobile is-6-tablet is-3-widescreen">
+                <div class="card people-card h-100 is-flex is-flex-direction-column" style="border-radius: 0.75rem; border: 1px solid rgba(0, 0, 0, 0.08); overflow: hidden; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);">
                     <div class="card-image">
-                        <figure class="image is-square">
-                            <img src="{{ person.image_thumbnail.url }}" alt="{{ person.name }}">
+                        <figure class="image is-square has-background-white-bis is-flex is-align-items-center is-justify-content-center">
+                            {% with thumb_url=person|safe_person_image_url %}
+                                {% if thumb_url %}
+                                    <img src="{{ thumb_url }}" alt="{{ person.name }}" style="object-fit: cover; width: 100%; height: 100%;">
+                                {% else %}
+                                    <div class="is-flex is-align-items-center is-justify-content-center w-100 h-100" style="width: 100%; height: 100%; min-height: 220px; background-color: #f1f5f9;">
+                                        <span class="icon is-large has-text-grey-light" style="font-size: 4.5rem;">
+                                            <i class="fas fa-user-circle"></i>
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
                         </figure>
                     </div>
-                    <div class="card-content">
-                        <h2 class="title is-4">{{ person.name }}</h2>
-                        {% if person.role %}<p class="subtitle is-6 has-text-grey">{{ person.role }}</p>{% endif %}
+                    <div class="card-content is-flex-grow-1 p-4">
+                        <h2 class="title is-5 mb-1">{{ person.name }}</h2>
+                        {% if person.role %}
+                            <p class="subtitle is-6 has-text-link has-text-weight-semibold mb-3">{{ person.role }}</p>
+                        {% endif %}
 
-                        <div class="content">
+                        <div class="content is-size-6 has-text-grey-dark">
                             {{ person.bio | markdown }}
                         </div>
-
                     </div>
-                    {% if person.url_fb|length > 0 or person.url_ig|length > 0 or person.url_other > 0 %}
-                        <div class="card-footer p-2">
+
+                    {% if person.url_fb|length > 0 or person.url_ig|length > 0 or person.url_other|length > 0 %}
+                        <div class="card-footer p-2 has-background-white-bis">
                             {% if person.url_fb|length > 0 %}
                                 <a class="card-footer-item" title="Facebook" href="{{ person.url_fb }}"
                                    rel="noreferrer noopener"
                                    target="_blank">
-                                    <i class="fab fa-facebook is-size-4"></i>
+                                    <i class="fab fa-facebook is-size-5 has-text-link"></i>
                                 </a>
                             {% endif %}
                             {% if person.url_ig|length > 0 %}
                                 <a class="card-footer-item" title="Instagram" href="{{ person.url_ig }}"
                                    rel="noreferrer noopener"
                                    target="_blank">
-                                    <i class="fab fa-instagram is-size-4"></i>
+                                    <i class="fab fa-instagram is-size-5 has-text-danger"></i>
                                 </a>
                             {% endif %}
                             {% if person.url_other|length > 0 %}
@@ -54,7 +56,7 @@
                                    href="{{ person.url_other }}"
                                    rel="noreferrer noopener"
                                    target="_blank">
-                                    <i class="fas fa-external-link-alt is-size-5"></i>
+                                    <i class="fas fa-external-link-alt is-size-6 has-text-grey"></i>
                                 </a>
                             {% endif %}
                         </div>

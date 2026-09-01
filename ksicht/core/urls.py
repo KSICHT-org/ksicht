@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import permission_required
 from django.urls import path
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, RedirectView
 
 from . import models, views
 
@@ -10,23 +10,26 @@ app_name = "core"
 
 urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
+    path("rocniky/", views.CurrentGradeView.as_view(), name="grades_hub"),
+    path("organizatori/", views.OrganizersView.as_view(), name="organizers"),
     path("aktualni-rocnik/", views.CurrentGradeView.as_view(), name="current_grade"),
     path(
         "archiv-rocniku/",
-        ListView.as_view(
-            queryset=models.Grade.objects.archive().prefetch_related(
-                "series__attachments"
-            ),
-            template_name="core/grade_archive.html",
-            paginate_by=6,
-        ),
+        RedirectView.as_view(url="/rocniky/#archiv", permanent=False),
         name="grade_archive",
+    ),
+    path(
+        "minule-rocniky/",
+        RedirectView.as_view(url="/rocniky/#archiv", permanent=False),
+        name="past_grades_redirect",
     ),
     path(
         "akce/",
         views.EventListView.as_view(paginate_by=10),
         name="event_listing",
     ),
+    path("moje-akce/", views.MyEventsView.as_view(), name="my_events"),
+    path("ucty/akce/", views.MyEventsView.as_view(), name="user_events"),
     path(
         "akce/<int:pk>-<slug:slug>/",
         views.EventDetailView.as_view(),

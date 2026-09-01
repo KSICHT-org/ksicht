@@ -16,51 +16,171 @@
     <div class="hero-body">
       <div class="container has-text-centered">
         <div class="view-home-brand-wrapper">
-          <img class="view-home-brand" src="{% webpack_static "img/brand/logo-round-inverted.svg" %}" alt="KSICHT" height="100" />
+          <img class="view-home-brand" src="{% webpack_static "img/brand/logo-round-inverted.svg" %}" alt="Logo KSICHTu" height="120" />
 
           <div>
-            <h2 class="title is-size-4-mobile">
-              <span class="has-text-warning has-text-weight-bold">K</span>orespondenční <span class="has-text-warning has-text-weight-bold">S</span>eminář<br><span class="has-text-warning has-text-weight-bold">I</span>nspirovaný <span class="has-text-warning has-text-weight-bold">Ch</span>emickou <span class="has-text-warning has-text-weight-bold">T</span>ematikou
+            <h2 class="title is-size-3 is-size-4-mobile has-text-weight-bold">
+              <span class="has-text-warning">K</span>orespondenční <span class="has-text-warning">S</span>eminář<br>
+              <span class="has-text-warning">I</span>nspirovaný <span class="has-text-warning">Ch</span>emickou <span class="has-text-warning">T</span>ematikou
             </h2>
-            <a href="{% url "django_registration_register" %}" class="button is-primary is-medium">Chci se přihlásit</a>
+            <p class="subtitle pt-4 pb-2">Celoroční soutěž pro české a slovenské studenty základních a středních škol se zájmem o chemii.</p>
+            <div class="buttons is-justify-content-center-mobile">
+              {% if not user.is_authenticated %}
+                <a href="{% url "django_registration_register" %}" class="button is-warning is-medium has-text-weight-bold">
+                  <i class="fas fa-user-plus pr-2"></i><span class="pl-2">Chci se přihlásit</span>
+                </a>
+              {% endif %}
+              <a href="{% url "core:current_grade" %}" class="button is-white is-outlined is-medium has-text-weight-bold">
+                <i class="fas fa-flask pr-2"></i><span class="pl-2">Aktuální ročník</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="hero-foot">
-      <div class="container">
-        <nav class="tabs is-boxed is-centered is-size-5 is-size-7-mobile has-text-weight-bold">
-            <ul>
-              <li class="is-active"><a>Co to je?</a></li>
-              <li><a>Jak to probíhá?</a></li>
-              <li><a>Jak se zúčastnit?</a></li>
-            </ul>
-        </nav>
+  <div class="section py-6 has-background-white-bis">
+    <div class="container">
+      <div class="has-text-centered mb-6">
+        <p class="subsubtitle has-text-link">Tři důvody</p>
+        <h3 class="title is-3 is-size-4-mobile">Proč řešit KSICHT</h3>
+      </div>
+
+      <div class="columns is-multiline">
+        <div class="column is-4">
+          <div class="view-home-feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-flask"></i>
+            </div>
+            <h4 class="title is-5 mb-2">Neobvyklé úlohy</h4>
+            <p class="has-text-grey">
+              Každý rok připravujeme čtyři série originálních a zábavných úloh z nejrůznějších koutů chemie. K jejich řešení můžeš využít i internet a literaturu a prohloubit si tak své dosavadní znalosti i zájem o chemii. Jako bonus najdeš v každé sérii i krátký seriál o zajímavých tématech.
+            </p>
+          </div>
+        </div>
+
+        <div class="column is-4">
+          <div class="view-home-feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-campground"></i>
+            </div>
+            <h4 class="title is-5 mb-2">Akce</h4>
+            <p class="has-text-grey">
+              Během roku pořádáme několik akcí, kde máš možnost se seznámit s ostatními řešiteli a také s organizátory. Na podzim a na jaře to jsou víkendové výlety na různá místa. Pro nejlepší řešitele je na konci školního roku také připraveno týdenní soustředění v Praze.
+            </p>
+          </div>
+        </div>
+
+        <div class="column is-4">
+          <div class="view-home-feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h4 class="title is-5 mb-2">Vysoká škola</h4>
+            <p class="has-text-grey">
+              Za úspěšné řešení semináře můžeš získat cenné body navíc, nebo dokonce prominutí přijímacích zkoušek na vybraných vysokých školách. Mimo to lze na některých školách po nástupu ke studiu dostat i stipendium.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="container section">
-    <div class="columns tabs-content is-centered">
-      <ul class="is-size-5 column is-three-quarters">
-          <li class="is-active">
-              <p>KSICHT – Korespondenční Seminář Inspirovaný Chemickou Tematikou – je určen všem středoškolákům a žákům ZŠ, kteří mají rádi chemii. Nabízí zábavu, poučení a zajímavosti z nejrůznějších koutů chemie. Každoročně vycházejí čtyři série úloh, pořádají se společné výlety a ti nejlepší se mohou zúčastnit závěrečného soustředění na PřF UK.</p>
-              <p>Poznáš, že chemici rozhodně nejsou suchaři v bílých pláštích!</p>
-          </li>
-          <li>
-              <p>Korespondenční seminář je soutěž, při níž si vy, řešitelé KSICHTu, dopisujete s námi, autory, a naopak. Vy nám pošlete řešení zadaných úloh, my vše opravíme, ohodnotíme a zašleme vám je zpátky s přiloženým autorským řešením a pěti úlohami nové série. To všechno se za celý školní rok čtyřikrát zopakuje.</p>
-              <p>KSICHT organizují studenti PřF UK, VŠCHT a PřF MUNI.</p>
-          </li>
-          <li>
-              <p>Není nic jednoduššího! Stačí se jen <a href="{% url "django_registration_register" %}">zaregistrovat</a>, nezáleží na adrese školy ani státní příslušnosti.</p>
-              <p>Řešení nám poté můžete posílat buď poštou nebo elektronicky přes webový formulář. Řešení přijímáme v českém nebo slovenském jazyce, není-li v úloze uvedeno jinak.</p>
-              <p class="mt-3">Pokud chcete řešení poslat poštou, použijte tuto adresu:</p>
-              <p class="has-text-weight-bold">KSICHT, Přírodovědecká fakulta Univerzity Karlovy</p>
-              <p class="has-text-weight-bold">Hlavova 2030</p>
-              <p class="has-text-weight-bold">128 43 Praha 2</p>
-          </li>
-      </ul>
+  <div class="section py-6">
+    <div class="container">
+      <div class="has-text-centered mb-6">
+        <p class="subsubtitle has-text-link">Průběh soutěže</p>
+        <h3 class="title is-3 is-size-4-mobile">Jak to funguje?</h3>
+      </div>
+
+      <div class="columns is-multiline">
+        <div class="column is-4-desktop is-6-tablet">
+          <div class="view-home-step-card">
+            <div class="step-number">1</div>
+            <h4 class="title is-6 mb-2">Přihlaš se do ročníku</h4>
+            <p class="is-size-6 has-text-grey">Po přihlášení (popř. registraci) získáš možnost se přihlásit do aktuálního ročníku.</p>
+          </div>
+        </div>
+
+        <div class="column is-4-desktop is-6-tablet">
+          <div class="view-home-step-card">
+            <div class="step-number">2</div>
+            <h4 class="title is-6 mb-2">Stáhni si zadání</h4>
+            <p class="is-size-6 has-text-grey">Pro každou sérii najdeš v zadání pět úloh a krátký seriál z chemické chemie. Zadání je dostupné online, nebo si můžeš zvolit i zasílání poštou na tvoji adresu.</p>
+          </div>
+        </div>
+
+        <div class="column is-4-desktop is-6-tablet">
+          <div class="view-home-step-card">
+            <div class="step-number">3</div>
+            <h4 class="title is-6 mb-2">Vyřeš úlohy</h4>
+            <p class="is-size-6 has-text-grey">S využitím svých znalostí, internetu i literatury se pokus vyřešit co nejvíc úloh.</p>
+          </div>
+        </div>
+
+        <div class="column is-4-desktop is-6-tablet">
+          <div class="view-home-step-card">
+            <div class="step-number">4</div>
+            <h4 class="title is-6 mb-2">Odevzdej úlohy</h4>
+            <p class="is-size-6 has-text-grey">Své řešení můžeš odevzdat digitálně, nebo, pokud jsi je vypracovával ručně na papír, nám je pošli na adresu, kterou najdeš v zadání.</p>
+          </div>
+        </div>
+
+        <div class="column is-4-desktop is-6-tablet">
+          <div class="view-home-step-card">
+            <div class="step-number">5</div>
+            <h4 class="title is-6 mb-2">Získej body a nálepky</h4>
+            <p class="is-size-6 has-text-grey">Autoři tvé řešení opraví a zapíšou získané body. Mimo to ti také dorazí okomentovaná řešení úloh společně s nálepkami do tvé schránky.</p>
+          </div>
+        </div>
+
+        <div class="column is-4-desktop is-6-tablet">
+          <div class="view-home-step-card">
+            <div class="step-number">6</div>
+            <h4 class="title is-6 mb-2">Zúčastni se soustředění</h4>
+            <p class="is-size-6 has-text-grey">Nejlepší řešitelé získají pozvánku na týdenní soustředění v Praze, konané v červnu na Přírodovědecké fakultě UK.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section py-6">
+    <div class="container">
+      <div class="columns is-multiline">
+        <div class="column is-12-tablet is-6-widescreen mb-4">
+          <div class="view-home-logos-group has-text-centered">
+            <h4 class="title is-6 is-uppercase has-text-grey mb-4">
+              <i class="fas fa-university pr-1"></i> Organizátoři
+            </h4>
+            <div class="view-home-logos">
+              <a href="https://www.natur.cuni.cz/" target="_blank" rel="noopener" title="Přírodovědecká fakulta Univerzity Karlovy">
+                <img src="{% webpack_static "img/prfuk/prfuk.png" %}" alt="Přírodovědecká fakulta Univerzity Karlovy" />
+              </a>
+              <a href="https://natur.cuni.cz/chemie" target="_blank" rel="noopener" title="Chemická sekce Přírodovědecké fakulty Univerzity Karlovy">
+                <img src="{% webpack_static "img/prfuk/prfuk_chemie.svg" %}" alt="Chemická sekce Přírodovědecké fakulty Univerzity Karlovy" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-12-tablet is-6-widescreen mb-4">
+          <div class="view-home-logos-group has-text-centered">
+            <h4 class="title is-6 is-uppercase has-text-grey mb-4">
+              <i class="fas fa-hand-holding-usd pr-1"></i> Finanční podpora
+            </h4>
+            <div class="view-home-logos">
+              <a href="https://www.msmt.cz/" target="_blank" rel="noopener" title="Ministerstvo školství, mládeže a tělovýchovy">
+                <img src="{% webpack_static "img/msmt/logo_msmt_barevne-pozitivni_rgb_fullhd.png" %}" alt="Ministerstvo školství, mládeže a tělovýchovy" />
+              </a>
+              <a href="https://www.natur.cuni.cz/" target="_blank" rel="noopener" title="Přírodovědecká fakulta Univerzity Karlovy">
+                <img src="{% webpack_static "img/prfuk/prfuk.png" %}" alt="Přírodovědecká fakulta Univerzity Karlovy" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

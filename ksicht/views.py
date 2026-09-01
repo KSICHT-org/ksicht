@@ -79,6 +79,14 @@ def permission_protected_flatpage(request, url):
     if not url.startswith("/"):
         url = "/" + url
 
+    if url in ("/navody", "/navody/"):
+        guides = FlatPage.objects.filter(url__startswith="/navody/").exclude(url__in=("/navody", "/navody/")).prefetch_related("metadata__allowed_groups")
+        accessible = [p for p in guides if not hasattr(p, "metadata") or p.metadata.is_accessible_for(request.user)]
+        if accessible:
+            return HttpResponseRedirect(accessible[0].url)
+        elif guides.exists():
+            return HttpResponseRedirect(guides.first().url)
+
     site_id = get_current_site(request).id
 
     try:
