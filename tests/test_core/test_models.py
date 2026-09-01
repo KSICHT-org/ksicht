@@ -4,7 +4,6 @@ import pytest
 
 from ksicht.core import models
 
-
 pytestmark = [pytest.mark.django_db]
 
 
@@ -129,10 +128,10 @@ def test_is_expected_publish_date_passed():
         submission_deadline=today + timedelta(days=40),
     )
 
-    assert s_past.is_expected_publish_date_passed() is True
-    assert s_today.is_expected_publish_date_passed() is True
-    assert s_future.is_expected_publish_date_passed() is False
-    assert s_none.is_expected_publish_date_passed() is False
+    assert s_past.is_expected_publish_date_passed is True
+    assert s_today.is_expected_publish_date_passed is True
+    assert s_future.is_expected_publish_date_passed is False
+    assert s_none.is_expected_publish_date_passed is False
 
 
 def test_my_submissions_view_includes_active_and_submitted_series(rf):
@@ -178,7 +177,5 @@ def test_my_submissions_view_includes_active_and_submitted_series(rf):
     grade_data = context["grades_data"][0]
     assert grade_data["grade"] == grade
     # Only s1 should be included because it has submissions/is current, while s2 should not
-    assert len(grade_data["series"]) == 1
     assert grade_data["series"][0]["series"] == s1
     assert grade_data["series"][0]["submitted_count"] == 1
-

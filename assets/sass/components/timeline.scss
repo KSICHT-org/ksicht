@@ -1,0 +1,154 @@
+@use "bulma/sass/utilities/mixins";
+
+.series-timeline-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 0.75rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: 0 8px 20px rgba(1, 87, 192, 0.08);
+    }
+
+    &.is-active-series {
+        border: 2px solid var(--bulma-link);
+        box-shadow: 0 4px 16px rgba(1, 87, 192, 0.14);
+
+        .series-timeline-header {
+            background: linear-gradient(to right, rgba(1, 87, 192, 0.06), transparent);
+        }
+    }
+
+    .series-timeline-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .series-timeline-body {
+        padding: 1.5rem;
+    }
+
+    .timeline-track {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 1.25rem 0 1.75rem 0;
+        position: relative;
+        padding: 0 0.5rem;
+
+        @include mixins.mobile {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+            padding: 0;
+        }
+
+        .milestone-point {
+            position: relative;
+            z-index: 2;
+            background: #ffffff;
+            padding: 0.55rem 0.85rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e1e7f0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+
+            .point-icon {
+                width: 2rem;
+                height: 2rem;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f1f5f9;
+                color: #94a3b8;
+                font-size: 0.85rem;
+                transition: all 0.25s ease;
+            }
+
+            &.is-passed {
+                border-color: var(--bulma-link);
+                background: #f0f6ff;
+
+                .point-icon {
+                    background: var(--bulma-link);
+                    color: #ffffff;
+                }
+            }
+        }
+
+        .timeline-segment {
+            flex-grow: 1;
+            height: 3px;
+            background: #e1e7f0;
+            margin: 0 0.5rem;
+            position: relative;
+            z-index: 1;
+            transition: background 0.3s ease;
+
+            &.is-passed {
+                background: var(--bulma-link);
+            }
+
+            @include mixins.mobile {
+                flex-grow: 0;
+                width: 3px;
+                height: 1.25rem;
+                margin: -0.25rem 0 -0.25rem 1.6rem;
+            }
+        }
+    }
+
+    .timeline-tasks {
+        background: #f9fbfd;
+        border-radius: 0.5rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.25rem;
+
+        .task-badge-item {
+            display: inline-flex;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #e1e7f0;
+            border-radius: 2rem;
+            padding: 0.35rem 0.85rem;
+            margin: 0.25rem 0.35rem 0.25rem 0;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: border-color 0.2s ease;
+
+            .task-points {
+                margin-left: 0.5rem;
+                background: #e8f0fe;
+                color: #0157c0;
+                padding: 0.1rem 0.5rem;
+                border-radius: 1rem;
+                font-size: 0.75rem;
+                font-weight: 700;
+            }
+
+            &:hover {
+                border-color: var(--bulma-link);
+            }
+        }
+    }
+
+    .timeline-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+    }
+}

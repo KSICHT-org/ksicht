@@ -1,18 +1,16 @@
 {% extends "page.html" %}
 {% load webpack_static from webpack_loader %}
 
-{% block breadcrumb %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-    <div class="container">
-        <ul>
-            <li><a href="/">KSICHT</a></li>
-            <li class="is-active"><a href="#" aria-current="page">{% block headline %}Minulé ročníky{% endblock %}</a></li>
-        </ul>
-    </div>
-</nav>
-{% endblock %}
+{% block headline %}Minulé ročníky{% endblock %}
 
 {% block article %}
+    <div class="tabs is-boxed mb-5">
+        <ul>
+            <li><a href="{% url 'core:current_grade' %}"><i class="fas fa-calendar-check pr-2"></i> Aktuální ročník</a></li>
+            <li class="is-active"><a href="{% url 'core:grade_archive' %}"><i class="fas fa-archive pr-2"></i> Minulé ročníky (Archiv)</a></li>
+        </ul>
+    </div>
+
 {% if object_list %}
     <div class="columns is-desktop is-multiline">
         {% for grade in object_list %}

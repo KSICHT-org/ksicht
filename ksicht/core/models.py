@@ -14,6 +14,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 from django_registration.signals import user_activated
 from imagekit.models import ImageSpecField
@@ -22,7 +23,6 @@ import pydash as py_
 
 from ksicht.pdf import prepare_submission_for_export
 from .constants import SCHOOLS_CHOICES
-
 
 logger = logging.getLogger(__name__)
 
@@ -116,6 +116,14 @@ class Grade(models.Model):
     @property
     def is_in_progress(self):
         return self.start_date <= date.today() <= self.end_date
+
+    @property
+    def has_task_files(self):
+        return any(bool(s.task_file) for s in self.series.all())
+
+    @property
+    def has_published_results(self):
+        return any(bool(s.results_published) for s in self.series.all())
 
     def __str__(self):
         return str(self.school_year)
@@ -245,16 +253,40 @@ class GradeSeries(models.Model):
             "core:series_detail", kwargs={"pk": self.pk, "grade_id": self.grade_id}
         )
 
+    @property
     def is_expected_publish_date_passed(self):
-        return bool(
-            self.expected_publish_date
-            and self.expected_publish_date <= datetime.now().date()
+        if self.expected_publish_date:
+            return self.expected_publish_date <= date.today()
+        return bool(self.task_file)
+
+    @property
+    def is_submission_deadline_passed(self):
+        if not self.submission_deadline:
+            return False
+        return self.submission_deadline <= datetime.now(self.submission_deadline.tzinfo)
+
+    @property
+    def is_evaluating(self):
+        return self.is_submission_deadline_passed and not self.results_published
+
+    @property
+    def is_active(self):
+        return (
+            bool(self.task_file)
+            and self.is_expected_publish_date_passed
+            and not self.is_submission_deadline_passed
         )
 
     @property
+    def is_upcoming(self):
+        return not self.is_active and not self.is_submission_deadline_passed
+
+    @property
     def accepts_solution_submissions(self):
-        return self.task_file is not None and self.submission_deadline > datetime.now(
-            self.submission_deadline.tzinfo
+        return (
+            bool(self.task_file)
+            and self.is_expected_publish_date_passed
+            and not self.is_submission_deadline_passed
         )
 
     def get_rankings(
@@ -458,7 +490,7 @@ class ParticipantManager(models.Manager):
 class Participant(models.Model):
     COUNTRY_CHOICES = (
         ("other", "-- jiný --"),
-        ("cz", "Česko"),
+        ("cz", "Česká republika"),
         ("sk", "Slovensko"),
     )
     GRADE_CHOICES = (
@@ -1028,3 +1060,99 @@ class TeamMember(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class AnnouncementQuerySet(models.QuerySet):
+    def active(self, user=None):
+        now = timezone.now()
+        qs = (
+            self.filter(is_active=True)
+            .filter(models.Q(valid_from__isnull=True) | models.Q(valid_from__lte=now))
+            .filter(models.Q(valid_to__isnull=True) | models.Q(valid_to__gte=now))
+            .order_by("-created_at")
+        )
+        if user is None or not user.is_authenticated:
+            qs = qs.filter(only_authenticated=False)
+        return qs
+
+
+class Announcement(models.Model):
+    STYLE_CHOICES = (
+        ("info", "Informace (modrá)"),
+        ("warning", "Varování (žlutá / oranžová)"),
+        ("danger", "Důležité upozornění (červená)"),
+        ("success", "Úspěch (zelená)"),
+        ("neutral", "Neutrální (světle šedá)"),
+    )
+
+    message = models.TextField(
+        verbose_name="Zpráva oznámení",
+        help_text="Podporuje formátování Markdown (tučné písmo, kurzíva, odkazy).",
+    )
+    style = models.CharField(
+        verbose_name="Barevný styl",
+        max_length=20,
+        choices=STYLE_CHOICES,
+        default="info",
+    )
+    is_active = models.BooleanField(
+        verbose_name="Aktivní",
+        default=True,
+        db_index=True,
+        help_text="Zaškrtněte pro zobrazení oznámení na webu.",
+    )
+    only_authenticated = models.BooleanField(
+        verbose_name="Pouze pro přihlášené uživatele",
+        default=False,
+        help_text="Pokud je zaškrtnuto, banner se zobrazí pouze přihlášeným uživatelům.",
+    )
+    valid_from = models.DateTimeField(
+        verbose_name="Zobrazovat od",
+        null=True,
+        blank=True,
+        help_text="Volitelné. Ponechte prázdné pro okamžité zobrazení.",
+    )
+    valid_to = models.DateTimeField(
+        verbose_name="Zobrazovat do",
+        null=True,
+        blank=True,
+        help_text="Volitelné. Ponechte prázdné pro neomezenou platnost.",
+    )
+    dismissible = models.BooleanField(
+        verbose_name="Lze skrýt křížkem",
+        default=True,
+        help_text="Uživatel si může banner skrýt kliknutím na křížek.",
+    )
+    link_url = models.CharField(
+        verbose_name="Odkaz tlačítka (URL)",
+        max_length=255,
+        blank=True,
+        help_text="Volitelné. Např. '/akce/' nebo celá URL.",
+    )
+    link_text = models.CharField(
+        verbose_name="Text tlačítka",
+        max_length=100,
+        blank=True,
+        help_text="Např. 'Více informací' nebo 'Přejít na přihlášku'.",
+    )
+    created_at = models.DateTimeField(
+        verbose_name="Vytvořeno",
+        auto_now_add=True,
+    )
+    updated_at = models.DateTimeField(
+        verbose_name="Upraveno",
+        auto_now=True,
+    )
+
+    objects = AnnouncementQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = "Oznámení (banner)"
+        verbose_name_plural = "Oznámení (bannery)"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        msg = self.message.strip()
+        if len(msg) > 60:
+            return msg[:57] + "..."
+        return msg
