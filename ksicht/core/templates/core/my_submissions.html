@@ -1,135 +1,158 @@
 {% extends "page.html" %}
 {% load filename stickers %}
 
-{% block headline %}Moje odeslaná řešení{% endblock %}
+{% block headline %}Moje řešení{% endblock %}
 
 {% block article %}
-    {% if grades_data %}
-        {% for grade_entry in grades_data %}
-            <h2 class="title is-4 mb-4">
-                <i class="fas fa-graduation-cap pr-1"></i> {{ grade_entry.grade }}
-            </h2>
+<div class="columns is-desktop">
+    <div class="column is-4-desktop is-12-tablet mb-5">
+        {% include "includes/user_hub_sidebar.html" %}
+    </div>
 
-            {% for series_entry in grade_entry.series %}
-                <div class="card mb-5">
-                    <header class="card-header" style="cursor: pointer;" onclick="var content = this.parentElement.querySelector('.card-content'); content.classList.toggle('is-hidden'); var icon = this.querySelector('.card-header-icon .icon i'); icon.classList.toggle('fa-angle-down'); icon.classList.toggle('fa-angle-up');">
-                        <p class="card-header-title">
-                            {{ series_entry.series }}
-                            <span class="ml-3">
-                                <span class="tag is-info is-light">{{ series_entry.submitted_count }}/{{ series_entry.total_count }} odevzdáno</span>
-                                {% if series_entry.results_published %}
-                                    <span class="tag is-success is-light">{{ series_entry.total_points|floatformat:2 }} bodů</span>
-                                {% endif %}
-                            </span>
-                        </p>
-                        <button class="card-header-icon" aria-label="toggle">
-                            <span class="icon">
-                                {% if grade_entry.is_current and forloop.first %}
-                                    <i class="fas fa-angle-up" aria-hidden="true"></i>
-                                {% else %}
-                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                {% endif %}
-                            </span>
-                        </button>
-                    </header>
-                    <div class="card-content p-0 {% if not grade_entry.is_current or not forloop.first %}is-hidden{% endif %}">
-                        <div class="table-container">
-                            <table class="table is-striped is-hoverable is-fullwidth mb-0">
-                                <thead>
-                                    <tr>
-                                        <th style="min-width: 150px;">Úloha</th>
-                                        <th style="min-width: 120px;">Stav</th>
-                                        <th style="min-width: 160px;">Soubor</th>
-                                        <th style="min-width: 140px;">Datum odevzdání</th>
-                                        <th style="min-width: 70px;">Body</th>
-                                        <th style="min-width: 120px;">Nálepky</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for item in series_entry.tasks %}
-                                    <tr>
-                                        <td style="word-break: break-word;">{{ item.task.nr }}. {{ item.task.title }}</td>
-                                        <td>
-                                            {% if item.submission and item.submission.score != None and series_entry.results_published %}
-                                                <span class="tag is-info">
-                                                    <i class="fas fa-star mr-1"></i> Ohodnoceno
-                                                </span>
-                                            {% elif item.submission %}
-                                                <span class="tag is-success">
-                                                    <i class="fas fa-check mr-1"></i> Odevzdáno
-                                                </span>
-                                            {% else %}
-                                                <span class="tag is-light">
-                                                    <i class="fas fa-times mr-1"></i> Neodevzdáno
-                                                </span>
-                                            {% endif %}
-                                        </td>
-                                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                            {% if item.submission and item.submission.file %}
-                                                <a href="{{ item.submission.file.url }}" target="_blank" title="Zobrazit soubor">
-                                                    <span class="icon-text">
-                                                        <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                                                        <span>{{ item.submission.file|filename }}</span>
-                                                    </span>
-                                                </a>
-                                            {% else %}
-                                                &mdash;
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if item.submission %}
-                                                {{ item.submission.submitted_at|date:"d.m.Y H:i" }}
-                                            {% else %}
-                                                &mdash;
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if series_entry.results_published and item.submission and item.submission.score != None %}
-                                                {{ item.submission.score|floatformat:2 }}
-                                            {% else %}
-                                                &mdash;
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if item.stickers_with_limits %}
-                                                <div class="tag-list" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
-                                                {% for s, grayed, label in item.stickers_with_limits %}
-                                                    {% sticker s grayed label force_link_color=True %}
-                                                {% endfor %}
-                                                </div>
-                                            {% elif item.submission %}
-                                                &mdash;
-                                            {% else %}
-                                                &mdash;
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        {% if series_entry.series_stickers_with_limits %}
-                        <div class="content p-4 has-background-light" style="border-top: 1px solid #dbdbdb;">
-                            <p class="is-size-7 has-text-grey mb-2">Nálepky přiřazené k sérii:</p>
-                            <div class="tag-list" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
-                                {% for s, grayed, label in series_entry.series_stickers_with_limits %}
-                                    {% sticker s grayed label force_link_color=True %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
+    <div class="column is-8-desktop is-12-tablet">
+        {% if grades_data %}
+            {% for grade_entry in grades_data %}
+                <div class="is-flex is-justify-content-between is-align-items-center mb-4 is-flex-wrap-wrap">
+                    <h2 class="title is-4 mb-2 mr-2">
+                        <i class="fas fa-graduation-cap pr-1"></i> {{ grade_entry.grade }}
+                    </h2>
+                    {% if grade_entry.final_rank %}
+                        <span class="tag is-primary is-light is-medium has-text-weight-bold mb-2">
+                            <i class="fas fa-trophy pr-1"></i> {{ grade_entry.final_rank }}. místo ({{ grade_entry.final_total_points|floatformat:2 }} b.)
+                        </span>
+                    {% endif %}
                 </div>
-            {% endfor %}
 
-            {% if not forloop.last %}<hr class="mb-5">{% endif %}
-        {% endfor %}
-    {% else %}
-        <article class="message is-info is-size-5">
-            <div class="message-body">
-                <p>Zatím jste se nepřihlásil/a do žádného ročníku KSICHTu, nebo nemáte žádná odeslaná řešení.</p>
-            </div>
-        </article>
-    {% endif %}
+                {% for series_entry in grade_entry.series %}
+                    <div class="card mb-5" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                        <header class="card-header" style="cursor: pointer; background: #f8fafc;" onclick="var content = this.parentElement.querySelector('.card-content'); content.classList.toggle('is-hidden'); var icon = this.querySelector('.card-header-icon .icon i'); icon.classList.toggle('fa-angle-down'); icon.classList.toggle('fa-angle-up');">
+                            <p class="card-header-title">
+                                {{ series_entry.series }}
+                                <span class="ml-3">
+                                    <span class="tag is-info is-light">{{ series_entry.submitted_count }}/{{ series_entry.total_count }} odevzdáno</span>
+                                    {% if series_entry.results_published %}
+                                        <span class="tag is-success is-light">{{ series_entry.total_points|floatformat:2 }} b.</span>
+                                        {% if series_entry.rank %}
+                                            <span class="tag is-warning is-light has-text-weight-bold">
+                                                <i class="fas fa-medal pr-1"></i> {{ series_entry.rank }}. místo
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </span>
+                            </p>
+                            <button class="card-header-icon" aria-label="toggle">
+                                <span class="icon">
+                                    {% if grade_entry.is_current and forloop.first %}
+                                        <i class="fas fa-angle-up" aria-hidden="true"></i>
+                                    {% else %}
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    {% endif %}
+                                </span>
+                            </button>
+                        </header>
+                        <div class="card-content p-0 {% if not grade_entry.is_current or not forloop.first %}is-hidden{% endif %}">
+                            <div class="table-container mb-0">
+                                <table class="table is-striped is-hoverable is-fullwidth mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th style="min-width: 150px;">Úloha</th>
+                                            <th>Odevzdáno</th>
+                                            <th>Body</th>
+                                            <th>Nálepky k úloze</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in series_entry.tasks %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ item.task.get_absolute_url }}">
+                                                    <strong>{{ item.task.title }}</strong>
+                                                </a>
+                                                {% if item.task.points %}
+                                                    <span class="tag is-light is-rounded is-size-7 ml-1">max {{ item.task.points }} b.</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.submission %}
+                                                    <div>
+                                                        {% if item.submission.file %}
+                                                            <a href="{{ item.submission.file.url }}" target="_blank" rel="noopener">
+                                                                <i class="fas fa-file-pdf pr-1 has-text-link"></i> {{ item.submission.file|filename }}
+                                                            </a>
+                                                        {% else %}
+                                                            <span class="has-text-grey"><i class="fas fa-envelope pr-1"></i> Poštou</span>
+                                                        {% endif %}
+                                                        <br>
+                                                        <span class="is-size-7 has-text-grey">
+                                                            {{ item.submission.submitted_at|date:"d.m.Y H:i" }}
+                                                        </span>
+                                                    </div>
+                                                {% else %}
+                                                    {% if series_entry.can_submit %}
+                                                        <a href="{% url 'core:solution_submit' task_id=item.task.pk %}" class="button is-small is-link is-outlined">
+                                                            <i class="fas fa-upload pr-1"></i> Odevzdat
+                                                        </a>
+                                                    {% else %}
+                                                        <span class="has-text-grey-light">Neodevzdáno</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if series_entry.results_published %}
+                                                    {% if item.submission and item.submission.score is not None %}
+                                                        <strong class="has-text-success">{{ item.submission.score|floatformat:2 }}</strong>
+                                                        {% if item.task.points %}
+                                                            <span class="has-text-grey is-size-7">/ {{ item.task.points }}</span>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <span class="has-text-grey">0</span>
+                                                    {% endif %}
+                                                {% elif item.submission %}
+                                                    <span class="tag is-warning is-light">Čeká na vyhodnocení</span>
+                                                {% else %}
+                                                    &mdash;
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.stickers_with_limits %}
+                                                    <div class="tag-list" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                                        {% for s, grayed, label in item.stickers_with_limits %}
+                                                            {% sticker s grayed label force_link_color=True %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="has-text-grey-light">&mdash;</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            {% if series_entry.series_stickers_with_limits %}
+                            <div class="content p-4 has-background-light" style="border-top: 1px solid #dbdbdb;">
+                                <p class="is-size-7 has-text-grey mb-2">Nálepky přiřazené k sérii:</p>
+                                <div class="tag-list" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                    {% for s, grayed, label in series_entry.series_stickers_with_limits %}
+                                        {% sticker s grayed label force_link_color=True %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if not forloop.last %}<hr class="mb-5">{% endif %}
+            {% endfor %}
+        {% else %}
+            <article class="message is-info is-light is-size-5">
+                <div class="message-body">
+                    <p>Zatím jsi se nepřihlásil/a do žádného ročníku KSICHTu, nebo nemáš žádná odeslaná řešení.</p>
+                </div>
+            </article>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

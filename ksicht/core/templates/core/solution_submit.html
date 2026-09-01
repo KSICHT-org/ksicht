@@ -3,39 +3,126 @@
 {% load filename %}
 
 {% block headline %}Odeslání řešení{% endblock %}
-{% block header_sub%}<h3 class="subtitle">pro {{ current_series.get_series_display }} sérii ročníku {{ current_grade }}</h3>{% endblock %}
+
+{% block header_sub %}
+    <div class="tags are-medium mt-2 mb-0">
+        <span class="tag is-link is-rounded has-text-weight-semibold">
+            <i class="fas fa-layer-group pr-1"></i> {{ current_series.get_series_display }} série ({{ current_grade }})
+        </span>
+        <span class="tag is-warning is-light is-rounded">
+            <i class="fas fa-clock pr-1"></i> Termín odevzdání: {{ current_series.submission_deadline|date:"d.m.Y (H:i)" }}
+        </span>
+    </div>
+{% endblock %}
 
 {% block article %}
-    <div class="columns">
-        <div class="column is-6">
-            {% for task, form, submission, can_delete in forms %}
-            <h2 class="subsubtitle is-size-7">{{ task.title }} úloha</h2>
-            {% if submission %}
-            <article class="message is-warning is-size-6">
-                <div class="message-body">
-                    <p>Pro tuto úlohu jste již <strong>odevzdal/a</strong> řešení <strong>{{ submission.file|filename }}</strong>.</p>
-                    <p>Nahráním nového souboru bude stávající řešení <strong>nahrazeno</strong>.</p>
+<div class="columns is-desktop">
+    <div class="column is-8-desktop is-12-tablet">
+        {% for task, form, submission, can_delete in forms %}
+            <div class="card mb-5" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 2px 6px rgba(0,0,0,0.03); overflow: hidden;">
+                <div class="card-header p-4 has-background-white-bis is-flex is-justify-content-between is-align-items-center is-flex-wrap-wrap is-gap-2 gap-2">
+                    <div class="is-flex is-align-items-center is-flex-wrap-wrap is-gap-2 gap-2">
+                        <span class="tag is-link is-rounded has-text-weight-bold pr-2 is-up">{{ task.nr }}. úloha</span>
+                        <h4 class="title is-5 mb-0 has-text-weight-bold">{{ task.title }}</h4>
+                    </div>
+                    <span class="tag is-info is-light is-rounded has-text-weight-semibold">
+                        <i class="fas fa-star pr-1"></i> {{ task.points }} b
+                    </span>
                 </div>
-            </article>
-            {% endif %}
-            {% crispy form %}
-            {% if submission and can_delete %}
-            <a class="button is-danger is-outlined is-small mt-2" href="{% url 'core:solution_submit_delete' submission.id %}">Smazat řešení</a>
-            {% endif %}
-            {% if not forloop.last %}<hr>{% endif %}
-            {% endfor %}
-        </div>
-        <div class="column is-4 is-offset-1">
-            <article class="message is-info">
-                <div class="message-header">Poznámky k odeslání řešení</div>
-                <div class="message-body content">
-                    <p>Každá série obsahuje <strong>5 úloh</strong>. Řešení se odevzdává v samostatných souborech pro každou úlohu. Soubory s řešením odevzdávejte výhradně ve <strong>formátu PDF</strong>. Maximální velikost každého souboru je <strong>
-                        omezena na 2 MB
-                    </strong>.</p>
-                    <p>Z omezení velikost vyplývá, že zdrojem pro PDF soubory musí být elektronický dokument, nikoliv sken papírového řešení!</p>
-                    <p>Nepovedlo se ti odeslat úlohy správně? Poslal jsi omylem špatný soubor? Napiš nám na <a href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a> a nějak to vyřešíme.</p>
+
+                <div class="card-content p-5">
+                    {% if submission %}
+                        <div class="p-4 mb-4" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                            <div class="is-flex is-justify-content-between is-align-items-center is-flex-wrap-wrap is-gap-3 gap-3 mb-2">
+                                <div class="is-flex is-align-items-center" style="min-width: 0; flex: 1 1 200px;">
+                                    <span class="icon is-medium has-text-success mr-3 is-flex-shrink-0">
+                                        <i class="fas fa-check-circle fa-lg"></i>
+                                    </span>
+                                    <div style="min-width: 0; overflow-wrap: anywhere; word-break: break-word;">
+                                        <p class="mb-0 has-text-weight-bold has-text-success-dark">
+                                            Řešení je odevzdáno
+                                        </p>
+                                        <p class="is-size-7 has-text-grey mb-0">
+                                            Soubor: <a href="{{ submission.file.url }}" target="_blank" rel="noopener" class="has-text-weight-semibold has-text-link">{{ submission.file|filename }}</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                {% if can_delete %}
+                                    <div class="is-flex-shrink-0">
+                                        <a class="button is-danger is-outlined is-small is-rounded" href="{% url 'core:solution_submit_delete' submission.id %}">
+                                            <i class="fas fa-trash-alt pr-2"></i>Smazat řešení
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <p class="is-size-7 has-text-grey mb-0 pt-2" style="border-top: 1px dashed rgba(72, 199, 142, 0.4);">
+-                                <i class="fas fa-info-circle pr-1"></i> Nahráním nového souboru níže stávající řešení <strong>nahradíš</strong>.
+                            </p>
+                        </div>
+                    {% else %}
+                        <div class="p-3 mb-4" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 0.5rem;">
+                            <p class="is-size-7 has-text-grey mb-0">
+                                <i class="fas fa-exclamation-circle pr-1 has-text-grey-light"></i> Pro tuto úlohu zatím nemáš nahráno žádné řešení.
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    <div>
+                        {% crispy form %}
+                    </div>
                 </div>
-            </article>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="column is-4-desktop is-12-tablet">
+        <div style="position: sticky; top: 1.5rem;">
+            <div class="box p-5" style="border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                <h4 class="title is-5 mb-4">
+                    <i class="fas fa-info-circle has-text-link pr-2"></i> Pokyny k odesílání
+                </h4>
+
+                <div class="content is-size-6">
+                    <div class="is-flex is-align-items-flex-start mb-3">
+                        <span class="icon has-text-danger mr-2 mt-1"><i class="fas fa-file-pdf"></i></span>
+                        <div>
+                            <strong>Formát PDF</strong>
+                            <p class="is-size-7 has-text-grey mb-0">Soubory odevzdávej ve formátu PDF (max. <strong>2 MB</strong> na úlohu).</p>
+                        </div>
+                    </div>
+
+                    <div class="is-flex is-align-items-flex-start mb-3">
+                        <span class="icon has-text-link mr-2 mt-1"><i class="fas fa-file-alt"></i></span>
+                        <div>
+                            <strong>Samostatné soubory</strong>
+                            <p class="is-size-7 has-text-grey mb-0">Každá úloha se odevzdává v samostatném souboru.</p>
+                        </div>
+                    </div>
+
+                    <div class="is-flex is-align-items-flex-start mb-3">
+                        <span class="icon has-text-info mr-2 mt-1"><i class="fas fa-laptop"></i></span>
+                        <div>
+                            <strong>Digitální dokument</strong>
+                            <p class="is-size-7 has-text-grey mb-0">Zdrojem PDF musí být elektronický dokument. Naskenovaná a ofocená řešení nemusí být přijata.</p>
+                        </div>
+                    </div>
+
+                    <div class="is-flex is-align-items-flex-start mb-4">
+                        <span class="icon has-text-warning mr-2 mt-1"><i class="fas fa-sync-alt"></i></span>
+                        <div>
+                            <strong>Možnost opravy</strong>
+                            <p class="is-size-7 has-text-grey mb-0">Až do termínu uzávěrky můžeš své řešení kdykoliv nahradit novou verzí.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 has-background-white-bis" style="border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+                    <p class="is-size-7 mb-0">
+                        <i class="fas fa-question-circle pr-1 has-text-link"></i> Něco se nepovedlo? Napiš nám na <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-semibold has-text-link">ksicht@natur.cuni.cz</a>.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}

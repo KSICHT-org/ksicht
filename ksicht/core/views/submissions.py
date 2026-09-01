@@ -56,7 +56,7 @@ class SolutionSubmitView(TemplateView):
 
         self.current_series = self.current_grade.get_current_series()
 
-        if not self.current_series:
+        if not self.current_series or not self.current_series.task_file:
             return HttpResponseNotFound()
 
         self.application = GradeApplication.objects.filter(
@@ -497,18 +497,11 @@ class MySubmissionsView(TemplateView):
 
             series_data = []
             for series in series_list:
-                # check if this series has any submissions for this participant
                 has_submissions = any(
                     task.id in submissions for task in series.tasks.all()
                 )
 
-                # only show series that have started, have submissions, or are currently accepting submissions
-                if (
-                    not series.task_file
-                    and not series.is_expected_publish_date_passed()
-                    and not has_submissions
-                    and series != grade.get_current_series()
-                ):
+                if not series.task_file and not has_submissions:
                     continue
 
                 # Collect assignments belonging to this series
@@ -564,22 +557,53 @@ class MySubmissionsView(TemplateView):
                         if series.results_published:
                             total_points += submission.score or Decimal("0")
 
+                rank = None
+                total_participants = None
+                cumulative_points = None
+                if series.results_published:
+                    try:
+                        rankings = series.get_rankings()
+                        rank_entry = next((r for r in rankings["listing"] if r[0].pk == application.pk), None)
+                        if rank_entry:
+                            rank = rank_entry[1]
+                            cumulative_points = rank_entry[3]
+                            total_participants = len(rankings["listing"])
+                    except Exception:
+                        pass
+
                 series_data.append(
                     {
                         "series": series,
+                        "can_submit": series.accepts_solution_submissions and bool(series.task_file),
                         "tasks": tasks_data,
                         "submitted_count": submitted_count,
                         "total_count": len(tasks_data),
                         "total_points": total_points,
+                        "cumulative_points": cumulative_points,
+                        "rank": rank,
+                        "total_participants": total_participants,
                         "results_published": series.results_published,
                         "series_stickers_with_limits": series_stickers_with_limits,
                     }
                 )
 
+            final_rank = None
+            final_total_participants = None
+            final_total_points = None
+            published_series_with_rank = [s for s in series_data if s["results_published"] and s.get("rank")]
+            if published_series_with_rank:
+                latest_pub = published_series_with_rank[0]
+                final_rank = latest_pub["rank"]
+                final_total_participants = latest_pub["total_participants"]
+                final_total_points = latest_pub["cumulative_points"]
+
             grades_data.append(
                 {
                     "grade": grade,
                     "series": series_data,
+                    "final_rank": final_rank,
+                    "final_total_participants": final_total_participants,
+                    "final_total_points": final_total_points,
                     "is_current": grade.is_in_progress,
                 }
             )

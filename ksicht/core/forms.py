@@ -56,7 +56,7 @@ class SolutionSubmitForm(forms.Form):
             return file
 
         self.fields[f"file_{task.pk}"] = FileField(
-            label="Vyberte soubor s řešením",
+            label="Vyber soubor s řešením",
             required=True,
             allow_empty_file=False,
         )
@@ -70,14 +70,12 @@ class SolutionSubmitForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Row(
+                Column(Field(f"file_{task.pk}"), css_class="is-12-tablet is-9-desktop"),
                 Column(
-                    Field(f"file_{task.pk}"), css_class="is-12-mobile is-10-desktop"
+                    Submit("submit", "Nahrát soubor", css_class="is-link is-fullwidth"),
+                    css_class="is-12-tablet is-3-desktop is-flex is-align-items-flex-end pb-3",
                 ),
-                Column(
-                    Submit("submit", "Odeslat", css_class="is-outlined"),
-                    css_class="is-12-mobile is-2-desktop has-text-right-desktop",
-                ),
-                css_class="is-mobile is-multiline",
+                css_class="is-multiline is-align-items-flex-end",
             )
         )
         self.helper.form_action = (
@@ -116,11 +114,15 @@ class ScoringForm(forms.ModelForm):
             initial = kwargs.setdefault("initial", {})
             try:
                 # Use prefetched objects to avoid N+1 queries during template rendering
-                initial["stickers"] = [sa.sticker_id for sa in instance.stickerassignment_set.all()]
+                initial["stickers"] = [
+                    sa.sticker_id for sa in instance.stickerassignment_set.all()
+                ]
             except AttributeError:
-                initial["stickers"] = list(models.StickerAssignment.objects.filter(
-                    awarded_for_submission=instance
-                ).values_list("sticker_id", flat=True))
+                initial["stickers"] = list(
+                    models.StickerAssignment.objects.filter(
+                        awarded_for_submission=instance
+                    ).values_list("sticker_id", flat=True)
+                )
 
         super().__init__(*args, **kwargs)
 
@@ -144,41 +146,41 @@ class ScoringForm(forms.ModelForm):
         selected_pks = self.cleaned_data.get("stickers", [])
         if not selected_pks:
             return []
-            
+
         valid_stickers = []
         for pk_val in selected_pks:
             for s in self.sticker_choices:
                 if s.pk == pk_val:
                     valid_stickers.append(s)
                     break
-                    
+
         return valid_stickers
 
     def save(self, commit=True):
         instance = super().save(commit)
         if commit:
             self.save_stickers(instance)
-            
+
         return instance
-        
+
     def _save_m2m(self):
         super()._save_m2m()
         self.save_stickers(self.instance)
-        
+
     def save_stickers(self, instance):
         if not instance or not instance.pk:
             return
-            
+
         selected_stickers = self.cleaned_data.get("stickers", [])
-        
+
         # Delete old assignments
         models.StickerAssignment.objects.filter(
             awarded_for_submission=instance
         ).exclude(sticker__in=selected_stickers).delete()
-        
+
         # Determine series context from submission
         series = instance.task.series
-        
+
         # Create new assignments
         for sticker in selected_stickers:
             models.StickerAssignment.objects.get_or_create(
@@ -188,5 +190,5 @@ class ScoringForm(forms.ModelForm):
                 defaults={
                     "awarded_in_series": series,
                     "assigned_after_publication": series.results_published,
-                }
+                },
             )
