@@ -88,7 +88,10 @@ class StickerAssignmentOverview(DetailView):
 
         grant_stickers_for_series(self.object)
 
-        messages.success(request, f"Nálepky pro sérii {self.object} byly úspěšně přepočítány.")
+        messages.success(
+            request,
+            f"<i class='fas fa-check-circle notification-icon'></i> Nálepky pro sérii {self.object} byly úspěšně přepočítány."
+        )
         return redirect("core:series_sticker_assignment_overview", grade_id=self.object.grade_id, pk=self.object.id)
 
     def get_context_data(self, **kwargs):

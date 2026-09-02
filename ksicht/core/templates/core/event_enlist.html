@@ -7,14 +7,14 @@
 
 {% if has_enlisted %}
 <div class="content content-readable">
-    <div class="message is-success is-size-5">
-        <div class="message-body">
-            <strong class="is-size-4">Přihlášení na akci proběhlo úspěšně.</strong>
+    <div class="message is-success is-light" style="border-radius: 0.75rem;">
+        <div class="message-body is-size-5">
+            <strong class="is-size-4"><i class="fas fa-check-circle pr-2 has-text-success"></i> Přihlášení na akci proběhlo úspěšně.</strong>
             {% if is_substitute %}
-            <p><i class="fas fa-exclamation-triangle pr-1"></i> Základní kapacita byla bohužel již překročena, prosto jsme vás přihlásili jako náhradníka.</p>
+            <p class="mt-2"><i class="fas fa-exclamation-triangle pr-1 has-text-warning-dark"></i> Základní kapacita byla bohužel již překročena, proto jsme tě přihlásili jako náhradníka.</p>
             {% endif %}
             {% if object.enlistment_message %}
-            <p class="mt-5">{{ object.enlistment_message|markdown }}</p>
+            <div class="mt-4">{{ object.enlistment_message|markdown }}</div>
             {% endif %}
         </div>
     </div>
@@ -31,13 +31,14 @@
                     </p>
 
                     <div class="content content-readable">
-                        <div class="message is-warning is-size-5">
-                            <div class="message-body">
+                        <div class="message is-warning is-light" style="border-radius: 0.75rem;">
+                            <div class="message-body is-size-5">
                                 <p>
+                                    <i class="fas fa-exclamation-triangle pr-1 has-text-warning-dark"></i>
                                     Přihlášení na akci je <strong>závazné</strong>. KSICHT si vyhrazuje právo akci <strong>změnit, upravit termín, nebo akci zcela zrušit</strong>.
                                 </p>
                                 {% if free_places == 0 %}
-                                    <p>Vyhrazená kapacita je již naplněna, <strong>přihlásite se pouze jako náhradník</strong>.</p>
+                                    <p class="mt-2">Vyhrazená kapacita je již naplněna, <strong>přihlásíte se pouze jako náhradník</strong>.</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -76,10 +77,10 @@
         <div class="columns is-reversed-mobile">
             <div class="column is-8-tablet is-6-widescreen">
                 <div class="content content-readable">
-                    <div class="message is-danger is-size-5">
-                        <div class="message-body">
-                            <p>Přihlášení na akci je <strong>podmíněno doplněním následujících údajů</strong> na vašem profilu:</p>
-                            <ul>
+                    <div class="message is-danger is-light" style="border-radius: 0.75rem;">
+                        <div class="message-body is-size-5">
+                            <p><i class="fas fa-exclamation-circle pr-1 has-text-danger"></i> Přihlášení na akci je <strong>podmíněno doplněním následujících údajů</strong> na vašem profilu:</p>
+                            <ul class="mt-2">
                                 {% if not phone_check_passed %}<li><strong>Telefonní číslo</strong></li>{% endif %}
                                 {% if not birth_date_check_passed %}<li><strong>Datum narození</strong></li>{% endif %}
                             </ul>

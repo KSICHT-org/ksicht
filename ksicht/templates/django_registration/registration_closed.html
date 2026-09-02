@@ -4,7 +4,11 @@
 {% block header_sub %}<p class="subtitle">Registrace jsou aktuálně pozastaveny.</p>{% endblock %}
 
 {% block container %}
-    <p class="notification">
-        Pro více informací nás kontaktujte na emailu <a href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
-    </p>
+    <article class="message is-warning is-light" style="border-radius: 0.5rem;">
+        <div class="message-body is-size-6">
+            <i class="fas fa-exclamation-triangle pr-2 has-text-warning-dark"></i>
+            Pro více informací nás kontaktuj na e-mailu <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-bold">ksicht@natur.cuni.cz</a>.
+        </div>
+    </article>
 {% endblock %}
+
