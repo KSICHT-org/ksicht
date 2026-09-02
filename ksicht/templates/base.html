@@ -37,16 +37,38 @@
         {% endblock %}
 
         {% if messages %}
-            {% for message in messages %}
-                <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
-                    <div class="container">
-                        <div class="columns is-vcentered">
-                            <div class="column is-size-5">{{ message|safe }}</div>
-                            <div class="column notification-delete"><button class="delete"></button></div>
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message-banner {% if message.tags %}{{ message.tags }}{% endif %}">
+                        <div class="container">
+                            <div class="flash-message-inner">
+                                <div class="flash-message-content">
+                                    {{ message|safe }}
+                                </div>
+                                <button type="button" class="flash-message-dismiss" aria-label="Zavřít" onclick="dismissFlashMessage(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+            <script>
+                function dismissFlashMessage(btn) {
+                    var el = btn.closest('.flash-message-banner');
+                    if (el) {
+                        el.style.transition = 'opacity 0.2s ease, max-height 0.2s ease, padding 0.2s ease';
+                        el.style.opacity = '0';
+                        el.style.maxHeight = el.scrollHeight + 'px';
+                        setTimeout(function() {
+                            el.style.maxHeight = '0';
+                            el.style.paddingTop = '0';
+                            el.style.paddingBottom = '0';
+                            setTimeout(function() { el.remove(); }, 200);
+                        }, 50);
+                    }
+                }
+            </script>
         {% endif %}
 
         {% block main %}

@@ -4,10 +4,16 @@
 {% block header_sub %}<p class="subtitle">Registrace byla úspěšná.</p>{% endblock %}
 
 {% block container %}
-    <p class="notification">
-        Zkontrolujte prosím svoji e-mailovou schránku, kam jsme vám poslali <strong>ověřovací e-mail</strong>. Ten je
-        nutné potvrdit pro dokončení registrace. Doručení registračního emailu může trvat několik minut. Pokud vám
-        nepřišel do schránky, zkontrolujte si prosím složku Spam/Nevyžádané. Pokud registrační mail nenajdete ani tam,
-        kontaktujte organizátory na emailu <a href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
-    </p>
+    <article class="message is-success is-light" style="border-radius: 0.5rem;">
+        <div class="message-body is-size-6">
+            <p>
+                <i class="fas fa-check-circle pr-2 has-text-success"></i>
+                Zkontroluj, prosím, svoji e-mailovou schránku, kam jsme ti poslali <strong>ověřovací e-mail</strong>. Ten je nutné potvrdit pro dokončení registrace.
+            </p>
+            <p class="mt-3 is-size-7 has-text-grey-dark">
+                Doručení registračního e-mailu může trvat několik minut. Pokud ti nepřišel do schránky, zkontroluj si prosím složku s nevyžádanou poštou. V případě potíží nás kontaktuj na <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-bold">ksicht@natur.cuni.cz</a>.
+            </p>
+        </div>
+    </article>
 {% endblock %}
+

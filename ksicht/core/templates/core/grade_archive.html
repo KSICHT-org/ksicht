@@ -52,7 +52,7 @@
                                             <h3 class="is-6 has-text-weight-bold">Přílohy {{ series }}</h3>
                                             {% for a in attachments %}
                                             <p class="is-5">
-                                                <p><a href="{{ a.file.url }}" class="mr-4"><i class="fas fa-file pr-1"></i> {{ a }}</a></p>
+                                                <p><a href="{{ a.file.url }}" class="mr-4"><i class="fas fa-file pr-1 mr-1"></i> {{ a }}</a></p>
                                             </p>
                                             {% endfor %}
                                         </div>
@@ -68,9 +68,9 @@
 
     {% include "includes/pagination.html" %}
 {% else %}
-    <article class="message is-warning is-size-5">
+    <article class="message is-warning is-light is-size-5" style="border-radius: 0.75rem;">
         <div class="message-body">
-            <p>Žádné minulé ročníky zatím neproběhly.</p>
+            <p><i class="fas fa-info-circle pr-2 has-text-warning-dark"></i> Žádné minulé ročníky zatím neproběhly.</p>
         </div>
     </article>
 {% endif %}
