@@ -111,7 +111,7 @@ class CurrentGradeApplicationView(BaseFormView):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            "<i class='fas fa-check-circle notification-icon'></i> Přihlášení do KSICHTu proběhlo úspěšně. Hurá na řešení!</strong>.",
+            "<i class='fas fa-check-circle notification-icon'></i> Přihlášení do KSICHTu proběhlo úspěšně. Hurá na řešení!",
         )
 
         return redirect("core:current_grade")

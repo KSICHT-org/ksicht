@@ -7,24 +7,29 @@
 {% block container %}
     {% if activation_error %}
         {% if activation_error.code == "already_activated" %}
-            <div class="notification is-info">
-                Uživatel je již aktivován. Můžete se <a href="{% url "login" %}">přihlásit</a>.
-            </div>
+            <article class="message is-info is-light mb-4" style="border-radius: 0.5rem;">
+                <div class="message-body is-size-6">
+                    <i class="fas fa-info-circle pr-2 has-text-info"></i>
+                    Účet byl již aktivován. Můžeš se <a href="{% url 'login' %}" class="has-text-weight-bold">přihlásit</a>.
+                </div>
+            </article>
         {% elif activation_error.code == "bad_username" %}
-            <div class="notification is-warning">
-                Uživatel nebyl nalezen. Pro více informací nás kontaktujte přes email na <a
-                href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
-            </div>
+            <article class="message is-warning is-light mb-4" style="border-radius: 0.5rem;">
+                <div class="message-body is-size-6">
+                    <i class="fas fa-exclamation-triangle pr-2 has-text-warning-dark"></i>
+                    Uživatel nebyl nalezen. Pro více informací nás kontaktuj přes e-mail na <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-bold">ksicht@natur.cuni.cz</a>.
+                </div>
+            </article>
         {% endif %}
-
     {% endif %}
 
     {% if is_form_invalid %}
-        <div class="notification is-danger">
-            Aktivační klíč je neplatný. Pro více informací nás kontaktujte přes email na <a
-            href="mailto:ksicht@natur.cuni.cz">ksicht@natur.cuni.cz</a>.
-        </div>
-
+        <article class="message is-danger is-light mb-4" style="border-radius: 0.5rem;">
+            <div class="message-body is-size-6">
+                <i class="fas fa-times-circle pr-2 has-text-danger"></i>
+                Aktivační klíč je neplatný. Pro více informací nás kontaktuj přes e-mail na <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-bold">ksicht@natur.cuni.cz</a>.
+            </div>
+        </article>
     {% endif %}
 
     <form method="post">
