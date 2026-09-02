@@ -4,6 +4,7 @@
     "description": "",
     "main": "index.js",
     "dependencies": {
+        "@fontsource/inter": "^5.3.0",
         "@vizuaalog/bulmajs": "^0.12.2",
         "bulma": "^1.0.4",
         "core-js": "^3.48.0",

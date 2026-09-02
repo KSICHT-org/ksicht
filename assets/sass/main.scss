@@ -56,9 +56,13 @@
 @forward "bulma/sass/helpers";
 @forward "bulma/sass/themes";
 
-// Custom fonts
-@import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&subset=latin-ext);
-
+// Inter font (self-hosted)
+// replaces: @import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&subset=latin-ext)
+// using @import causes bug in production build by injecting BOM character and therefore breaking crispy forms style
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
 
 // FontAwesome
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
