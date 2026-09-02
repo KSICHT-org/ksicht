@@ -4,6 +4,12 @@
 {% block header_sub %}<p class="subtitle">Aktivace účtu se nezdařila.</p>{% endblock %}
 
 {% block container %}
-<p class="notification is-size-5">Zkuste to prosím ještě jednou.</p>
+<article class="message is-danger is-light" style="border-radius: 0.5rem;">
+    <div class="message-body is-size-6">
+        <i class="fas fa-exclamation-circle pr-2 has-text-danger"></i>
+        Zkus to, prosím, ještě jednou nebo kontaktuj organizátory na <a href="mailto:ksicht@natur.cuni.cz" class="has-text-weight-bold">ksicht@natur.cuni.cz</a>.
+    </div>
+</article>
 {% endblock %}
+
 

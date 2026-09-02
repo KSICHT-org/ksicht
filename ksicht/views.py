@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.views import render_flatpage
@@ -20,7 +21,7 @@ from . import forms
 class UserProfileEditView(UpdateView):
     form_class = forms.KsichtEditProfileForm
     template_name = "registration/user_change_form.html"
-    success_url = reverse_lazy("core:home")
+    success_url = reverse_lazy("edit_profile")
 
     @method_decorator(csrf_protect)
     @method_decorator(login_required)
@@ -47,7 +48,7 @@ class UserProfileEditView(UpdateView):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            "<i class='fas fa-check-circle notification-icon'></i> Váš profil byl aktualizován</strong>.",
+            "<i class='fas fa-check-circle notification-icon'></i> Váš profil byl aktualizován.",
         )
         return super().form_valid(form)
 
@@ -56,6 +57,20 @@ class UserProfileEditView(UpdateView):
 
         context["no_birth_date"] = self.object.participant_profile.birth_date is None
         return context
+
+
+class KsichtPasswordChangeView(auth_views.PasswordChangeView):
+    form_class = forms.KsichtChangePasswordForm
+    template_name = "registration/password_change_form.html"
+    success_url = reverse_lazy("password_change")
+
+    def form_valid(self, form):
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "<i class='fas fa-check-circle notification-icon'></i> Vaše heslo bylo úspěšně změněno.",
+        )
+        return super().form_valid(form)
 
 
 class KsichtActivationView(ActivationView):
