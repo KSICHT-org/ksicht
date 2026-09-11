@@ -152,7 +152,8 @@ def prepare_submission_for_export(in_file, label: str):
         in_file.seek(0)
         in_memory_pdf = io.BytesIO(in_file.read())
         in_pdf = PdfFileReader(in_memory_pdf)
-        out_pdf.append_pages_from_reader(in_pdf)
+        for page in in_pdf.pages:
+            out_pdf.add_page(page)
     except Exception:
         out_pdf.add_page(page_with_memo(10, 200, "!! Tento PDF soubor je poškozený !!"))
 
@@ -177,7 +178,8 @@ def prepare_submission_for_export(in_file, label: str):
     # Build duplex version by reading from normal and optionally adding blank page
     out_duplex = PdfFileWriter()
     duplex_reader = PdfFileReader(normal_buf)
-    out_duplex.append_pages_from_reader(duplex_reader)
+    for page in duplex_reader.pages:
+        out_duplex.add_page(page)
 
     num_pages = len(duplex_reader.pages)
     if (num_pages % 2 == 1) and num_pages > 1:
