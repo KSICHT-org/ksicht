@@ -77,15 +77,15 @@
                         <div>
                             <span class="title is-5 has-text-weight-bold mr-3">{{ series }}</span>
                             {% if series.results_published %}
-                                <span class="tag is-success is-light is-rounded"><i class="fas fa-check pr-1"></i> Vyhodnoceno</span>
+                                <span class="tag is-success is-light is-rounded">Vyhodnoceno</span>
                             {% elif series.is_evaluating %}
-                                <span class="tag is-warning is-light is-rounded"><i class="fas fa-hourglass-half pr-1"></i> Probíhá hodnocení</span>
+                                <span class="tag is-warning is-light is-rounded">Probíhá hodnocení</span>
                             {% elif series.is_active %}
-                                <span class="tag is-primary is-rounded has-text-weight-bold"><i class="fas fa-play-circle pr-1"></i> Právě probíhá</span>
+                                <span class="tag is-primary is-rounded has-text-weight-bold">Právě probíhá</span>
                             {% elif series.is_expected_publish_date_passed and not series.task_file %}
-                                <span class="tag is-warning is-light is-rounded"><i class="fas fa-flask pr-1"></i> Zadání se připravuje</span>
+                                <span class="tag is-warning is-light is-rounded">Zadání se připravuje</span>
                             {% else %}
-                                <span class="tag is-light is-rounded"><i class="fas fa-clock pr-1"></i> Připravuje se</span>
+                                <span class="tag is-light is-rounded">Připravuje se</span>
                             {% endif %}
                         </div>
 
