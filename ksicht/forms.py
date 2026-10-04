@@ -211,7 +211,7 @@ class KsichtRegistrationForm(KsichtProfileMixin, UserCreationForm):
                 "school",
                 "school_year",
                 "school_alt_name",
-                "schole_alt_street",
+                "school_alt_street",
                 "school_alt_city",
                 "school_alt_zip_code",
             )
@@ -232,7 +232,7 @@ class KsichtEditProfileForm(UserChangeForm, KsichtProfileMixin):
         "school",
         "school_year",
         "school_alt_name",
-        "schole_alt_street",
+        "school_alt_street",
         "school_alt_city",
         "school_alt_zip_code",
         "brochures_by_mail",
