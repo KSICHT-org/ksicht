@@ -17,3 +17,4 @@ webpack-stats.json
 static
 media/*
 .excluded
+.agents
