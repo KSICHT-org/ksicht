@@ -16,7 +16,7 @@ confusable-homoglyphs==3.3.1
     # via django-registration
 crispy-bulma==0.12.0
     # via -r requirements.in
-django==5.2.16
+django==5.2.17
     # via
     #   -r requirements.in
     #   crispy-bulma
@@ -91,7 +91,7 @@ psycopg2-binary==2.9.11
     # via -r requirements.in
 pydash==8.0.6
     # via -r requirements.in
-pypdf==6.16.1
+pypdf==6.19.0
     # via -r requirements.in
 reportlab==4.4.10
     # via -r requirements.in
