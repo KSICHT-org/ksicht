@@ -101,5 +101,5 @@ sqlparse==0.6.0
     # via django
 typing-extensions==4.15.0
     # via pydash
-urllib3==2.7.0
+urllib3==2.8.0
     # via sentry-sdk
