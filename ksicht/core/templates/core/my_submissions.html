@@ -65,9 +65,7 @@
                                         {% for item in series_entry.tasks %}
                                         <tr>
                                             <td>
-                                                <a href="{{ item.task.get_absolute_url }}">
                                                     <strong>{{ item.task.title }}</strong>
-                                                </a>
                                                 {% if item.task.points %}
                                                     <span class="tag is-light is-rounded is-size-7 ml-1">max {{ item.task.points }} b.</span>
                                                 {% endif %}
