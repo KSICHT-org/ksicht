@@ -65,11 +65,9 @@
                                         {% for item in series_entry.tasks %}
                                         <tr>
                                             <td>
-                                                <a href="{{ item.task.get_absolute_url }}">
                                                     <strong>{{ item.task.title }}</strong>
-                                                </a>
                                                 {% if item.task.points %}
-                                                    <span class="tag is-light is-rounded is-size-7 ml-1">max {{ item.task.points }} b.</span>
+                                                    <span class="tag is-light is-rounded is-size-7 ml-1">max. {{ item.task.points }} b.</span>
                                                 {% endif %}
                                             </td>
                                             <td>
@@ -89,7 +87,7 @@
                                                     </div>
                                                 {% else %}
                                                     {% if series_entry.can_submit %}
-                                                        <a href="{% url 'core:solution_submit' task_id=item.task.pk %}" class="button is-small is-link is-outlined">
+                                                        <a href="{% url 'core:solution_submit' %}" class="button is-small is-link is-outlined">
                                                             <i class="fas fa-upload pr-1"></i> Odevzdat
                                                         </a>
                                                     {% else %}
