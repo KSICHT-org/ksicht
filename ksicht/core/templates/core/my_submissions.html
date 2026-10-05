@@ -87,7 +87,7 @@
                                                     </div>
                                                 {% else %}
                                                     {% if series_entry.can_submit %}
-                                                        <a href="{% url 'core:solution_submit' task_id=item.task.pk %}" class="button is-small is-link is-outlined">
+                                                        <a href="{% url 'core:solution_submit' %}" class="button is-small is-link is-outlined">
                                                             <i class="fas fa-upload pr-1"></i> Odevzdat
                                                         </a>
                                                     {% else %}
