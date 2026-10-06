@@ -1,4 +1,5 @@
 import logging
+from .core.phone import normalize_phone_number
 
 from cuser.forms import AuthenticationForm, UserChangeForm, UserCreationForm
 from django import forms
@@ -111,7 +112,7 @@ class KsichtProfileMixin(forms.ModelForm):
         # Run validation
         phone_validator(phone)
 
-        return phone
+        return normalize_phone_number(phone)
 
     def clean(self):
         cd = self.cleaned_data
