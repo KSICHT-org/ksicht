@@ -137,7 +137,7 @@ class EventEnlistView(DetailView):
         )
 
         context["has_enlisted"] = True
-        context["is_substitue"] = self.object.capacity > context["attendee_count"]
+        context["is_substitute"] = context["attendee_count"] >= self.object.capacity
 
         return self.render_to_response(context)
 
