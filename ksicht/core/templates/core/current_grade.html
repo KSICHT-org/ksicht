@@ -91,12 +91,12 @@
 
                         <div class="buttons are-small mb-0">
                             {% if series.task_file %}
-                                <a href="{{ series.task_file.url }}" class="button is-link is-light">
+                                <a href="{{ series.task_file.url }}" class="button is-primary">
                                     <i class="fas fa-file-pdf pr-1 mr-1"></i> Zadání v PDF
                                 </a>
                             {% endif %}
                             {% if series.results_published %}
-                                <a href="{% url "core:series_results" grade_id=series.grade_id pk=series.pk %}" class="button is-success is-light">
+                                <a href="{% url "core:series_results" grade_id=series.grade_id pk=series.pk %}" class="button is-success">
                                     <i class="fas fa-trophy pr-1 mr-1"></i> Výsledky
                                 </a>
                             {% endif %}
