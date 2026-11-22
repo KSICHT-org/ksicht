@@ -12,6 +12,7 @@ from django.views.generic.detail import BaseDetailView
 
 from .decorators import is_participant
 from .. import models
+from ..phone import normalize_phone_number
 
 
 def is_enlisted(user, event):
@@ -167,10 +168,10 @@ class EventAttendeesExportView(BaseDetailView):
                 "Jméno",
                 "Příjmení",
                 "Status",
-                "(Telefon)",
-                "(Datum narození))",
-                "(Škola)",
-                "(Město)",
+                "Telefon",
+                "Datum narození",
+                "Škola",
+                "Město",
             ]
         )
 
@@ -190,7 +191,9 @@ class EventAttendeesExportView(BaseDetailView):
                 attendee.user.first_name,
                 attendee.user.last_name,
                 "Náhradník" if is_substitute else "Účastník",
-                (participant.phone if participant else None) or attendee.user_phone,
+                normalize_phone_number(
+                    (participant.phone if participant else None) or attendee.user_phone
+                ),
                 (
                     formats.date_format(birth_date, "SHORT_DATE_FORMAT")
                     if birth_date
