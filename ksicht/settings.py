@@ -152,6 +152,8 @@ DATABASES = {
         "PASSWORD": db.password,
         "HOST": db.host,
         "PORT": db.port,
+        "CONN_MAX_AGE": int(os.environ.get("CONN_MAX_AGE", 600)),
+        "CONN_HEALTH_CHECKS":  os.environ.get("CONN_HEALTH_CHECKS", "True").lower() in ("true", "1", "yes"),
     }
 }
 
