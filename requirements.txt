@@ -8,7 +8,7 @@ asgiref==3.8.1
     # via
     #   django
     #   django-minify-html
-certifi==2026.2.25
+certifi==2026.10.18
     # via sentry-sdk
 charset-normalizer==3.4.4
     # via reportlab
